@@ -1,4 +1,3 @@
-from tkinter import VERTICAL
 import kivy
 from kivy.app import App
 from kivy.uix.widget import Widget
@@ -18,6 +17,8 @@ from kivy.lang import Builder
 
 
 
+def get_text(a):
+    return str(random.randint(0, a+1))
 
 
 class MainWidget (BoxLayout):
@@ -49,8 +50,8 @@ class MainWidget (BoxLayout):
         self.grid = GridLayout(cols = 1, size_hint_y = None)
         self.grid.bind(minimum_height=self.grid.setter('height'))
 
-        for a in range (100):
-            self.btn = Button (size_hint_y = None, height = 40, text = (str(a)))
+        for a in range (20):
+            self.btn = Button (size_hint_y = None, height = 100, text = (get_text(a)))
             self.grid.add_widget(self.btn)
 
         self.scroll = ScrollView ()
