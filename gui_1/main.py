@@ -14,22 +14,25 @@ from kivy.core.window import Window
 from kivy.base import runTouchApp
 from kivy.properties import StringProperty
 from kivy.lang import Builder
+from kivy.uix.screenmanager import ScreenManager, Screen
 
 
 
-def get_text(a):
+def get_post_text(a):
     return str(random.randint(0, a+1))
 
 
-class MainWidget (BoxLayout):
+
+class MainScreen (Screen):
     def __init__(self, **kwargs):
-        super(MainWidget, self).__init__(**kwargs)
-        self.orientation = "vertical"
+        super(MainScreen, self).__init__(**kwargs)
         
+        self.Box0 = BoxLayout()
+        self.Box0.orientation = "vertical"
+        self.add_widget(self.Box0)
 
-
-        self.box1 = BoxLayout (size_hint = (1, 0.12))
-        self.add_widget(self.box1)
+        self.box1 = BoxLayout (size_hint = (1, 0.15))
+        self.Box0.add_widget(self.box1)
 
         self.lab1 = Label (text = ("Small Brother"), size_hint = (3, 1))
         self.box1.add_widget(self.lab1)
@@ -43,27 +46,23 @@ class MainWidget (BoxLayout):
         self.btn1.bind(on_press = self.Settings)
         
 
-
         self.box2 = BoxLayout (size_hint = (1, 1))
-        self.add_widget(self.box2)
+        self.Box0.add_widget(self.box2)
         
         self.grid = GridLayout(cols = 1, size_hint_y = None)
         self.grid.bind(minimum_height=self.grid.setter('height'))
 
         for a in range (20):
-            self.btn = Button (size_hint_y = None, height = 100, text = (get_text(a)))
+            self.btn = Button (size_hint_y = None, height = 80, text = (get_post_text(a)))
             self.grid.add_widget(self.btn)
 
         self.scroll = ScrollView ()
         self.scroll.add_widget (self.grid)
         self.box2.add_widget (self.scroll)
-        
-        
 
 
-
-        self.box3 = BoxLayout (size_hint = (1, 0.12))
-        self.add_widget(self.box3)
+        self.box3 = BoxLayout (size_hint = (1, 0.15))
+        self.Box0.add_widget(self.box3)
 
         self.btn11 = Button (text = ("A"))
         self.box3.add_widget(self.btn11)
@@ -84,14 +83,13 @@ class MainWidget (BoxLayout):
         self.btn15 = Button (text = ("E"))
         self.box3.add_widget(self.btn15)
         self.btn15.bind(on_press = self.press_btn15)
-
         
 
     def Search1(instance, value):
         pass
 
     def Settings(self, instance):
-        pass
+        self.manager.current = "search"
     
 
     def press_btn11(self, instance):
@@ -110,12 +108,20 @@ class MainWidget (BoxLayout):
         pass
 
 
+class SearchScreen (Screen):
+    def __init__(self, **kwargs):
+        super(SearchScreen, self).__init__(**kwargs)
+        self.box0 = BoxLayout()
+        self.box0.orientation = "vertical"
+        self.add_widget(self.box0)
 
+        self.bt = Button (text = "f")
+        self.bt.bind(on_press = self.jump)
+        self.box0.add_widget(self.bt)
 
-
-
-
-
+    def jump(self, instance):
+        self.manager.current = "main"
+    
 
 
 
@@ -123,8 +129,10 @@ class MainWidget (BoxLayout):
 
 class MyApp (App):
     def build(self):
-        return MainWidget()
-
+        sm = ScreenManager()
+        sm.add_widget(MainScreen(name = "main"))
+        sm.add_widget(SearchScreen(name = "search"))
+        return sm
 
 if __name__ == "__main__":
     MyApp().run()
