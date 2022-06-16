@@ -9,10 +9,20 @@ def connect():
     )
     return connection
 
-def create(connection):
+def querry(connection:mysql.connector.connection_cext.CMySQLConnection, querry:str):
+    cursor = connection.cursor()
+    cursor.execute(querry)
+    return cursor.fetchall()
+
+def execute(connection:mysql.connector.connection_cext.CMySQLConnection, sql:str):
+    cursor = connection.cursor()
+    cursor.execute(sql)
+    connection.commit()
+
+def create(connection:mysql.connector.connection_cext.CMySQLConnection):
     cursor = connection.cursor()
     
-    cursor.execute("DROP TABLE IF EXISTS coments;")
+    cursor.execute("DROP TABLE IF EXISTS comments;")
     cursor.execute("DROP TABLE IF EXISTS posts;")
     cursor.execute("DROP TABLE IF EXISTS users;")
 
@@ -22,9 +32,9 @@ def create(connection):
 
    
     cursor.execute("DROP TABLE IF EXISTS ips;")
-    cursor.execute("DROP TABLE IF EXISTS conected;")
+    cursor.execute("DROP TABLE IF EXISTS connected;")
 
-    cursor.execute("CREATE TABLE ips(ip VARCHAR(21) NOT NULL PRIMARY KEY, time_connected INT NOT NULL);")
+    cursor.execute("CREATE TABLE ips(ip VARCHAR(21) NOT NULL PRIMARY KEY, time_connected INT NOT NULL, id INT AUTO_INCREMENT);")
     cursor.execute("CREATE TABLE connected_ips(ip VARCHAR(21) NOT NULL PRIMARY KEY, time_connected INT NOT NULL);")
 
     connection.commit()
