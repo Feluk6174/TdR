@@ -57,23 +57,29 @@ def main_loop(connection):
 
 def check_connections():
     global connections
-    pass
 
-def connect_to_node():
-    pass
+def connect_to_node(n_nodes):
+    global connections, db_connection
+    ip = db.querry(db_connection, "SELECT ip FROM ips ORDER BY RAND() LIMIT 1;")
+    server.connect()
+
 
 def manage_node(connection, data):
     global connections, get_n_connected, db_connection
     check_connections()
     n_connected = len(connections)
-    n_suposed_connections = get_n_connected(len(db.querry(db_connection, "SELECRT * FROM ips")))
+    n_nodes = len(db.querry(db_connection, "SELECT * FROM ips;")))
+    n_suposed_connections = get_n_connected(n_nodes)
     if n_connections < n_suposed_connections:
         difference = n_connected - n_suposed_connections
         connections.append((connections))
         #Falta crear thread amb la nova conexio
         for i in range(difference - 1):
-            connect_to_node()
-        
+            connect_to_node(n_nodea)
+
+    else:
+        connection.send("FULL")
+        connection.close()
 
 def manage_client(connection, data):
     pass
