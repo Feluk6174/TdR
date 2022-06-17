@@ -42,7 +42,7 @@ class ChatScreen (Screen):
         self.box1.add_widget(self.text1)
         self.text1.bind(on_text_validate = self.Search1)
         
-        self.btn1 = Button(text = "S", size_hint = (1, 1))
+        self.btn1 = Button(text = "S", size_hint = (1, 1), background_normal = 'settings1.png', background_down = 'settings2.png')
         self.box1.add_widget(self.btn1)
         self.btn1.bind(on_press = self.Settings)
         
@@ -131,7 +131,7 @@ class SearchScreen (Screen):
         self.box1.add_widget(self.text1)
         self.text1.bind(on_text_validate = self.Search1)
         
-        self.btn1 = Button(text = "S", size_hint = (1, 1))
+        self.btn1 = Button(text = "S", size_hint = (1, 1), background_normal = 'settings1.png', background_down = 'settings2.png')
         self.box1.add_widget(self.btn1)
         self.btn1.bind(on_press = self.Settings)
         
@@ -247,7 +247,7 @@ class MainScreen (Screen):
         self.box1.add_widget(self.text1)
         self.text1.bind(on_text_validate = self.Search1)
         
-        self.btn1 = Button(text = "S", size_hint = (1, 1))
+        self.btn1 = Button(text = "S", size_hint = (1, 1), background_normal = 'settings1.png', background_down = 'settings2.png')
         self.box1.add_widget(self.btn1)
         self.btn1.bind(on_press = self.Settings)
         
@@ -334,7 +334,7 @@ class PostUserScreen (Screen):
         self.box1.add_widget(self.text1)
         self.text1.bind(on_text_validate = self.Search1)
         
-        self.btn1 = Button(text = "S", size_hint = (1, 1))
+        self.btn1 = Button(text = "S", size_hint = (1, 1), background_normal = 'settings1.png', background_down = 'settings2.png')
         self.box1.add_widget(self.btn1)
         self.btn1.bind(on_press = self.Settings)
         
@@ -343,14 +343,13 @@ class PostUserScreen (Screen):
         self.Box0.add_widget(self.box2)
         
         self.grid = BoxLayout(orientation = "vertical")
-        self.grid.bind(minimum_height=self.grid.setter('height'))
         self.box2.add_widget(self.grid)
 
-        self.actp = TextInput(multiline = False, size_hint = (1, 4))
+        self.actp = TextInput(multiline = True, size_hint = (1, 4))
         self.grid.add_widget(self.actp)
         self.actp.bind(on_text_validate = self.NotYet)
 
-        self.send = Button (text = "Publish", size_hint = (1, 1.3))
+        self.send = Button (text = "Publish", size_hint = (1, 1))
         self.grid.add_widget(self.send)
         self.send.bind(on_press = self.SendPost)
 
@@ -434,7 +433,7 @@ class ProfileScreen (Screen):
         self.box1.add_widget(self.text1)
         self.text1.bind(on_text_validate = self.Search1)
         
-        self.btn1 = Button(text = "S", size_hint = (1, 1))
+        self.btn1 = Button(text = "S", size_hint = (1, 1), background_normal = 'settings1.png', background_down = 'settings2.png')
         self.box1.add_widget(self.btn1)
         self.btn1.bind(on_press = self.Settings)
         
@@ -546,12 +545,6 @@ class ProfileScreen (Screen):
 
     def press_btn15(self, instance):
         pass
-
-
-
-
-
-
 
 
 
