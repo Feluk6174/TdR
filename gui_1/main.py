@@ -1,4 +1,4 @@
-import kivy
+#import kivy
 from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.uix.boxlayout import BoxLayout
@@ -8,19 +8,40 @@ from kivy.uix.image import Image
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.textinput import TextInput
 from kivy.uix.image import AsyncImage
-import random
 from kivy.uix.scrollview import ScrollView
 from kivy.core.window import Window
 from kivy.base import runTouchApp
 from kivy.properties import StringProperty
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
+import time
+
+Window.size = (400, 600)
 
 
 
 def get_post_text(a):
     return str(a)
     #random.randint(0, a+1)
+
+
+class LoadScreen (Screen):
+    def __init__(self, **kwargs):
+        super(LoadScreen, self).__init__(**kwargs)
+        self.Box0 = BoxLayout()
+        self.Box0.orientation = "vertical"
+        self.add_widget(self.Box0)
+
+        self.lab1 = Button(size_hint = (None, None), size = (300, 300), background_normal = 'logo.png', background_down = 'logo.png')
+        self.Box0.add_widget(self.lab1)
+
+        self.lab2 = Label(text = "Small Brother", size_hint = (1, 0.12))
+        self.Box0.add_widget(self.lab1)
+
+        time.sleep(3)
+        self.manager.current = "chat"
+
+
 
 
 
@@ -35,7 +56,7 @@ class ChatScreen (Screen):
         self.box1 = BoxLayout (size_hint = (1, 0.15))
         self.Box0.add_widget(self.box1)
 
-        self.lab1 = Label (text = ("Small Brother"), size_hint = (3, 1))
+        self.lab1 = Button (size_hint = (None, None), size = (80, 80), background_normal = 'logo.png', background_down = 'logo.png')
         self.box1.add_widget(self.lab1)
         
         self.text1 = TextInput(multiline = False, size_hint = (2, 1))
@@ -124,7 +145,7 @@ class SearchScreen (Screen):
         self.box1 = BoxLayout (size_hint = (1, 0.15))
         self.Box0.add_widget(self.box1)
 
-        self.lab1 = Label (text = ("Small Brother"), size_hint = (3, 1))
+        self.lab1 = Button (size_hint = (None, None), size = (80, 80), background_normal = 'logo.png', background_down = 'logo.png')
         self.box1.add_widget(self.lab1)
         
         self.text1 = TextInput(multiline = False, size_hint = (2, 1))
@@ -240,7 +261,7 @@ class MainScreen (Screen):
         self.box1 = BoxLayout (size_hint = (1, 0.15))
         self.Box0.add_widget(self.box1)
 
-        self.lab1 = Label (text = ("Small Brother"), size_hint = (3, 1))
+        self.lab1 = Button (size_hint = (None, None), size = (80, 80), background_normal = 'logo.png', background_down = 'logo.png')
         self.box1.add_widget(self.lab1)
         
         self.text1 = TextInput(multiline = False, size_hint = (2, 1))
@@ -327,7 +348,7 @@ class PostUserScreen (Screen):
         self.box1 = BoxLayout (size_hint = (1, 0.15))
         self.Box0.add_widget(self.box1)
 
-        self.lab1 = Label (text = ("Small Brother"), size_hint = (3, 1))
+        self.lab1 = Button (size_hint = (None, None), size = (80, 80), background_normal = 'logo.png', background_down = 'logo.png')
         self.box1.add_widget(self.lab1)
         
         self.text1 = TextInput(multiline = False, size_hint = (2, 1))
@@ -426,7 +447,7 @@ class ProfileScreen (Screen):
         self.box1 = BoxLayout (size_hint = (1, 0.15))
         self.Box0.add_widget(self.box1)
 
-        self.lab1 = Label (text = ("Small Brother"), size_hint = (3, 1))
+        self.lab1 = Button (size_hint = (None, None), size = (80, 80), background_normal = 'logo.png', background_down = 'logo.png')
         self.box1.add_widget(self.lab1)
         
         self.text1 = TextInput(multiline = False, size_hint = (2, 1))
@@ -554,6 +575,7 @@ class ProfileScreen (Screen):
 class MyApp (App):
     def build(self):
         sm = ScreenManager()
+        sm.add_widget(LoadScreen(name = "load"))
         sm.add_widget(MainScreen(name = "main"))
         sm.add_widget(ChatScreen(name = "chat"))
         sm.add_widget(SearchScreen(name = "search"))
