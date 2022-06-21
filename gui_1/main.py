@@ -1,8 +1,10 @@
 #import kivy
 from kivy.app import App
+from functools import partial
 from kivy.uix.widget import Widget
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
+from kivy.uix.button import ButtonBehavior
 from kivy.uix.label import Label
 from kivy.uix.image import Image
 from kivy.uix.gridlayout import GridLayout
@@ -15,6 +17,11 @@ from kivy.properties import StringProperty
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
 import time
+from kivy.clock import Clock
+from kivy.uix.screenmanager import FallOutTransition
+from kivy.uix.screenmanager import SlideTransition
+
+
 
 Window.size = (400, 600)
 
@@ -25,25 +32,28 @@ def get_post_text(a):
     #random.randint(0, a+1)
 
 
+
+
 class LoadScreen (Screen):
     def __init__(self, **kwargs):
         super(LoadScreen, self).__init__(**kwargs)
-        self.Box0 = BoxLayout()
-        self.Box0.orientation = "vertical"
-        self.add_widget(self.Box0)
+        self.box0 = BoxLayout(orientation = "vertical")
+        self.add_widget(self.box0)
 
-        self.lab1 = Button(size_hint = (None, None), size = (300, 300), background_normal = 'logo.png', background_down = 'logo.png')
-        self.Box0.add_widget(self.lab1)
+        self.Lab1 = Button(size_hint = (None, None), size = (400, 400), background_normal = 'logo.png', background_down = 'logo.png')
+        self.box0.add_widget(self.Lab1)
+        self.Lab1.bind(on_press = self.change)
 
         self.lab2 = Label(text = "Small Brother", size_hint = (1, 0.12))
-        self.Box0.add_widget(self.lab1)
+        self.box0.add_widget(self.lab2)
 
-        time.sleep(3)
-        self.manager.current = "chat"
+        Clock.schedule_once(self.change, 3)
 
-
-
-
+        
+    def change(self, instance):
+        self.manager.transition = FallOutTransition()
+        self.manager.current = "main"
+        
 
 
 class ChatScreen (Screen):
@@ -172,9 +182,13 @@ class SearchScreen (Screen):
         self.grid.add_widget(self.lab2)
         self.lab2.bind(on_text_validate = self.search12)
 
-        self.lab3 = TextInput(multiline = False, text = "Favourites")
+        self.lab3 = TextInput(multiline = False, text = "Search hastag")
         self.grid.add_widget(self.lab3)
         self.lab2.bind(on_text_validate = self.search13)
+
+        self.ran0 = Button (text = "Favourites", size_hint = (1, 1))
+        self.grid.add_widget(self.ran0)
+        self.ran0.bind(on_press = self.random0)
 
         self.ran1 = Button (text = "Global", size_hint = (1, 2.5))
         self.grid.add_widget(self.ran1)
@@ -223,6 +237,9 @@ class SearchScreen (Screen):
     def search13(instance, value):
         pass
 
+    def random0(self, instance):
+        pass
+
     def random1(self, instance):
         pass
 
@@ -261,14 +278,15 @@ class MainScreen (Screen):
         self.box1 = BoxLayout (size_hint = (1, 0.15))
         self.Box0.add_widget(self.box1)
 
-        self.lab1 = Button (size_hint = (None, None), size = (80, 80), background_normal = 'logo.png', background_down = 'logo.png')
+        self.lab1 = Button (size_hint = (None, None), size = (70, 70), background_normal = 'logo.png', background_down = 'logo.png')
         self.box1.add_widget(self.lab1)
+        self.lab1.bind(on_release = self.log)
         
-        self.text1 = TextInput(multiline = False, size_hint = (2, 1))
+        self.text1 = TextInput(multiline = False)
         self.box1.add_widget(self.text1)
         self.text1.bind(on_text_validate = self.Search1)
         
-        self.btn1 = Button(text = "S", size_hint = (1, 1), background_normal = 'settings1.png', background_down = 'settings2.png')
+        self.btn1 = Button(size_hint = (None, None), size = (70, 70), background_normal = 'settings1.png', background_down = 'settings2.png')
         self.box1.add_widget(self.btn1)
         self.btn1.bind(on_press = self.Settings)
         
@@ -279,9 +297,9 @@ class MainScreen (Screen):
         self.grid = GridLayout(cols = 1, size_hint_y = None)
         self.grid.bind(minimum_height=self.grid.setter('height'))
 
-        for a in range (20):
-            self.btn = Button (size_hint_y = None, height = 100, text = "P" + (get_post_text(a)))
-            self.grid.add_widget(self.btn)
+        self.btn1 = Button (text = "1", size_hint_y = None, height = 50)
+        self.grid.add_widget(self.btn1)
+        self.btn1.bind(on_press = partial(self.make_post_btn, "aniol", "foto", "What doesn't kill you makes you stronger." + '\n' + " ~Friedrich Niesche~", 9))
 
         self.scroll = ScrollView ()
         self.scroll.add_widget (self.grid)
@@ -311,6 +329,9 @@ class MainScreen (Screen):
         self.btn15.bind(on_press = self.press_btn15)
         
 
+    def log(self, instance):
+        pass
+
     def Search1(instance, value):
         pass
 
@@ -318,10 +339,12 @@ class MainScreen (Screen):
         pass
 
     def press_btn11(self, instance):
+        self.manager.transition = SlideTransition()
         self.manager.current = "chat"
         self.manager.transition.direction = "right"
 
     def press_btn12(self, instance):
+        self.manager.transition = SlideTransition()
         self.manager.current = "search"
         self.manager.transition.direction = "right"
 
@@ -329,12 +352,60 @@ class MainScreen (Screen):
         pass
 
     def press_btn14(self, instance):
+        self.manager.transition = SlideTransition()
         self.manager.current = "last"
         self.manager.transition.direction = "left"
 
     def press_btn15(self, instance):
+        self.manager.transition = SlideTransition()
         self.manager.current = "profile"
         self.manager.transition.direction = "left"
+    
+    def make_post_btn(self, user_name, user_image, textp, nlikes, instance):
+        
+        self.post = BoxLayout(size_hint_y = None, height = 200, orientation = "vertical")
+        self.grid.add_widget(self.post)
+        self.post_like = 0
+
+        self.first_box = BoxLayout(orientation = "horizontal", size_hint = (1, 0.5))
+        self.post.add_widget(self.first_box)
+        
+        self.im = Button(size_hint = (None, 1), width = 50, text = (user_image))
+        self.first_box.add_widget(self.im)
+        self.im.bind(on_press = partial(self.Image_press))
+        
+        self.pname = Button(text = (user_name))
+        self.first_box.add_widget(self.pname)
+        self.pname.bind(on_press = partial(self.Name_press))
+
+        self.likes = BoxLayout(size_hint = (None, 1), width = 100)
+        self.first_box.add_widget(self.likes)
+
+        self.like_heart = Button(background_normal = 'heart.png')
+        self.likes.add_widget(self.like_heart)
+        self.like_heart.bind(on_press = partial(self.Like_press, nlikes))
+
+        self.num_likes = Label (text = (str(nlikes + self.post_like)), size_hint = (1, 1))
+        self.likes.add_widget(self.num_likes)
+
+        self.second_box = BoxLayout(size_hint = (1, 2))
+        self.post.add_widget(self.second_box)
+
+        self.txt = Button (text = (str(textp)))
+        self.second_box.add_widget(self.txt)
+
+    
+    def Name_press(self, instance):
+        pass
+
+    def Image_press(self, instance):
+        pass
+
+    def Like_press(self, nlikes, instance):
+        self.post_like = (self.post_like + 1) % 2
+        self.num_likes.text = (str(nlikes + self.post_like))
+        return
+        
 
 
 
@@ -574,8 +645,9 @@ class ProfileScreen (Screen):
 
 class MyApp (App):
     def build(self):
-        sm = ScreenManager()
+        sm = ScreenManager(transition = FallOutTransition())
         sm.add_widget(LoadScreen(name = "load"))
+        sm.transition = SlideTransition()
         sm.add_widget(MainScreen(name = "main"))
         sm.add_widget(ChatScreen(name = "chat"))
         sm.add_widget(SearchScreen(name = "search"))
