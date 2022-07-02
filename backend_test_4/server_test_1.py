@@ -59,13 +59,16 @@ def check_connections():
     global connections
 
 def connect_to_node(n_nodes):
-    global connections, db_connection
+    global connections, db_connection, node_data
     ip = db.querry(db_connection, "SELECT ip FROM ips ORDER BY RAND() LIMIT 1;")
-    server.connect()
+    ip = ip.split(":")
+    server.connect((ip[0], int(ip[1])))
+    server.send(json.dumps(node_data).decode("utf-8"))
+    if server
+    
 
-
-def manage_node(connection, data):
-    global connections, get_n_connected, db_connection
+def manage_new_node(connection, data):
+    global connections, get_n_connected, db_connection, node_data
     check_connections()
     n_connected = len(connections)
     n_nodes = len(db.querry(db_connection, "SELECT * FROM ips;")))
@@ -73,7 +76,10 @@ def manage_node(connection, data):
     if n_connections < n_suposed_connections:
         difference = n_connected - n_suposed_connections
         connections.append((connections))
-        #Falta crear thread amb la nova conexio
+        
+        thread = threading.Thread(target=manage_node, args=(connection,))
+        thread.start()
+        
         for i in range(difference - 1):
             connect_to_node(n_nodea)
 
