@@ -93,4 +93,4 @@ def main(server):
         manage_new_node(connection, data, address)
 
     if data["type"] == "client":
-        manage_client(connection, data, address)
+                manage_client(connection, data, address)
