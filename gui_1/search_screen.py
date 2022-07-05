@@ -33,6 +33,7 @@ class SearchScreen (Screen):
 
         self.lab1 = Button (size_hint = (None, None), size = (80, 80), background_normal = 'logo.png', background_down = 'logo.png')
         self.box1.add_widget(self.lab1)
+        self.lab1.bind(on_release = self.press_btn13)
         
         self.text1 = TextInput(multiline = False, size_hint = (2, 1))
         self.box1.add_widget(self.text1)

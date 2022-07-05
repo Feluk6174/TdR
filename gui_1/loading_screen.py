@@ -34,7 +34,7 @@ class LoadScreen (Screen):
         self.lab2 = Label(text = "Small Brother", size_hint = (1, 0.12))
         self.box0.add_widget(self.lab2)
 
-        Clock.schedule_once(self.change, 3)
+        Clock.schedule_once(self.change, 2)
 
         
     def change(self, instance):

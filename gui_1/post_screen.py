@@ -33,6 +33,7 @@ class PostUserScreen (Screen):
 
         self.lab1 = Button (size_hint = (None, None), size = (80, 80), background_normal = 'logo.png', background_down = 'logo.png')
         self.box1.add_widget(self.lab1)
+        self.lab1.bind(on_release = self.press_btn13)
         
         self.text1 = TextInput(multiline = False, size_hint = (2, 1))
         self.box1.add_widget(self.text1)
@@ -51,15 +52,21 @@ class PostUserScreen (Screen):
 
         self.actp = TextInput(multiline = True, size_hint = (1, 4))
         self.grid.add_widget(self.actp)
-        self.actp.bind(on_text_validate = self.NotYet)
+        #self.actp.bind(on_text_validate = self.NotYet)
 
-        self.send = Button (text = "Publish", size_hint = (1, 1))
+        self.actp2 = TextInput(multiline = False, size_hint = (1, 0.5))
+        self.grid.add_widget(self.actp2)
+
+        self.actp3 = TextInput(multiline = False, size_hint = (1, 0.5))
+        self.grid.add_widget(self.actp3)
+
+        self.send = Button (text = "Publish", size_hint = (1, 0.8))
         self.grid.add_widget(self.send)
         self.send.bind(on_press = self.SendPost)
 
-        self.last = Button (text = "All your posts", size_hint = (1, 0.67))
-        self.grid.add_widget(self.last)
-        self.last.bind(on_press = self.LastPosts)
+        #self.last = Button (text = "All your posts", size_hint = (1, 0.67))
+        #self.grid.add_widget(self.last)
+        #self.last.bind(on_press = self.LastPosts)
 
 
         self.box3 = BoxLayout (size_hint = (1, 0.15))

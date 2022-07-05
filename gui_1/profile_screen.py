@@ -21,6 +21,9 @@ from kivy.clock import Clock
 from kivy.uix.screenmanager import FallOutTransition
 from kivy.uix.screenmanager import SlideTransition
 
+def get_post_text(num):
+    return(str(num))
+
 class ProfileScreen (Screen):
     def __init__(self, **kwargs):
         super(ProfileScreen, self).__init__(**kwargs)
@@ -33,6 +36,7 @@ class ProfileScreen (Screen):
 
         self.lab1 = Button (size_hint = (None, None), size = (80, 80), background_normal = 'logo.png', background_down = 'logo.png')
         self.box1.add_widget(self.lab1)
+        self.lab1.bind(on_release = self.press_btn13)
         
         self.text1 = TextInput(multiline = False, size_hint = (2, 1))
         self.box1.add_widget(self.text1)
@@ -43,7 +47,7 @@ class ProfileScreen (Screen):
         self.btn1.bind(on_press = self.Settings)
         
 
-        self.box2 = BoxLayout (size_hint = (1, 1))
+        self.box2 = BoxLayout (size_hint = (1, 1), orientation = "vertical")
         self.Box0.add_widget(self.box2)
 
         self.grid = GridLayout(cols = 1, size_hint_y = None)
@@ -52,34 +56,50 @@ class ProfileScreen (Screen):
         self.scroll = ScrollView ()
         self.scroll.add_widget (self.grid)
         self.box2.add_widget (self.scroll)
-        
-        self.us_name = Button(text = "Name", size_hint_y = None, height = 120)
-        self.grid.add_widget(self.us_name)
-        self.us_name.bind(on_press = self.UserName)
 
-        self.us_image = Button(text = "Profile", size_hint_y = None, height = 200)
-        self.grid.add_widget(self.us_image)
+        self.user_n_f = BoxLayout(size_hint_y = None, height = 100)
+        self.grid.add_widget(self.user_n_f)
+
+        self.us_image = Button(text = "Foto", size_hint = (0.5, 1))
+        self.user_n_f.add_widget(self.us_image)
         self.us_image.bind(on_press = self.UserImage)
 
-        self.us_des = Button(text = "Description", size_hint_y = None, height = 90)
+        self.us_name = Button(text = "Name")
+        self.user_n_f.add_widget(self.us_name)
+        self.us_name.bind(on_press = self.UserName)
+
+        self.us_des = Button(text = "Description", size_hint_y = None, height = 162)
         self.grid.add_widget(self.us_des)
         self.us_des.bind(on_press = self.UserDescription)
 
-        self.us_followers = Button(text = "Followers", size_hint_y = None, height = 80)
-        self.grid.add_widget(self.us_followers)
+        self.user_foll = BoxLayout(size_hint_y = None, height = 100)
+        self.grid.add_widget(self.user_foll)
+
+        self.us_followers = Button(text = "Followers")
+        self.user_foll.add_widget(self.us_followers)
         self.us_followers.bind(on_press = self.UserFollowers)
 
-        self.us_following = Button(text = "Following", size_hint_y = None, height = 80)
-        self.grid.add_widget(self.us_following)
+        self.us_following = Button(text = "Following")
+        self.user_foll.add_widget(self.us_following)
         self.us_following.bind(on_press = self.UserFollowing)
 
-        self.us_posts = Button(text = "Posts", size_hint_y = None, height = 80)
-        self.grid.add_widget(self.us_posts)
-        self.us_posts.bind(on_press = self.UserPosts)
+        self.u_posts_all = BoxLayout(size_hint_y = None, height = 100)
+        self.grid.add_widget(self.u_posts_all)
 
-        self.settings_final = Button(text = "Settings", size_hint_y = None, height = 80)
-        self.grid.add_widget(self.settings_final)
-        self.settings_final.bind(on_press = self.FinalSettings)
+        self.us_posts = Button(text = "My Posts")
+        self.u_posts_all.add_widget(self.us_posts)
+        self.us_posts.bind(on_press = self.UserPosts)
+        
+        self.fav = Button (text = "Favourites")
+        self.u_posts_all.add_widget(self.fav)
+        self.fav.bind(on_press = self.UserFavourites)
+
+        #firstposts
+        #current: 1 = my, 2 = fav
+        self.current_posts = 0
+        self.quant_m_p = 10
+        self.quant_f_p = 11
+        self.us_posts.trigger_action(duration = 0)
 
 
         self.box3 = BoxLayout (size_hint = (1, 0.15))
@@ -127,10 +147,38 @@ class ProfileScreen (Screen):
         pass
 
     def UserPosts(self, instance):
-        pass
+        if self.current_posts != 1:
+            if self.current_posts == 2:
+                self.favourite_posts.clear_widgets()
+                self.grid.remove_widget(self.favourite_posts)
 
-    def FinalSettings(self, instance):
-        pass
+            self.my_posts = BoxLayout(size_hint_y = None, height = self.quant_m_p * 100, orientation = "vertical")
+            self.grid.add_widget(self.my_posts)
+
+            #my posts
+            for a in range (self.quant_m_p): 
+                self.btn_p = Button (size_hint_y = None, height = 100, text = "M" + (get_post_text(a)))
+                self.my_posts.add_widget(self.btn_p)
+            
+            self.grid.bind(minimum_height=self.grid.setter('height'))
+            self.current_posts = 1
+
+    def UserFavourites(self, instance):
+        if self.current_posts != 2:
+            if self.current_posts == 1:
+                self.my_posts.clear_widgets()
+                self.grid.remove_widget(self.my_posts)
+
+            self.favourite_posts = BoxLayout(size_hint_y = None, height = self.quant_f_p * 100, orientation = "vertical")
+            self.grid.add_widget(self.favourite_posts)
+
+            #favourite posts
+            for a in range (self.quant_f_p):
+                self.btn_f = Button (size_hint_y = None, height = 100, text = "F" + (get_post_text(a)))
+                self.favourite_posts.add_widget(self.btn_f)
+            
+            self.grid.bind(minimum_height=self.grid.setter('height'))
+            self.current_posts = 2
 
     def press_btn11(self, instance):
         self.manager.current = "chat"
@@ -147,6 +195,3 @@ class ProfileScreen (Screen):
     def press_btn14(self, instance):
         self.manager.current = "last"
         self.manager.transition.direction = "right"
-
-    def press_btn15(self, instance):
-        pass
