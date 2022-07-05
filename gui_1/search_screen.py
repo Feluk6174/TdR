@@ -3,6 +3,7 @@ from kivy.app import App
 from functools import partial
 from kivy.uix.widget import Widget
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.button import Button
 from kivy.uix.button import ButtonBehavior
 from kivy.uix.label import Label
@@ -20,6 +21,9 @@ import time
 from kivy.clock import Clock
 from kivy.uix.screenmanager import FallOutTransition
 from kivy.uix.screenmanager import SlideTransition
+
+def get_post_text(num):
+    return (str(num))
 
 class SearchScreen (Screen):
     def __init__(self, **kwargs):
@@ -44,25 +48,47 @@ class SearchScreen (Screen):
         self.btn1.bind(on_press = self.Settings)
         
 
-        self.box2 = BoxLayout (size_hint = (1, 1))
+        self.box2 = BoxLayout ()
         self.Box0.add_widget(self.box2)
         
-        self.grid = BoxLayout(orientation = "vertical")
-        self.grid.bind(minimum_height=self.grid.setter('height'))
-        self.box2.add_widget(self.grid)
+        self.scroll = ScrollView ()
+        self.box2.add_widget (self.scroll) 
 
-        self.lab1 = TextInput(multiline = False, text = "Search post")
+        self.grid = GridLayout(cols = 1, size_hint_y = None)
+        self.grid.bind(minimum_height=self.grid.setter('height'))
+        self.scroll.add_widget (self.grid)
+
+        self.lab1 = TextInput(multiline = False, text = "Search post", size_hint_y = None, height = 50)
         self.grid.add_widget(self.lab1)
         self.lab1.bind(on_text_validate = self.search11)
 
-        self.lab2 = TextInput(multiline = False, text = "Search user")
+        self.lab2 = TextInput(multiline = False, text = "Search user", size_hint_y = None, height = 50)
         self.grid.add_widget(self.lab2)
         self.lab2.bind(on_text_validate = self.search12)
 
-        self.lab3 = TextInput(multiline = False, text = "Search hastag")
+        self.lab3 = TextInput(multiline = False, text = "Search hastag", size_hint_y = None, height = 50)
         self.grid.add_widget(self.lab3)
         self.lab2.bind(on_text_validate = self.search13)
+   
+        self.u_posts_all = BoxLayout(size_hint_y = None, height = 100)
+        self.grid.add_widget(self.u_posts_all)
 
+        self.popu_posts = Button(text = "Popular Posts")
+        self.u_posts_all.add_widget(self.popu_posts)
+        self.popu_posts.bind(on_press = self.UserPosts)
+        
+        #self.fav = Button (text = "Favourites")
+        #self.u_posts_all.add_widget(self.fav)
+        #self.fav.bind(on_press = self.UserFavourites)
+
+        #firstposts
+        #current: 1 = popular, 2 = fav
+        self.current_posts = 0
+        self.quant_p_p = 8
+        self.quant_f_p = 11
+        self.popu_posts.trigger_action(duration = 0)
+
+        """
         self.ran0 = Button (text = "Favourites", size_hint = (1, 1))
         self.grid.add_widget(self.ran0)
         self.ran0.bind(on_press = self.random0)
@@ -70,10 +96,7 @@ class SearchScreen (Screen):
         self.ran1 = Button (text = "Global", size_hint = (1, 2.5))
         self.grid.add_widget(self.ran1)
         self.ran1.bind(on_press = self.random1)
-
-        self.ran2 = Button (text = "Random", size_hint = (1, 1))
-        self.grid.add_widget(self.ran2)
-        self.ran2.bind(on_press = self.random2)
+        """
 
 
         self.box3 = BoxLayout (size_hint = (1, 0.15))
@@ -120,8 +143,56 @@ class SearchScreen (Screen):
     def random1(self, instance):
         pass
 
-    def random2(self, instance):
-        pass
+    def UserPosts(self, instance):
+        if self.current_posts == 2:
+            self.favourite_posts.clear_widgets()
+            self.grid.remove_widget(self.favourite_posts)
+        
+        self.u_posts_all.clear_widgets()
+
+        self.popu_posts = Label(text = "My Posts")
+        self.u_posts_all.add_widget(self.popu_posts)
+        
+        self.fav = Button (text = "Favourites")
+        self.u_posts_all.add_widget(self.fav)
+        self.fav.bind(on_press = self.UserFavourites)
+
+        self.pop_posts = BoxLayout(size_hint_y = None, height = self.quant_p_p * 100, orientation = "vertical")
+        self.grid.add_widget(self.pop_posts)
+
+        #my posts
+        for a in range (self.quant_p_p): 
+            self.btn_p = Button (size_hint_y = None, height = 100, text = "P" + (get_post_text(a)))
+            self.pop_posts.add_widget(self.btn_p)
+            
+        self.grid.bind(minimum_height=self.grid.setter('height'))
+        self.current_posts = 1
+
+    def UserFavourites(self, instance):
+        if self.current_posts == 1:
+            self.pop_posts.clear_widgets()
+            self.grid.remove_widget(self.pop_posts)
+        
+        self.u_posts_all.clear_widgets()
+        
+        self.popu_posts = Button(text = "My Posts")
+        self.u_posts_all.add_widget(self.popu_posts)
+        self.popu_posts.bind(on_press = self.UserPosts)
+
+        self.fav = Label (text = "Favourites")
+        self.u_posts_all.add_widget(self.fav)
+
+        self.favourite_posts = BoxLayout(size_hint_y = None, height = self.quant_f_p * 100, orientation = "vertical")
+        self.grid.add_widget(self.favourite_posts)
+
+        #favourite posts
+        for a in range (self.quant_f_p):
+            self.btn_f = Button (size_hint_y = None, height = 100, text = "F" + (get_post_text(a)))
+            self.favourite_posts.add_widget(self.btn_f)
+            
+        self.grid.bind(minimum_height=self.grid.setter('height'))
+        self.current_posts = 2
+
 
     def press_btn11(self, instance):
         self.manager.current = "chat"

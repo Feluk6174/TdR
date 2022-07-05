@@ -54,10 +54,10 @@ class PostUserScreen (Screen):
         self.grid.add_widget(self.actp)
         #self.actp.bind(on_text_validate = self.NotYet)
 
-        self.actp2 = TextInput(multiline = False, size_hint = (1, 0.5))
+        self.actp2 = TextInput(multiline = False, size_hint = (1, 0.5), text = "Author")
         self.grid.add_widget(self.actp2)
 
-        self.actp3 = TextInput(multiline = False, size_hint = (1, 0.5))
+        self.actp3 = TextInput(multiline = False, size_hint = (1, 0.5), text = "Source")
         self.grid.add_widget(self.actp3)
 
         self.send = Button (text = "Publish", size_hint = (1, 0.8))

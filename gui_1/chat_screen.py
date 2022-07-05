@@ -4,6 +4,7 @@ from functools import partial
 from kivy.uix.widget import Widget
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
+from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.button import ButtonBehavior
 from kivy.uix.label import Label
 from kivy.uix.image import Image
@@ -46,9 +47,11 @@ class ChatScreen (Screen):
         self.box1.add_widget(self.btn1)
         self.btn1.bind(on_press = self.Settings)
         
+        self.lay_float = FloatLayout()
+        self.Box0.add_widget(self.lay_float)
 
-        self.box2 = BoxLayout (size_hint = (1, 1))
-        self.Box0.add_widget(self.box2)
+        self.box2 = BoxLayout (pos_hint = {"x" : 0, "y" : 0})
+        self.lay_float.add_widget(self.box2)
         
         self.grid = GridLayout(cols = 1, size_hint_y = None)
         self.grid.bind(minimum_height=self.grid.setter('height'))
@@ -60,6 +63,10 @@ class ChatScreen (Screen):
         self.scroll = ScrollView ()
         self.scroll.add_widget (self.grid)
         self.box2.add_widget (self.scroll)
+
+        self.ran2 = Button (text = "Random", size_hint = (None, None), height = 65, width = 65, pos_hint = {"x" : 0.8, "y" : 0.035})
+        self.lay_float.add_widget(self.ran2)
+        self.ran2.bind(on_press = self.random2)
 
 
         self.box3 = BoxLayout (size_hint = (1, 0.15))
@@ -89,6 +96,9 @@ class ChatScreen (Screen):
         pass
 
     def Settings(self, instance):
+        pass
+    
+    def random2(self, instance):
         pass
 
     def press_btn11(self, instance):

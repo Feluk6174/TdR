@@ -1,4 +1,4 @@
-#import kivy
+#import kivy 
 from kivy.app import App
 from functools import partial
 from kivy.uix.widget import Widget
@@ -147,38 +147,58 @@ class ProfileScreen (Screen):
         pass
 
     def UserPosts(self, instance):
-        if self.current_posts != 1:
-            if self.current_posts == 2:
-                self.favourite_posts.clear_widgets()
-                self.grid.remove_widget(self.favourite_posts)
+        if self.current_posts == 2:
+            self.favourite_posts.clear_widgets()
+            self.grid.remove_widget(self.favourite_posts)
 
-            self.my_posts = BoxLayout(size_hint_y = None, height = self.quant_m_p * 100, orientation = "vertical")
-            self.grid.add_widget(self.my_posts)
+        self.u_posts_all.clear_widgets()
 
-            #my posts
-            for a in range (self.quant_m_p): 
-                self.btn_p = Button (size_hint_y = None, height = 100, text = "M" + (get_post_text(a)))
-                self.my_posts.add_widget(self.btn_p)
-            
-            self.grid.bind(minimum_height=self.grid.setter('height'))
-            self.current_posts = 1
+        self.us_posts = Label(text = "My Posts")
+        self.u_posts_all.add_widget(self.us_posts)
+        
+        self.fav = Button (text = "Favourites")
+        self.u_posts_all.add_widget(self.fav)
+        self.fav.bind(on_press = self.UserFavourites)
+
+        self.my_posts = BoxLayout(size_hint_y = None, height = self.quant_m_p * 100, orientation = "vertical")
+        self.grid.add_widget(self.my_posts)
+
+        #my posts
+        for a in range (self.quant_m_p): 
+            self.btn_p = Button (size_hint_y = None, height = 100, text = "M" + (get_post_text(a)))
+            self.my_posts.add_widget(self.btn_p)
+
+        self.us_posts = Label(text = "My Posts")
+        self.fav = Button(text = "Favourite Posts")
+        self.grid.bind(minimum_height=self.grid.setter('height'))
+        self.current_posts = 1
 
     def UserFavourites(self, instance):
-        if self.current_posts != 2:
-            if self.current_posts == 1:
-                self.my_posts.clear_widgets()
-                self.grid.remove_widget(self.my_posts)
+        if self.current_posts == 1:
+            self.my_posts.clear_widgets()
+            self.grid.remove_widget(self.my_posts)
 
-            self.favourite_posts = BoxLayout(size_hint_y = None, height = self.quant_f_p * 100, orientation = "vertical")
-            self.grid.add_widget(self.favourite_posts)
+        self.u_posts_all.clear_widgets()
+        
+        self.us_posts = Button(text = "My Posts")
+        self.u_posts_all.add_widget(self.us_posts)
+        self.us_posts.bind(on_press = self.UserPosts)
 
-            #favourite posts
-            for a in range (self.quant_f_p):
-                self.btn_f = Button (size_hint_y = None, height = 100, text = "F" + (get_post_text(a)))
-                self.favourite_posts.add_widget(self.btn_f)
+        self.fav = Label (text = "Favourites")
+        self.u_posts_all.add_widget(self.fav)
+
+        self.favourite_posts = BoxLayout(size_hint_y = None, height = self.quant_f_p * 100, orientation = "vertical")
+        self.grid.add_widget(self.favourite_posts)
+
+        #favourite posts
+        for a in range (self.quant_f_p):
+            self.btn_f = Button (size_hint_y = None, height = 100, text = "F" + (get_post_text(a)))
+            self.favourite_posts.add_widget(self.btn_f)
             
-            self.grid.bind(minimum_height=self.grid.setter('height'))
-            self.current_posts = 2
+        
+        
+        self.grid.bind(minimum_height=self.grid.setter('height'))
+        self.current_posts = 2
 
     def press_btn11(self, instance):
         self.manager.current = "chat"
