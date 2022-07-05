@@ -64,7 +64,7 @@ def connect_to_new_node():
     global connections
     while True:
         ip = db.querry("SELECT ip FROM ips ORDER BY RAND() LIMIT 1;")
-        host, port = ip[num].split(":")
+        host, port = ip.split(":")
     
         connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         connection.connect((host, int(port)))
