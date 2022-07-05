@@ -112,4 +112,5 @@ def main():
 if __name__ == "__main__":    
     thread = threading.Thread(target=ip_share_loop)
     thread.start()
+    connect_to_new_node()
     main()
