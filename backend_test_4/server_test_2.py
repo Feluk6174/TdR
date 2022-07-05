@@ -72,7 +72,7 @@ def connect_to_new_node():
     
         if connection.recv(1024).decode("utf-8") == "OK":
             connections.append(connection)
-
+            print(f"connected to {ip[0][0]}")
             thread = threading.Thread(target=mainloop, args=(connection,))
             thread.start()
             break
@@ -87,6 +87,7 @@ def manage_new_node(connection, address):
         difference = n_connected - n_suposed_connections
         connection.send("OK".encode("utf-8"))
         connections.append((connection))
+        print(f"connected by {adddress}")
         thread = threading.Thread(target=mainloop, args=(connection,))
         thread.start()
 
