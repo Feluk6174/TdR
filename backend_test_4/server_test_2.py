@@ -5,7 +5,7 @@ import time
 
 HOST = "127.0.0.1"
 PORT = int(input("Input port: "))
-PORT = 42069
+#PORT = 42069
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind((HOST, PORT))
@@ -95,7 +95,8 @@ def manage_new_node(connection, address):
 
 def ip_share_loop():
     global HOST, PORT
-    connect()
+    time.sleep(10)
+    connect_to_new_node()
     while True:
         broadcast_ip(HOST+str(PORT))
         time.sleep(60)
