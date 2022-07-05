@@ -95,6 +95,7 @@ def manage_new_node(connection, address):
 
 def ip_share_loop():
     global HOST, PORT
+    connect()
     while True:
         broadcast_ip(HOST+str(PORT))
         time.sleep(60)
@@ -112,5 +113,4 @@ def main():
 if __name__ == "__main__":    
     thread = threading.Thread(target=ip_share_loop)
     thread.start()
-    connect_to_new_node()
     main()
