@@ -21,22 +21,22 @@ from kivy.clock import Clock
 from kivy.uix.screenmanager import FallOutTransition
 from kivy.uix.screenmanager import SlideTransition
 
-import chat_screen, home_screen, loading_screen, post_screen, profile_screen, search_screen
+class LoadScreen (Screen):
+    def __init__(self, **kwargs):
+        super(LoadScreen, self).__init__(**kwargs)
+        self.box0 = BoxLayout(orientation = "vertical")
+        self.add_widget(self.box0)
 
-Window.size = (400, 600)
+        self.Lab1 = Button(size_hint = (None, None), size = (400, 400), background_normal = 'logo.png', background_down = 'logo.png')
+        self.box0.add_widget(self.Lab1)
+        self.Lab1.bind(on_press = self.change)
 
+        self.lab2 = Label(text = "Small Brother", size_hint = (1, 0.12))
+        self.box0.add_widget(self.lab2)
 
-class MyApp (App):
-    def build(self):
-        sm = ScreenManager(transition = FallOutTransition())
-        sm.add_widget(loading_screen.LoadScreen(name = "load"))
-        sm.transition = SlideTransition()
-        sm.add_widget(home_screen.MainScreen(name = "main"))
-        sm.add_widget(chat_screen.ChatScreen(name = "chat"))
-        sm.add_widget(search_screen.SearchScreen(name = "search"))
-        sm.add_widget(post_screen.PostUserScreen(name = "last"))
-        sm.add_widget(profile_screen.ProfileScreen(name = "profile"))
-        return sm
+        Clock.schedule_once(self.change, 3)
 
-if __name__ == "__main__":
-    MyApp().run()
+        
+    def change(self, instance):
+        self.manager.transition = FallOutTransition()
+        self.manager.current = "main"
