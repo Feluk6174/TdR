@@ -5,7 +5,7 @@ import time
 
 HOST = "192.168.178.138"
 PORT = int(input("Input port: "))
-#PORT = 42069
+IP = HOST+":"+str(PORT)
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind((HOST, PORT))
@@ -32,9 +32,12 @@ def broadcast_ip(ip:str):
             connection[1].send(ip.encode("utf-8"))
 
 def ip_manager(ip:str):
-    global db
+    global db, IP
 
     print(threading.current_thread().name, "ip_manager", ip)
+
+    if ip == IP:
+        return
     seconds = 60
     db.execute(f"DELETE FROM ips WHERE time_connected <= {int(time.time()) - seconds}")
     res = db.querry(f"SELECT * FROM ips WHERE ip = '{ip}';")
@@ -129,16 +132,15 @@ def manage_new_node(connection, address):
                 connect_to_new_node()
 
 def ip_share_loop():
-    global HOST, PORT
+    global HOST, PORT, IP
 
     print(threading.current_thread().name, "ip_share_loop")
     time.sleep(10)
     connect_to_new_node()
     #print("heyyyyy")
     while True:
-        ip = HOST+":"+str(PORT)
-        print(ip)
-        broadcast_ip(HOST+":"+str(PORT))
+        print("eviant ip:",IP)
+        broadcast_ip(IP)
         time.sleep(60)
 
 def main():
