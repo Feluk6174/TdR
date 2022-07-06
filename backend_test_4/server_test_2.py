@@ -95,6 +95,7 @@ def connect_to_new_node():
 
 def manage_new_node(connection, address):
     global connections, get_n_connected, db
+    print(10)
     n_connected = len(connections)
     n_nodes = len(db.querry("SELECT * FROM ips;"))
     n_suposed_connections = get_n_connected(n_nodes)
@@ -130,6 +131,8 @@ def main():
 
         #print(f"connected by {address}")    
         conn_type = connection.recv(1024)
+        print(conn_type)
+
         if conn_type == "NODE":
             manage_new_node(connection, address)
 
