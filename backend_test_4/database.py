@@ -34,7 +34,7 @@ class connection():
         cursor.execute("DROP TABLE IF EXISTS ips;")
         cursor.execute("DROP TABLE IF EXISTS connected;")
 
-        cursor.execute("CREATE TABLE ips(ip VARCHAR(21) NOT NULL PRIMARY KEY, time_connected INT NOT NULL, id INT AUTO_INCREMENT);")
+        cursor.execute("CREATE TABLE ips(ip VARCHAR(21) NOT NULL PRIMARY KEY, time_connected INT NOT NULL);")
         cursor.execute("CREATE TABLE connected_ips(ip VARCHAR(21) NOT NULL PRIMARY KEY, time_connected INT NOT NULL);")
 
         self.connection.commit()
