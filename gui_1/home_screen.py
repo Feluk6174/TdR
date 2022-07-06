@@ -1,8 +1,9 @@
-#import kivy
+#import kivy 
 from kivy.app import App
 from functools import partial
 from kivy.uix.widget import Widget
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.button import Button
 from kivy.uix.button import ButtonBehavior
 from kivy.uix.label import Label
@@ -46,7 +47,7 @@ class MainScreen (Screen):
         self.box1.add_widget(self.btn1)
         self.btn1.bind(on_press = self.Settings)
         
-
+        
         self.box2 = BoxLayout (size_hint = (1, 1))
         self.Box0.add_widget(self.box2)
         

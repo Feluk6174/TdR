@@ -90,9 +90,9 @@ class ProfileScreen (Screen):
         self.u_posts_all.add_widget(self.us_posts)
         self.us_posts.bind(on_press = self.UserPosts)
         
-        self.fav = Button (text = "Favourites")
-        self.u_posts_all.add_widget(self.fav)
-        self.fav.bind(on_press = self.UserFavourites)
+        #self.fav = Button (text = "Favourites")
+        #self.u_posts_all.add_widget(self.fav)
+        #self.fav.bind(on_press = self.UserFavourites)
 
         #firstposts
         #current: 1 = my, 2 = fav
@@ -179,7 +179,7 @@ class ProfileScreen (Screen):
             self.grid.remove_widget(self.my_posts)
 
         self.u_posts_all.clear_widgets()
-        
+
         self.us_posts = Button(text = "My Posts")
         self.u_posts_all.add_widget(self.us_posts)
         self.us_posts.bind(on_press = self.UserPosts)
