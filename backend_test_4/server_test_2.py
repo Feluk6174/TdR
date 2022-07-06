@@ -124,6 +124,9 @@ def ip_share_loop():
     connect_to_new_node()
     while True:
         print("num connecions: ", len(connections))
+        print("connections:" )
+        for connection in connections:
+            print(f"    {connection[0]}")
         broadcast_ip(IP)
 
         time.sleep(60)
