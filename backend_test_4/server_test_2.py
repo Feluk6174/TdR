@@ -128,7 +128,7 @@ def main():
     while True:
         connection, address = server.accept()
 
-        print(f"connected by {address}")    
+        #print(f"connected by {address}")    
         conn_type = connection.recv(1024)
         if conn_type == "NODE":
             manage_new_node(connection, address)
