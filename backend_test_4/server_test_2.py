@@ -130,7 +130,7 @@ def main():
         connection, address = server.accept()
 
         #print(f"connected by {address}")    
-        conn_type = connection.recv(1024)
+        conn_type = connection.recv(1024).decode("utf-8")
         print(conn_type)
 
         if conn_type == "NODE":
