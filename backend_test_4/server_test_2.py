@@ -85,8 +85,9 @@ def connect_to_new_node():
     while True:
         ip = db.querry("SELECT ip FROM ips ORDER BY RAND() LIMIT 1;")
         print(ip)
-
-        if not check_if_connected(ip[0][0]):
+        temp = check_if_connected(ip[0][0])
+        print(temp)
+        if not temp:
             host, port = ip[0][0].split(":")
     
             connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
