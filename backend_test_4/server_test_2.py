@@ -36,7 +36,7 @@ def broadcast_ip(ip:str):
         data = connection[1].recv(1024).decode("utf-8")
         print(f"[{time.time()}]broadcast_reponse: {data}")
         if data == "OK":
-            print(f"[{int(time.time())}]sendig ip({ip}) to {connection[0]}")
+            print(f"[{int(time.time())}]sendig ip({ip}) to {connection[1].addr}")
             connection[1].send(ip.encode("utf-8"))
 
 def ip_manager(ip:str):
