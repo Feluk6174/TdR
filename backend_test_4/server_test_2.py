@@ -140,13 +140,14 @@ def manage_new_node(connection, address, conn_info):
                 connect_to_new_node()
 
 def ip_share_loop():
-    global HOST, PORT, IP
+    global HOST, PORT, IP, connections
 
     #print(threading.current_thread().name, "ip_share_loop")
     time.sleep(10)
     connect_to_new_node()
     #print("heyyyyy")
     while True:
+        print(len(connections))
         print(f"[{int(time.time())}]eviant ip:",IP)
         broadcast_ip(IP)
 
