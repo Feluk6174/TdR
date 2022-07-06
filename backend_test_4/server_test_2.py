@@ -3,7 +3,7 @@ import threading
 import database
 import time
 
-HOST = "127.0.0.1"
+HOST = "192.168.178.138"
 PORT = int(input("Input port: "))
 #PORT = 42069
 
@@ -80,13 +80,17 @@ def connect_to_new_node():
             connection.connect((host, int(port)))
 
             connection.send("NODE".encode("utf-8"))
-        
+            print(1)
             if connection.recv(1024).decode("utf-8") == "OK":
+                print(2)
                 connections.append((ip[0][0], connection))
                 print(f"connected to {ip[0][0]}")
                 thread = threading.Thread(target=mainloop, args=(connection, ip[0][0]))
+                print(4)
                 thread.start()
+                print(5)
                 break
+            print(5)
 
 
 def manage_new_node(connection, address):
@@ -94,11 +98,15 @@ def manage_new_node(connection, address):
     n_connected = len(connections)
     n_nodes = len(db.querry("SELECT * FROM ips;"))
     n_suposed_connections = get_n_connected(n_nodes)
+    print(n_connected, n_suposed_connections)
     if n_connections < n_suposed_connections and not check_if_connected(address):
+        print(1)
         difference = n_connected - n_suposed_connections
+        print(difference)
         connection.send("OK".encode("utf-8"))
+        print(2)
         connections.append((address, connection))
-        print(f"connected by {adddress}")
+        print(f"connected by {adddress}", connections)
         thread = threading.Thread(target=mainloop, args=(connection, address))
         thread.start()
 
