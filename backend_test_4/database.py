@@ -10,11 +10,13 @@ class connection():
         )
         
     def querry(self, querry:str):
+        print(self.connection.ping())
         cursor = self.connection.cursor()
         cursor.execute(querry)
         return cursor.fetchall()
 
     def execute(self, sql:str):
+        print(self.connection.ping())
         cursor = self.connection.cursor()
         cursor.execute(sql)
         self.connection.commit()
@@ -32,7 +34,7 @@ class connection():
 
    
         cursor.execute("DROP TABLE IF EXISTS ips;")
-        cursor.execute("DROP TABLE IF EXISTS connected;")
+        cursor.execute("DROP TABLE IF EXISTS connected_ips;")
 
         cursor.execute("CREATE TABLE ips(ip VARCHAR(21) NOT NULL PRIMARY KEY, time_connected INT NOT NULL);")
         cursor.execute("CREATE TABLE connected_ips(ip VARCHAR(21) NOT NULL PRIMARY KEY, time_connected INT NOT NULL);")
