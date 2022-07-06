@@ -27,7 +27,7 @@ connections = []
 get_n_connected = lambda n: int(5*math.log2(n))
 get_n_connected = lambda n: 3
 
-server_info = json.loads("{"+f"'type': 'NODE', 'host': {HOST}, 'port': {PORT}, 'ip': {IP}"+"}")
+server_info = json.loads("{"+f'"type": "NODE", "host": "{HOST}", "port": {PORT}, "ip": "{IP}"'+"}")
 
 def broadcast_ip(ip:str):
     #broadcasts ip to all connections
