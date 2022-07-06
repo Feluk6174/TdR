@@ -52,10 +52,12 @@ def ip_manager(msg_info:str):
     db.execute(f"DELETE FROM ips WHERE time_connected <= {int(time.time()) - seconds_to_delete}")
     res = db.querry(f"SELECT * FROM ips WHERE ip = '{ip}';")
 
+    print(res)
+
     if res[0][1] <= int(time.time()) - seconds_to_update:
         db.execute(f"DELETE FROM ips WHERE ip = '{ip}';")
         res = []
-        
+
     if len(res) == 0:
         db.execute(f"INSERT INTO ips(ip, time_connected) VALUES('{ip}', {time.time()});")
         broadcast_ip(ip)
