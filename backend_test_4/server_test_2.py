@@ -18,7 +18,7 @@ db = database.connection()
 connections = []
 
 get_n_connected = lambda n: int(5*math.log2(n))
-get_n_connected = lambda n: 2
+get_n_connected = lambda n: 1
 
 def broadcast_ip(ip:str):
     #broadcasts ip to all connections
