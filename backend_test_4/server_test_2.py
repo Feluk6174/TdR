@@ -72,10 +72,10 @@ def mainloop(connection, ip):
         try:
             msg_info = json.loads(connection.recv(1024).decode("utf-8"))
             
+            print(msg_info)
+
             if msg_info["type"] == "IP":
                 ip_manager(msg_info)
-
-            print(res)
             
             #time.sleep(0.1)
                 
