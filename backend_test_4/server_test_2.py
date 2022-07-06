@@ -36,7 +36,7 @@ def broadcast_ip(ip:str):
         data = connection[1].recv(1024).decode("utf-8")
         print(f"[{time.time()}]broadcast_reponse: {data}")
         if data == "OK":
-            print(f"[{int(time.time())}]sendig ip({ip}) to {connection[1].addr}")
+            print(f"[{int(time.time())}]sendig ip({ip}) to {connection[1]}")
             connection[1].send(ip.encode("utf-8"))
 
 def ip_manager(ip:str):
@@ -104,9 +104,11 @@ def connect_to_new_node():
             if connection.recv(1024).decode("utf-8") == "OK":
                 #print(22)
                 connections.append((ip[0][0], connection))
-                #print(f"connected to {ip[0][0]}")
+                print(f"connected to {ip[0][0]}")
                 connection.send(IP.encode("utf-8"))
+                print(connection)
                 thread = threading.Thread(target=mainloop, args=(connection, ip[0][0]))
+                
                 #print(23)
                 thread.start()
                 #print(24)
