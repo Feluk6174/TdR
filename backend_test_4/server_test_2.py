@@ -33,7 +33,7 @@ def ip_manager(ip:str):
     global db
     seconds = 60
     db.execute(f"DELETE FROM ips WHERE time_connected <= {int(time.time()) - seconds}")
-    res = db.querry(f"SELECT * WHERE ip == {ip};")
+    res = db.querry(f"SELECT * WHERE ip = {ip};")
     if len(res) == 0:
         db.execute(f"INSERT INTO ips(ip, time_connected) VALUES({ip}, {time.time()});")
         broadcast_ip(ip)
