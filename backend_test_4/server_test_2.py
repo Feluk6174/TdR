@@ -80,32 +80,32 @@ def connect_to_new_node():
             connection.connect((host, int(port)))
 
             connection.send("NODE".encode("utf-8"))
-            print(21)
+            #print(21)
             if connection.recv(1024).decode("utf-8") == "OK":
-                print(22)
+                #print(22)
                 connections.append((ip[0][0], connection))
-                print(f"connected to {ip[0][0]}")
+                #print(f"connected to {ip[0][0]}")
                 thread = threading.Thread(target=mainloop, args=(connection, ip[0][0]))
-                print(23)
+                #print(23)
                 thread.start()
-                print(24)
+                #print(24)
                 break
-            print(25)
+            #print(25)
 
 
 def manage_new_node(connection, address):
     global connections, get_n_connected, db
-    print(10)
+    #print(10)
     n_connected = len(connections)
     n_nodes = len(db.querry("SELECT * FROM ips;"))
     n_suposed_connections = get_n_connected(n_nodes)
-    print(n_connected, n_suposed_connections)
+    #print(n_connected, n_suposed_connections)
     if n_connected < n_suposed_connections and not check_if_connected(address):
-        print(11)
+        #print(11)
         difference = n_connected - n_suposed_connections
         print(difference)
         connection.send("OK".encode("utf-8"))
-        print(12)
+        #print(12)
         connections.append((address, connection))
         print(f"connected by {address}", connections)
         thread = threading.Thread(target=mainloop, args=(connection, address))
@@ -119,7 +119,7 @@ def ip_share_loop():
     global HOST, PORT
     time.sleep(10)
     connect_to_new_node()
-    print("heyyyyy")
+    #print("heyyyyy")
     while True:
         broadcast_ip(HOST+str(PORT))
         time.sleep(60)
@@ -139,5 +139,5 @@ def main():
 if __name__ == "__main__":    
     thread = threading.Thread(target=ip_share_loop)
     thread.start()
-    print(2)
+    #print(2)
     main()
