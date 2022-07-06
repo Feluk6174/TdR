@@ -79,7 +79,7 @@ def mainloop(connection, ip):
             break
 
 def connect_to_new_node():
-    global connections
+    global connections, IP
 
     print(threading.current_thread().name, "connect_to_new_node")
     while True:
@@ -99,6 +99,7 @@ def connect_to_new_node():
                 #print(22)
                 connections.append((ip[0][0], connection))
                 #print(f"connected to {ip[0][0]}")
+                connection.send(IP.encode("utf-8"))
                 thread = threading.Thread(target=mainloop, args=(connection, ip[0][0]))
                 #print(23)
                 thread.start()
@@ -124,8 +125,9 @@ def manage_new_node(connection, address):
         difference = n_connected - n_suposed_connections
         print(difference)
         connection.send("OK".encode("utf-8"))
+        ip = connection.recv(1024).decode("utf-8") 
         #print(12)
-        connections.append((address, connection))
+        connections.append((ip, connection))
         print(f"connected by {address}", connections)
         thread = threading.Thread(target=mainloop, args=(connection, address))
         thread.start()
