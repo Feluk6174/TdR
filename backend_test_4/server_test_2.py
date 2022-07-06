@@ -100,7 +100,7 @@ def manage_new_node(connection, address):
     n_nodes = len(db.querry("SELECT * FROM ips;"))
     n_suposed_connections = get_n_connected(n_nodes)
     print(n_connected, n_suposed_connections)
-    if n_connections < n_suposed_connections and not check_if_connected(address):
+    if n_connected < n_suposed_connections and not check_if_connected(address):
         print(11)
         difference = n_connected - n_suposed_connections
         print(difference)
