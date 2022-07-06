@@ -111,7 +111,7 @@ def manage_new_node(connection, address, conn_info):
         difference = n_connected - n_suposed_connections
         connection.send("OK".encode("utf-8"))
         connections.append((conn_info["ip"], address, connection))
-        print(f"connected by {address}", connections)
+        print(f"connected by {address}")
         thread = threading.Thread(target=mainloop, args=(connection, address))
         thread.start()
 
