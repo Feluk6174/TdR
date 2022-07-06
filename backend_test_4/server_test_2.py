@@ -24,7 +24,7 @@ def broadcast_ip(ip:str):
     #broadcasts ip to all connections
     global conections
     for connection in connections:
-        connection[1].send("IP")
+        connection[1].send("IP".encode("utf-8"))
         data = connection[1].recv(1024).decode("utf-8")
         if data == "OK":
             connection[1].send(ip.encode("utf-8"))
@@ -107,7 +107,7 @@ def manage_new_node(connection, address):
         connection.send("OK".encode("utf-8"))
         print(12)
         connections.append((address, connection))
-        print(f"connected by {adddress}", connections)
+        print(f"connected by {address}", connections)
         thread = threading.Thread(target=mainloop, args=(connection, address))
         thread.start()
 
