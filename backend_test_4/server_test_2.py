@@ -34,7 +34,9 @@ def broadcast_ip(ip:str):
     for connection in connections:
         connection[1].send("IP".encode("utf-8"))
         data = connection[1].recv(1024).decode("utf-8")
+        print(f"[{time.time()}]broadcast_reponse: {data}")
         if data == "OK":
+            print(f"[{int(time.time())}]sendig ip({ip}) to {connection[0]}")
             connection[1].send(ip.encode("utf-8"))
 
 def ip_manager(ip:str):
@@ -63,7 +65,7 @@ def check_if_connected(ip:str):
 def mainloop(connection, ip):
     global connections, HOST, PORT
 
-    print(threading.current_thread().name, "main_loop", connection, ip)
+    #print(threading.current_thread().name, "main_loop", connection, ip)
     while True:
         try:
             #connection.send(f"{HOST}:{PORT}: {len(connections)}".encode("utf-8"))
@@ -87,13 +89,11 @@ def mainloop(connection, ip):
 def connect_to_new_node():
     global connections, IP
 
-    print(threading.current_thread().name, "connect_to_new_node")
+    #print(threading.current_thread().name, "connect_to_new_node")
     while True:
         ip = db.querry("SELECT ip FROM ips ORDER BY RAND() LIMIT 1;")
         print(ip)
-        temp = check_if_connected(ip[0][0])
-        print(temp)
-        if not temp:
+        if not check_if_connected(ip[0][0]):
             host, port = ip[0][0].split(":")
     
             connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -115,12 +115,12 @@ def connect_to_new_node():
 
         if len(db.querry("SELECT * FROM ips;")) <= len(connections):
             break
-        print(1)
+        #print(1)
 
 def manage_new_node(connection, address):
     global connections, get_n_connected, db
 
-    print(threading.current_thread().name, "manage_new_node", connection, address)
+    #print(threading.current_thread().name, "manage_new_node", connection, address)
     #print(10)
     n_connected = len(connections)
     n_nodes = len(db.querry("SELECT * FROM ips;"))
@@ -129,7 +129,7 @@ def manage_new_node(connection, address):
     if n_connected < n_suposed_connections and not check_if_connected(address):
         #print(11)
         difference = n_connected - n_suposed_connections
-        print(difference)
+        #print(difference)
         connection.send("OK".encode("utf-8"))
         ip = connection.recv(1024).decode("utf-8") 
         #print(12)
@@ -145,13 +145,14 @@ def manage_new_node(connection, address):
 def ip_share_loop():
     global HOST, PORT, IP
 
-    print(threading.current_thread().name, "ip_share_loop")
+    #print(threading.current_thread().name, "ip_share_loop")
     time.sleep(10)
     connect_to_new_node()
-    print("heyyyyy")
+    #print("heyyyyy")
     while True:
         print(f"[{int(time.time())}]eviant ip:",IP)
         broadcast_ip(IP)
+
         time.sleep(60)
 
 def main():
