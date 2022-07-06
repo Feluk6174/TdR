@@ -141,7 +141,7 @@ def ip_share_loop():
 def main():
     global connections, server
 
-    print(threading.current_thread().getName(), "main") 
+    #print(threading.current_thread().getName(), "main") 
     while True:
         connection, address = server.accept()
 
