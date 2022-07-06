@@ -23,6 +23,8 @@ get_n_connected = lambda n: 2
 def broadcast_ip(ip:str):
     #broadcasts ip to all connections
     global conections
+
+    print(threading.current_thread().getName(), "broadcast_ip", ip)
     for connection in connections:
         connection[1].send("IP".encode("utf-8"))
         data = connection[1].recv(1024).decode("utf-8")
@@ -31,6 +33,8 @@ def broadcast_ip(ip:str):
 
 def ip_manager(ip:str):
     global db
+
+    print(threading.current_thread().getName(), "ip_manager", ip)
     seconds = 60
     db.execute(f"DELETE FROM ips WHERE time_connected <= {int(time.time()) - seconds}")
     res = db.querry(f"SELECT * WHERE ip = {ip};")
@@ -38,8 +42,10 @@ def ip_manager(ip:str):
         db.execute(f"INSERT INTO ips(ip, time_connected) VALUES({ip}, {time.time()});")
         broadcast_ip(ip)
 
-def check_if_connected(ip):
+def check_if_connected(ip:str):
     global connections
+
+    print(threading.current_thread().getName(), "check_if_connect", ip)
     for connection in connections:
         if connection[0] == ip:
             return True
@@ -47,6 +53,8 @@ def check_if_connected(ip):
 
 def mainloop(connection, ip):
     global connections, HOST, PORT
+
+    print(threading.current_thread().getName(), "main_loop", connection, ip)
     while True:
         try:
             #connection.send(f"{HOST}:{PORT}: {len(connections)}".encode("utf-8"))
@@ -69,6 +77,8 @@ def mainloop(connection, ip):
 
 def connect_to_new_node():
     global connections
+
+    print(threading.current_thread().getName(), "connect_to_new_node")
     while True:
         ip = db.querry("SELECT ip FROM ips ORDER BY RAND() LIMIT 1;")
         print(ip)
@@ -95,6 +105,8 @@ def connect_to_new_node():
 
 def manage_new_node(connection, address):
     global connections, get_n_connected, db
+
+    print(threading.current_thread().getName(), "manage_new_node", connection, address)
     #print(10)
     n_connected = len(connections)
     n_nodes = len(db.querry("SELECT * FROM ips;"))
@@ -117,6 +129,8 @@ def manage_new_node(connection, address):
 
 def ip_share_loop():
     global HOST, PORT
+
+    print(threading.current_thread().getName(), "ip_share_loop")
     time.sleep(10)
     connect_to_new_node()
     #print("heyyyyy")
@@ -125,7 +139,9 @@ def ip_share_loop():
         time.sleep(60)
 
 def main():
-    global connections, server 
+    global connections, server
+
+    print(threading.current_thread().getName(), "main") 
     while True:
         connection, address = server.accept()
 
@@ -139,5 +155,4 @@ def main():
 if __name__ == "__main__":    
     thread = threading.Thread(target=ip_share_loop)
     thread.start()
-    #print(2)
     main()
