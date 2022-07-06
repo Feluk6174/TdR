@@ -37,9 +37,9 @@ def ip_manager(ip:str):
     print(threading.current_thread().name, "ip_manager", ip)
     seconds = 60
     db.execute(f"DELETE FROM ips WHERE time_connected <= {int(time.time()) - seconds}")
-    res = db.querry(f"SELECT * WHERE ip = '{ip}';")
+    res = db.querry(f"SELECT * FROM ips WHERE ip = '{ip}';")
     if len(res) == 0:
-        db.execute(f"INSERT INTO ips(ip, time_connected) VALUES({ip}, {time.time()});")
+        db.execute(f"INSERT INTO ips(ip, time_connected) VALUES('{ip}', {time.time()});")
         broadcast_ip(ip)
 
 def check_if_connected(ip:str):
