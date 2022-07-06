@@ -2,11 +2,17 @@ import socket
 import threading
 import database
 import time
+import sys
 
 HOST = "192.168.178.138"
-PORT = int(input("Input port: "))
+try:
+    PORT = int(sys.argv[1])
+except IndexError:
+    PORT = int(input("Input port: "))
+
 IP = HOST+":"+str(PORT)
 
+    
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind((HOST, PORT))
 server.listen()
