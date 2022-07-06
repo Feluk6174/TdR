@@ -137,7 +137,7 @@ def ip_share_loop():
     print(threading.current_thread().name, "ip_share_loop")
     time.sleep(10)
     connect_to_new_node()
-    #print("heyyyyy")
+    print("heyyyyy")
     while True:
         print("eviant ip:",IP)
         broadcast_ip(IP)
