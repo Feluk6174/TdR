@@ -3,6 +3,7 @@ import threading
 import database
 import time
 import sys
+import json
 
 HOST = "192.168.178.138"
 try:
@@ -26,29 +27,30 @@ connections = []
 get_n_connected = lambda n: int(5*math.log2(n))
 get_n_connected = lambda n: 3
 
+server_info = json.loads("{"+f"'type': 'NODE', 'host': {HOST}, 'port': {PORT}, 'ip': {IP}"+"}")
+
 def broadcast_ip(ip:str):
     #broadcasts ip to all connections
     global conections
 
     print(threading.current_thread().name, "broadcast_ip", ip)
     for connection in connections:
-        connection[1].send("IP".encode("utf-8"))
-        data = connection[1].recv(1024).decode("utf-8")
-        print(f"[{time.time()}]broadcast_reponse: {data}")
-        if data == "OK":
-            print(f"[{int(time.time())}]sendig ip({ip}) to {connection[1].raddr}")
-            connection[1].send(ip.encode("utf-8"))
+        connection[2].send(("{"+f"'type': 'IP', 'ip': '{ip}'"+"}").encode("utf-8"))
 
-def ip_manager(ip:str):
+def ip_manager(msg_info:str):
     global db, IP
 
-    print(threading.current_thread().name, "ip_manager", ip)
+    print(threading.current_thread().name, "ip_manager", msg_info)
+    
+    ip = msg_info["ip"]
 
     if ip == IP:
         return
+
     seconds = 100
     db.execute(f"DELETE FROM ips WHERE time_connected <= {int(time.time()) - seconds}")
     res = db.querry(f"SELECT * FROM ips WHERE ip = '{ip}';")
+    
     if len(res) == 0:
         db.execute(f"INSERT INTO ips(ip, time_connected) VALUES('{ip}', {time.time()});")
         broadcast_ip(ip)
@@ -68,14 +70,10 @@ def mainloop(connection, ip):
     #print(threading.current_thread().name, "main_loop", connection, ip)
     while True:
         try:
-            #connection.send(f"{HOST}:{PORT}: {len(connections)}".encode("utf-8"))
-        
-            res = connection.recv(1024).decode("utf-8")
+            msg_info = json.loads(connection.recv(1024).decode("utf-8"))
             
-            if res == "IP":
-                connection.send("OK".encode("utf-8"))
-                ip = connection.recv(1024).decode("utf-8")
-                ip_manager(ip)
+            if msg_info["type"] == "IP":
+                ip_manager(msg_info)
 
             print(res)
             
@@ -87,7 +85,7 @@ def mainloop(connection, ip):
             break
 
 def connect_to_new_node():
-    global connections, IP
+    global connections, IP, server_info
 
     #print(threading.current_thread().name, "connect_to_new_node")
     while True:
@@ -99,14 +97,12 @@ def connect_to_new_node():
             connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             connection.connect((host, int(port)))
 
-            connection.send("NODE".encode("utf-8"))
+            connection.send(json.dumps(server_info).encode("utf-8"))
             #print(21)
             if connection.recv(1024).decode("utf-8") == "OK":
                 #print(22)
-                connections.append((ip[0][0], connection))
+                connections.append((ip[0][0], ip[0][0], connection))
                 print(f"connected to {ip[0][0]}")
-                connection.send(IP.encode("utf-8"))
-                print(connection)
                 thread = threading.Thread(target=mainloop, args=(connection, ip[0][0]))
                 
                 #print(23)
@@ -119,7 +115,7 @@ def connect_to_new_node():
             break
         #print(1)
 
-def manage_new_node(connection, address):
+def manage_new_node(connection, address, conn_info):
     global connections, get_n_connected, db
 
     #print(threading.current_thread().name, "manage_new_node", connection, address)
@@ -133,9 +129,8 @@ def manage_new_node(connection, address):
         difference = n_connected - n_suposed_connections
         #print(difference)
         connection.send("OK".encode("utf-8"))
-        ip = connection.recv(1024).decode("utf-8") 
         #print(12)
-        connections.append((ip, connection))
+        connections.append((conn_info["ip"], address, connection))
         print(f"connected by {address}", connections)
         thread = threading.Thread(target=mainloop, args=(connection, address))
         thread.start()
@@ -165,11 +160,11 @@ def main():
         connection, address = server.accept()
 
         #print(f"connected by {address}")    
-        conn_type = connection.recv(1024).decode("utf-8")
+        conn_info = json.loads(connection.recv(1024).decode("utf-8"))
         print(conn_type)
 
-        if conn_type == "NODE":
-            manage_new_node(connection, address)
+        if conn_info["type"] == "NODE":
+            manage_new_node(connection, address, conn_info)
 
 if __name__ == "__main__":    
     thread = threading.Thread(target=ip_share_loop)
