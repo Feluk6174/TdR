@@ -135,7 +135,7 @@ def ip_share_loop():
     connect_to_new_node()
     #print("heyyyyy")
     while True:
-        broadcast_ip(HOST+str(PORT))
+        broadcast_ip(HOST+":"+str(PORT))
         time.sleep(60)
 
 def main():
