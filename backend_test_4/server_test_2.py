@@ -136,4 +136,5 @@ def main():
 if __name__ == "__main__":    
     thread = threading.Thread(target=ip_share_loop)
     thread.start()
+    print(2)
     main()
