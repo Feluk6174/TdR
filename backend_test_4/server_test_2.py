@@ -44,7 +44,7 @@ def ip_manager(ip:str):
 
     if ip == IP:
         return
-    seconds = 60
+    seconds = 100
     db.execute(f"DELETE FROM ips WHERE time_connected <= {int(time.time()) - seconds}")
     res = db.querry(f"SELECT * FROM ips WHERE ip = '{ip}';")
     if len(res) == 0:
