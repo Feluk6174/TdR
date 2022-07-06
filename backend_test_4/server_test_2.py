@@ -144,7 +144,7 @@ def ip_share_loop():
     connect_to_new_node()
     print("heyyyyy")
     while True:
-        print("eviant ip:",IP)
+        print(f"[{int(time.time())}]eviant ip:",IP)
         broadcast_ip(IP)
         time.sleep(60)
 
