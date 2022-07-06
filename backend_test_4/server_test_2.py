@@ -161,7 +161,7 @@ def main():
 
         #print(f"connected by {address}")    
         conn_info = json.loads(connection.recv(1024).decode("utf-8"))
-        print(conn_type)
+        print(conn_info)
 
         if conn_info["type"] == "NODE":
             manage_new_node(connection, address, conn_info)
