@@ -35,7 +35,7 @@ def broadcast_ip(ip:str):
 
     print(threading.current_thread().name, "broadcast_ip", ip)
     for connection in connections:
-        connection[2].send(("{"+f"'type': 'IP', 'ip': '{ip}'"+"}").encode("utf-8"))
+        connection[2].send(("{"+f'"type": "IP", "ip": "{ip}"'+"}").encode("utf-8"))
 
 def ip_manager(msg_info:str):
     global db, IP
