@@ -99,11 +99,11 @@ def mainloop(connection, ip):
 
 
 def connect_to_new_node():
-    global connections, IP, server_info
+    global connections, IP, server_info, get_n_connected
     while True:
         ip = db.querry("SELECT ip FROM ips ORDER BY RAND() LIMIT 1;")
         print(f"[{time.asctime()}] tring to connect to {ip}")
-        ifn_connected = len(connections)
+        n_connected = len(connections)
         n_nodes = len(db.querry("SELECT * FROM ips;"))
         n_suposed_connections = get_n_connected(n_nodes)
         if n_connected < n_suposed_connections and not check_if_connected(ip[0][0]):
