@@ -63,7 +63,7 @@ def ip_manager(msg_info:str):
         broadcast_ip(ip)
         return
 
-    if res[0][1] <= int(time.time()) - seconds_to_update:
+    elif res[0][1] <= int(time.time()) - seconds_to_update:
         db.execute(f"DELETE FROM ips WHERE ip = '{ip}';")
         db.execute(f"INSERT INTO ips(ip, time_connected) VALUES('{ip}', {time.time()});")
         broadcast_ip(ip)
