@@ -108,7 +108,7 @@ def mainloop(connection, ip):
 
 def connect_to_new_node():
     global connections, IP, server_info, get_n_connected
-    while True:
+    for i in range(10):
         ip = db.querry("SELECT ip FROM ips ORDER BY RAND() LIMIT 1;")
         print(f"({threading.current_thread().name})[{time.asctime()}] tring to connect to {ip}")
         n_connected = len(connections)
