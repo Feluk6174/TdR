@@ -139,7 +139,7 @@ def manage_new_node(connection, address, conn_info):
                 connect_to_new_node()
 
 def ip_share_loop():
-    global HOST, PORT, IP, connections
+    global HOST, PORT, IP, connections, db
     time.sleep(10)
     connect_to_new_node()
     while True:
@@ -147,6 +147,13 @@ def ip_share_loop():
         print("connections:" )
         for connection in connections:
             print(f"    {connection[0]}")
+
+        known_nodes = db.querry("SELECT * FROM ips;")
+        print("num known nodes: ", len(known_nodes))
+        print("connections:" )
+        for connection in known_nodes:
+            print(f"    {connection[0]}")
+        
         broadcast_ip(IP)
 
         time.sleep(60)
