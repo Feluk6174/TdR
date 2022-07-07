@@ -119,6 +119,7 @@ def connect_to_new_node():
 
         if len(db.querry("SELECT * FROM ips;")) <= len(connections):
             break
+        print(2)
 
 def manage_new_node(connection, address, conn_info):
     global connections, get_n_connected, db
