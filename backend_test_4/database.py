@@ -1,4 +1,4 @@
-import mysql.connector
+import mysql.connector, threading
 
 class connection():
     def __init__(self, thread_lock):
