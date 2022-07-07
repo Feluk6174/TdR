@@ -36,14 +36,14 @@ def broadcast_ip(ip:str):
     #broadcasts ip to all connections
     global conections
 
-    print(f"({threading.currentThread().name})[{time.asctime()}] broadcasting:", ip)
+    print(f"({threading.current_thread().name})[{time.asctime()}] broadcasting:", ip)
     for connection in connections:
         connection[2].send(("{"+f'"type": "IP", "ip": "{ip}"'+"}").encode("utf-8"))
 
 def ip_manager(msg_info:str):
     global db, IP
 
-    print(f"({threading.currentThread().name})[{time.asctime()}] managing:", msg_info)
+    print(f"({threading.current_thread().name})[{time.asctime()}] managing:", msg_info)
     
     ip = msg_info["ip"]
 
@@ -74,7 +74,7 @@ def ip_manager(msg_info:str):
 def check_if_connected(ip:str):
     global connections
 
-    print(f"({threading.currentThread().name})[{time.asctime()}] checking if connected:", ip)
+    print(f"({threading.current_thread().name})[{time.asctime()}] checking if connected:", ip)
     for connection in connections:
         if connection[0] == ip:
             return True
@@ -83,7 +83,7 @@ def check_if_connected(ip:str):
 def mainloop(connection, ip):
     global connections, HOST, PORT
 
-    print(f"({threading.currentThread().name})[{time.asctime()}] mainloop:", ip)
+    print(f"({threading.current_thread().name})[{time.asctime()}] mainloop:", ip)
     while True:
         try:
             msg_info = json.loads(connection.recv(1024).decode("utf-8"))
@@ -110,7 +110,7 @@ def connect_to_new_node():
     global connections, IP, server_info, get_n_connected
     while True:
         ip = db.querry("SELECT ip FROM ips ORDER BY RAND() LIMIT 1;")
-        print(f"({threading.currentThread().name})[{time.asctime()}] tring to connect to {ip}")
+        print(f"({threading.current_thread().name})[{time.asctime()}] tring to connect to {ip}")
         n_connected = len(connections)
         n_nodes = len(db.querry("SELECT * FROM ips;"))
         n_suposed_connections = get_n_connected(n_nodes)
@@ -135,7 +135,7 @@ def connect_to_new_node():
 
 def manage_new_node(connection, address, conn_info):
     global connections, get_n_connected, db
-    print(f"({threading.currentThread().name})[{time.asctime()}] managing new node:", conn_info)
+    print(f"({threading.current_thread().name})[{time.asctime()}] managing new node:", conn_info)
     n_connected = len(connections)
     n_nodes = len(db.querry("SELECT * FROM ips;"))
     n_suposed_connections = get_n_connected(n_nodes)
@@ -149,7 +149,7 @@ def manage_new_node(connection, address, conn_info):
 
 def ip_share_loop():
     global HOST, PORT, IP, connections, db
-    print(f"({threading.currentThread().name})[{time.asctime()}] ip sharing loop:")
+    print(f"({threading.current_thread().name})[{time.asctime()}] ip sharing loop:")
     while True:
         print(f"[{time.asctime()}]")
         print("num connecions: ", len(connections))
