@@ -1,6 +1,6 @@
 import socket
 import threading
-import database
+import database as db
 import time
 import sys
 import json
@@ -22,8 +22,6 @@ client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 thread_lock = threading.Lock()
 
-db = database.connection(thread_lock)
-
 connections = []
 
 get_n_connected = lambda n: int(5*math.log2(n))
@@ -43,36 +41,36 @@ def broadcast_ip(ip:str):
 def ip_manager(msg_info:str):
     global db, IP
 
-    print(1)
+    print(threading.current_thread().name, 1)
     print(f"({threading.current_thread().name})[{time.asctime()}] managing:", msg_info)
     
-    print(2)
+    print(threading.current_thread().name, 2)
     ip = msg_info["ip"]
 
-    print(3)
+    print(threading.current_thread().name, 3)
     if ip == IP:
         return
 
-    print(4)
+    print(threading.current_thread().name, 4)
     seconds_to_delete = 120
     seconds_to_update = 60
     
-    print(5)
+    print(threading.current_thread().name, 5)
     thread_lock.acquire()
-    print(5.5)
+    print(threading.current_thread().name, 5.5)
     db.execute(f"DELETE FROM ips WHERE time_connected <= {int(time.time()) - seconds_to_delete}")
-    print(6)
+    print(threading.current_thread().name, 6)
     res = db.querry(f"SELECT * FROM ips WHERE ip = '{ip}';")
-    print(7)
+    print(threading.current_thread().name, 7)
         
     print(res, int(time.time()) - seconds_to_update, len(res))
 
-    print(8)
+    print(threading.current_thread().name, 8)
     if len(res) == 0:
         print("1", db.querry("SELECT * FROM ips;"))
         db.execute(f"INSERT INTO ips(ip, time_connected) VALUES('{ip}', {time.time()});")
             
-        print(9)
+        print(threading.current_thread().name, 9)
         broadcast_ip(ip)
         thread_lock.release()
         return
@@ -81,13 +79,13 @@ def ip_manager(msg_info:str):
         print("2", db.querry("SELECT * FROM ips;"))
         db.execute(f"DELETE FROM ips WHERE ip = '{ip}';")
             
-        print(10)
+        print(threading.current_thread().name, 10)
         db.execute(f"INSERT INTO ips(ip, time_connected) VALUES('{ip}', {time.time()});")
             
-        print(11)
+        print(threading.current_thread().name, 11)
         broadcast_ip(ip)
     
-    print(12)
+    print(threading.current_thread().name, 12)
     thread_lock.release()
     
 
