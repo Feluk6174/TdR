@@ -74,6 +74,7 @@ def ip_manager(msg_info:str):
             
             print(9)
             broadcast_ip(ip)
+            thread_lock.release()
             return
 
         elif res[0][1] <= int(time.time()) - seconds_to_update:
