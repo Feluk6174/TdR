@@ -102,6 +102,7 @@ def connect_to_new_node():
     global connections, IP, server_info
     while True:
         ip = db.querry("SELECT ip FROM ips ORDER BY RAND() LIMIT 1;")
+        print(f"[{time.asctime()}] tring to connect to {ip}")
         if not check_if_connected(ip[0][0]):
             host, port = ip[0][0].split(":")
     
@@ -157,6 +158,12 @@ def ip_share_loop():
 
         time.sleep(60)
 
+def start():
+    print("before")
+    time.sleep(10)
+    connect_to_new_node()
+    print("after")
+
 def main():
     global connections, server
     while True:
@@ -169,6 +176,8 @@ def main():
 
 if __name__ == "__main__":    
     print(f"========SERVER RUNNING ON {IP}========")
-    thread = threading.Thread(target=ip_share_loop)
+    thread = threading.Thread(target=start)
+    thread.start()
+    thread = threading.Threasd(target=ip_share_loop)
     thread.start()
     main()
