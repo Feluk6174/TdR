@@ -43,9 +43,9 @@ def execute(sql:str):
     connection.close()
 
 
-def create(self):
-    with self.thread_lock:
-        cursor = self.connection.cursor()
+def create():
+    with thread_lock:
+        cursor = connection.cursor()
 
         cursor.execute("DROP TABLE IF EXISTS comments;")
         cursor.execute("DROP TABLE IF EXISTS posts;")
