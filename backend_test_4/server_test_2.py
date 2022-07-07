@@ -140,8 +140,6 @@ def manage_new_node(connection, address, conn_info):
 
 def ip_share_loop():
     global HOST, PORT, IP, connections, db
-    time.sleep(10)
-    connect_to_new_node()
     while True:
         print(f"[{time.asctime()}]")
         print("num connecions: ", len(connections))
