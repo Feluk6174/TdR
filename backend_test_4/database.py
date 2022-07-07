@@ -19,6 +19,7 @@ class connection():
         with self.thread_lock: 
             while True:
                 try:
+                    print("t")
                     cursor = self.connection.cursor()
                     cursor.execute(querry)
                     return cursor.fetchall()
