@@ -17,13 +17,16 @@ class connection():
 
     def querry(self, querry:str):
         with self.thread_lock: 
+            print("t1")
             while True:
+                print("t2")
                 try:
-                    print("t")
+                    print("t3")
                     cursor = self.connection.cursor()
                     cursor.execute(querry)
                     return cursor.fetchall()
                 except mysql.connector.Error as e:
+                    print("t4")
                     print("[ERROR]", e)
                     self.connect()
 
