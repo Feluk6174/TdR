@@ -178,6 +178,6 @@ if __name__ == "__main__":
     print(f"========SERVER RUNNING ON {IP}========")
     thread = threading.Thread(target=start)
     thread.start()
-    thread = threading.Threasd(target=ip_share_loop)
+    thread = threading.Thread(target=ip_share_loop)
     thread.start()
     main()
