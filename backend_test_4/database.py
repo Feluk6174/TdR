@@ -28,7 +28,7 @@ class connection():
                 return cursor.fetchall()
             except mysql.connector.Error as e:
                 print("t4")
-                print("[ERROR]", e)
+                print(f"[ERROR]({threading.current_thread().name})", e)
                 self.connect()
 
     def execute(self, sql:str):
@@ -39,7 +39,7 @@ class connection():
                 self.connection.commit()
                 break
             except mysql.connector.Error as e:
-                print("[ERROR]", e)
+                print(f"[ERROR]{threading.current_thread().name}", e)
                 self.connect()
 
 
