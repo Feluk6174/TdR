@@ -59,6 +59,7 @@ def ip_manager(msg_info:str):
     
     print(5)
     with thread_lock:
+        print(5.5)
         db.execute(f"DELETE FROM ips WHERE time_connected <= {int(time.time()) - seconds_to_delete}")
         print(6)
         res = db.querry(f"SELECT * FROM ips WHERE ip = '{ip}';")
