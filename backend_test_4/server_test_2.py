@@ -52,22 +52,23 @@ def ip_manager(msg_info:str):
 
     seconds_to_delete = 120
     seconds_to_update = 60
-    db.execute(f"DELETE FROM ips WHERE time_connected <= {int(time.time()) - seconds_to_delete}")
-    res = db.querry(f"SELECT * FROM ips WHERE ip = '{ip}';")
-    
-    print(res, int(time.time()) - seconds_to_update, len(res))
+    with thread_lock:
+        db.execute(f"DELETE FROM ips WHERE time_connected <= {int(time.time()) - seconds_to_delete}")
+        res = db.querry(f"SELECT * FROM ips WHERE ip = '{ip}';")
+        
+        print(res, int(time.time()) - seconds_to_update, len(res))
 
-    if len(res) == 0:
-        print("1", db.querry("SELECT * FROM ips;"))
-        db.execute(f"INSERT INTO ips(ip, time_connected) VALUES('{ip}', {time.time()});")
-        broadcast_ip(ip)
-        return
+        if len(res) == 0:
+            print("1", db.querry("SELECT * FROM ips;"))
+            db.execute(f"INSERT INTO ips(ip, time_connected) VALUES('{ip}', {time.time()});")
+            broadcast_ip(ip)
+            return
 
-    elif res[0][1] <= int(time.time()) - seconds_to_update:
-        print("2", db.querry("SELECT * FROM ips;"))
-        db.execute(f"DELETE FROM ips WHERE ip = '{ip}';")
-        db.execute(f"INSERT INTO ips(ip, time_connected) VALUES('{ip}', {time.time()});")
-        broadcast_ip(ip)
+        elif res[0][1] <= int(time.time()) - seconds_to_update:
+            print("2", db.querry("SELECT * FROM ips;"))
+            db.execute(f"DELETE FROM ips WHERE ip = '{ip}';")
+            db.execute(f"INSERT INTO ips(ip, time_connected) VALUES('{ip}', {time.time()});")
+            broadcast_ip(ip)
 
     
 
