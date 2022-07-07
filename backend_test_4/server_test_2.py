@@ -58,34 +58,34 @@ def ip_manager(msg_info:str):
     seconds_to_update = 60
     
     print(5)
-    with thread_lock:
-        print(5.5)
-        db.execute(f"DELETE FROM ips WHERE time_connected <= {int(time.time()) - seconds_to_delete}")
-        print(6)
-        res = db.querry(f"SELECT * FROM ips WHERE ip = '{ip}';")
-        print(7)
+    thread_lock.acquire()
+    print(5.5)
+    db.execute(f"DELETE FROM ips WHERE time_connected <= {int(time.time()) - seconds_to_delete}")
+    print(6)
+    res = db.querry(f"SELECT * FROM ips WHERE ip = '{ip}';")
+    print(7)
         
-        print(res, int(time.time()) - seconds_to_update, len(res))
+    print(res, int(time.time()) - seconds_to_update, len(res))
 
-        print(8)
-        if len(res) == 0:
-            print("1", db.querry("SELECT * FROM ips;"))
-            db.execute(f"INSERT INTO ips(ip, time_connected) VALUES('{ip}', {time.time()});")
+    print(8)
+    if len(res) == 0:
+        print("1", db.querry("SELECT * FROM ips;"))
+        db.execute(f"INSERT INTO ips(ip, time_connected) VALUES('{ip}', {time.time()});")
             
-            print(9)
-            broadcast_ip(ip)
-            thread_lock.release()
-            return
+        print(9)
+        broadcast_ip(ip)
+        thread_lock.release()
+        return
 
-        elif res[0][1] <= int(time.time()) - seconds_to_update:
-            print("2", db.querry("SELECT * FROM ips;"))
-            db.execute(f"DELETE FROM ips WHERE ip = '{ip}';")
+    elif res[0][1] <= int(time.time()) - seconds_to_update:
+        print("2", db.querry("SELECT * FROM ips;"))
+        db.execute(f"DELETE FROM ips WHERE ip = '{ip}';")
             
-            print(10)
-            db.execute(f"INSERT INTO ips(ip, time_connected) VALUES('{ip}', {time.time()});")
+        print(10)
+        db.execute(f"INSERT INTO ips(ip, time_connected) VALUES('{ip}', {time.time()});")
             
-            print(11)
-            broadcast_ip(ip)
+        print(11)
+        broadcast_ip(ip)
     
     print(12)
     
