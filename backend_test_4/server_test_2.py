@@ -20,7 +20,9 @@ server.listen()
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-db = database.connection()
+thread_lock = threading.Lock()
+
+db = database.connection(thread_lock)
 
 connections = []
 
@@ -29,18 +31,19 @@ get_n_connected = lambda n: 2
 
 server_info = json.loads("{"+f'"type": "NODE", "host": "{HOST}", "port": {PORT}, "ip": "{IP}"'+"}")
 
+
 def broadcast_ip(ip:str):
     #broadcasts ip to all connections
     global conections
 
-    print("broadcasting:", ip)
+    print(f"[{time.asctime()}]broadcasting:", ip)
     for connection in connections:
         connection[2].send(("{"+f'"type": "IP", "ip": "{ip}"'+"}").encode("utf-8"))
 
 def ip_manager(msg_info:str):
     global db, IP
 
-    print("managing:", msg_info)
+    print(f"[{time.asctime()}]managing:", msg_info)
     
     ip = msg_info["ip"]
 
@@ -57,10 +60,7 @@ def ip_manager(msg_info:str):
         broadcast_ip(ip)
         return
 
-    print(res, res[0][1], int(time.time()) - seconds_to_update, res[0][1] <= int(time.time()) - seconds_to_update)
-
     if res[0][1] <= int(time.time()) - seconds_to_update:
-        print("borrant als 60")
         db.execute(f"DELETE FROM ips WHERE ip = '{ip}';")
         db.execute(f"INSERT INTO ips(ip, time_connected) VALUES('{ip}', {time.time()});")
         broadcast_ip(ip)
@@ -80,7 +80,7 @@ def mainloop(connection, ip):
         try:
             msg_info = json.loads(connection.recv(1024).decode("utf-8"))
             
-            print(msg_info)
+            print(f"[{time.asctime()}]", msg_info)
 
             if msg_info["type"] == "IP":
                 ip_manager(msg_info)
@@ -99,11 +99,14 @@ def mainloop(connection, ip):
 
 
 def connect_to_new_node():
-    global connections, IP, server_info
+    global connections, IP, server_info, get_n_connected
     while True:
         ip = db.querry("SELECT ip FROM ips ORDER BY RAND() LIMIT 1;")
-        print(ip)
-        if not check_if_connected(ip[0][0]):
+        print(f"[{time.asctime()}] tring to connect to {ip}")
+        n_connected = len(connections)
+        n_nodes = len(db.querry("SELECT * FROM ips;"))
+        n_suposed_connections = get_n_connected(n_nodes)
+        if n_connected < n_suposed_connections and not check_if_connected(ip[0][0]):
             host, port = ip[0][0].split(":")
     
             connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -113,13 +116,14 @@ def connect_to_new_node():
 
             if connection.recv(1024).decode("utf-8") == "OK":
                 connections.append((ip[0][0], ip[0][0], connection))
-                print(f"connected to {ip[0][0]}")
+                print(f"[{time.asctime()}] connected to {ip[0][0]}")
                 thread = threading.Thread(target=mainloop, args=(connection, ip[0][0]))
                 thread.start()
                 break
 
         if len(db.querry("SELECT * FROM ips;")) <= len(connections):
             break
+        print(2)
 
 def manage_new_node(connection, address, conn_info):
     global connections, get_n_connected, db
@@ -130,38 +134,49 @@ def manage_new_node(connection, address, conn_info):
         difference = n_connected - n_suposed_connections
         connection.send("OK".encode("utf-8"))
         connections.append((conn_info["ip"], address, connection))
-        print(f"connected by {address}")
+        print(f"[{time.asctime()}] connected by {address}")
         thread = threading.Thread(target=mainloop, args=(connection, address))
         thread.start()
 
-        if not difference == 1:
-            for i in range(difference - 1):
-                connect_to_new_node()
-
 def ip_share_loop():
-    global HOST, PORT, IP, connections
-    time.sleep(10)
-    connect_to_new_node()
+    global HOST, PORT, IP, connections, db
     while True:
+        print(f"[{time.asctime()}]")
         print("num connecions: ", len(connections))
         print("connections:" )
         for connection in connections:
             print(f"    {connection[0]}")
+
+        known_nodes = db.querry("SELECT * FROM ips;")
+        print("num known nodes: ", len(known_nodes))
+        print("known nodes:" )
+        for connection in known_nodes:
+            print(f"    {connection[0]}")
+
         broadcast_ip(IP)
 
         time.sleep(60)
+
+def start():
+    print("before")
+    time.sleep(10)
+    connect_to_new_node()
+    print("after")
 
 def main():
     global connections, server
     while True:
         connection, address = server.accept()
         conn_info = json.loads(connection.recv(1024).decode("utf-8"))
-        print(conn_info)
+        print(f"[{time.asctime()}]", conn_info)
 
         if conn_info["type"] == "NODE":
             manage_new_node(connection, address, conn_info)
 
 if __name__ == "__main__":    
+    print(f"========SERVER RUNNING ON {IP}========")
+    thread = threading.Thread(target=start)
+    thread.start()
     thread = threading.Thread(target=ip_share_loop)
     thread.start()
     main()
