@@ -29,6 +29,8 @@ get_n_connected = lambda n: 2
 
 server_info = json.loads("{"+f'"type": "NODE", "host": "{HOST}", "port": {PORT}, "ip": "{IP}"'+"}")
 
+thread_lock = threading.Lock()
+
 def broadcast_ip(ip:str):
     #broadcasts ip to all connections
     global conections
@@ -40,7 +42,7 @@ def broadcast_ip(ip:str):
         print("sent")
 
 def ip_manager(msg_info:str):
-    global db, IP
+    global db, IP, thread_lock
 
     print("managing:", msg_info)
     
@@ -51,6 +53,7 @@ def ip_manager(msg_info:str):
 
     seconds_to_delete = 120
     seconds_to_update = 60
+    thread_lock.acquire()
     db.execute(f"DELETE FROM ips WHERE time_connected <= {int(time.time()) - seconds_to_delete}")
     res = db.querry(f"SELECT * FROM ips WHERE ip = '{ip}';")
     
@@ -66,6 +69,7 @@ def ip_manager(msg_info:str):
         db.execute(f"DELETE FROM ips WHERE ip = '{ip}';")
         db.execute(f"INSERT INTO ips(ip, time_connected) VALUES('{ip}', {time.time()});")
         broadcast_ip(ip)
+    thread_lock.release()
 
     
 
@@ -173,6 +177,7 @@ def main():
             manage_new_node(connection, address, conn_info)
 
 if __name__ == "__main__":    
+    print(f"========SERVER RUNNING ON {IP}========")
     thread = threading.Thread(target=ip_share_loop)
     thread.start()
     main()
