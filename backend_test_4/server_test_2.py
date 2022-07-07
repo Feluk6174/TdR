@@ -138,10 +138,6 @@ def manage_new_node(connection, address, conn_info):
         thread = threading.Thread(target=mainloop, args=(connection, address))
         thread.start()
 
-        if not difference == 1:
-            for i in range(difference - 1):
-                connect_to_new_node()
-
 def ip_share_loop():
     global HOST, PORT, IP, connections, db
     while True:
