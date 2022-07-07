@@ -22,7 +22,9 @@ class connection():
             try:
                 print("t3")
                 cursor = self.connection.cursor()
+                print("t3.1")
                 cursor.execute(querry)
+                print("3.2")
                 return cursor.fetchall()
             except mysql.connector.Error as e:
                 print("t4")
