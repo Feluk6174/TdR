@@ -30,16 +30,15 @@ class connection():
                 self.connect()
 
     def execute(self, sql:str):
-        with self.thread_lock:
-            while True:
-                try:
-                    cursor = self.connection.cursor()
-                    cursor.execute(sql)
-                    self.connection.commit()
-                    break
-                except mysql.connector.Error as e:
-                    print("[ERROR]", e)
-                    self.connect()
+        while True:
+            try:
+                cursor = self.connection.cursor()
+                cursor.execute(sql)
+                self.connection.commit()
+                break
+            except mysql.connector.Error as e:
+                print("[ERROR]", e)
+                self.connect()
 
 
     def create(self):
