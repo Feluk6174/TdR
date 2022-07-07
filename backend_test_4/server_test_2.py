@@ -109,13 +109,16 @@ def mainloop(connection, ip):
 
 def connect_to_new_node():
     global connections, IP, server_info, get_n_connected
+    n_connected = len(connections)
+    n_nodes = len(db.querry("SELECT * FROM ips;"))
+    n_suposed_connections = get_n_connected(n_nodes)
+    if n_connected < n_suposed_connections:
+        return
+
     for i in range(10):
         ip = db.querry("SELECT ip FROM ips ORDER BY RAND() LIMIT 1;")
         print(f"({threading.current_thread().name})[{time.asctime()}] tring to connect to {ip}")
-        n_connected = len(connections)
-        n_nodes = len(db.querry("SELECT * FROM ips;"))
-        n_suposed_connections = get_n_connected(n_nodes)
-        if n_connected < n_suposed_connections and not check_if_connected(ip[0][0]):
+        if not check_if_connected(ip[0][0]):
             host, port = ip[0][0].split(":")
     
             connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -130,7 +133,7 @@ def connect_to_new_node():
                 thread.start()
                 break
 
-        if len(db.querry("SELECT * FROM ips;")) <= len(connections):
+        if len(connections) <= len(db.querry("SELECT * FROM ips;")):
             break
         print(2)
 
