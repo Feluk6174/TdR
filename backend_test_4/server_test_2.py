@@ -179,8 +179,9 @@ def ip_share_loop():
         print("connections:" )
         for connection in connections:
             print(f"    {connection[0]}")
-
+        print(1)
         known_nodes = db.querry("SELECT * FROM ips;")
+        print(2)
         print("num known nodes: ", len(known_nodes))
         print("known nodes:" )
         for connection in known_nodes:
