@@ -135,7 +135,7 @@ def connect_to_new_node():
 
 def manage_new_node(connection, address, conn_info):
     global connections, get_n_connected, db
-    print(f"({threading.currentThread().name})[{time.asctime()}] managing new node:", ip)
+    print(f"({threading.currentThread().name})[{time.asctime()}] managing new node:", conn_info)
     n_connected = len(connections)
     n_nodes = len(db.querry("SELECT * FROM ips;"))
     n_suposed_connections = get_n_connected(n_nodes)
@@ -149,7 +149,7 @@ def manage_new_node(connection, address, conn_info):
 
 def ip_share_loop():
     global HOST, PORT, IP, connections, db
-    print(f"({threading.currentThread().name})[{time.asctime()}] ip sharing loop:", ip)
+    print(f"({threading.currentThread().name})[{time.asctime()}] ip sharing loop:")
     while True:
         print(f"[{time.asctime()}]")
         print("num connecions: ", len(connections))
