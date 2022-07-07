@@ -23,7 +23,7 @@ from kivy.uix.screenmanager import SlideTransition
 
 import chat_screen, home_screen, loading_screen, post_screen, profile_screen, search_screen
 
-Window.size = (400, 600)
+#Window.size = (400, 600)
 
 class MyApp (App):
     def build(self):

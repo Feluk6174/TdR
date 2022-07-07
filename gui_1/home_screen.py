@@ -23,7 +23,7 @@ from kivy.uix.screenmanager import FallOutTransition
 from kivy.uix.screenmanager import SlideTransition
 
 def get_post_text(num):
-    return str(num)
+    return str(Window.size)
 
 class MainScreen (Screen):
     def __init__(self, **kwargs):

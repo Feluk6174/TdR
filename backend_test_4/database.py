@@ -2,24 +2,37 @@ import mysql.connector
 
 class connection():
     def __init__(self):
+        self.connect()
+
+    def connect(self):
         self.connection = mysql.connector.connect(
-                host = "localhost", 
-                user = "root", 
-                password = "root",
-                database = "TdR"
+            host = "localhost", 
+            user = "root", 
+            password = "root",
+            database = "TdR"
         )
-        
+
     def querry(self, querry:str):
-        print(self.connection.ping())
-        cursor = self.connection.cursor()
-        cursor.execute(querry)
-        return cursor.fetchall()
+        while True:
+            try:
+                cursor = self.connection.cursor()
+                cursor.execute(querry)
+                return cursor.fetchall()
+            except mysql.connector.Error as e:
+                print("[ERROR]", e)
+                self.connect()
 
     def execute(self, sql:str):
-        print(self.connection.ping())
-        cursor = self.connection.cursor()
-        cursor.execute(sql)
-        self.connection.commit()
+        while True:
+            try:
+                cursor = self.connection.cursor()
+                cursor.execute(sql)
+                self.connection.commit()
+                break
+            except mysql.connector.Error as e:
+                print("[ERROR]", e)
+                self.connect()
+
 
     def create(self):
         cursor = self.connection.cursor()
