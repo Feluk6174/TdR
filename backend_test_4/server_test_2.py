@@ -35,7 +35,9 @@ def broadcast_ip(ip:str):
 
     print("broadcasting:", ip)
     for connection in connections:
+        print(f"sending to {connection[0]} ({connection[1]})")
         connection[2].send(("{"+f'"type": "IP", "ip": "{ip}"'+"}").encode("utf-8"))
+        print("sent")
 
 def ip_manager(msg_info:str):
     global db, IP
@@ -154,6 +156,8 @@ def ip_share_loop():
         for connection in known_nodes:
             print(f"    {connection[0]}")
         
+        print(connections)
+
         broadcast_ip(IP)
 
         time.sleep(60)
