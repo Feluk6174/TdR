@@ -36,16 +36,14 @@ def broadcast_ip(ip:str):
     #broadcasts ip to all connections
     global conections
 
-    print("broadcasting:", ip)
+    print(f"[{time.asctime()}]broadcasting:", ip)
     for connection in connections:
-        print(f"sending to {connection[0]} ({connection[1]})")
         connection[2].send(("{"+f'"type": "IP", "ip": "{ip}"'+"}").encode("utf-8"))
-        print("sent")
 
 def ip_manager(msg_info:str):
     global db, IP
 
-    print("managing:", msg_info)
+    print(f"[{time.asctime()}]managing:", msg_info)
     
     ip = msg_info["ip"]
 
@@ -62,10 +60,7 @@ def ip_manager(msg_info:str):
         broadcast_ip(ip)
         return
 
-    print(res, res[0][1], int(time.time()) - seconds_to_update, res[0][1] <= int(time.time()) - seconds_to_update)
-
     if res[0][1] <= int(time.time()) - seconds_to_update:
-        print("borrant als 60")
         db.execute(f"DELETE FROM ips WHERE ip = '{ip}';")
         db.execute(f"INSERT INTO ips(ip, time_connected) VALUES('{ip}', {time.time()});")
         broadcast_ip(ip)
@@ -85,7 +80,7 @@ def mainloop(connection, ip):
         try:
             msg_info = json.loads(connection.recv(1024).decode("utf-8"))
             
-            print(msg_info)
+            print(f"[{time.asctime()}]", msg_info)
 
             if msg_info["type"] == "IP":
                 ip_manager(msg_info)
@@ -107,7 +102,6 @@ def connect_to_new_node():
     global connections, IP, server_info
     while True:
         ip = db.querry("SELECT ip FROM ips ORDER BY RAND() LIMIT 1;")
-        print(ip)
         if not check_if_connected(ip[0][0]):
             host, port = ip[0][0].split(":")
     
@@ -118,7 +112,7 @@ def connect_to_new_node():
 
             if connection.recv(1024).decode("utf-8") == "OK":
                 connections.append((ip[0][0], ip[0][0], connection))
-                print(f"connected to {ip[0][0]}")
+                print(f"[{time.asctime()}] connected to {ip[0][0]}")
                 thread = threading.Thread(target=mainloop, args=(connection, ip[0][0]))
                 thread.start()
                 break
@@ -135,7 +129,7 @@ def manage_new_node(connection, address, conn_info):
         difference = n_connected - n_suposed_connections
         connection.send("OK".encode("utf-8"))
         connections.append((conn_info["ip"], address, connection))
-        print(f"connected by {address}")
+        print(f"[{time.asctime()}] connected by {address}")
         thread = threading.Thread(target=mainloop, args=(connection, address))
         thread.start()
 
@@ -148,6 +142,7 @@ def ip_share_loop():
     time.sleep(10)
     connect_to_new_node()
     while True:
+        print(f"[{time.asctime()}]")
         print("num connecions: ", len(connections))
         print("connections:" )
         for connection in connections:
@@ -155,11 +150,9 @@ def ip_share_loop():
 
         known_nodes = db.querry("SELECT * FROM ips;")
         print("num known nodes: ", len(known_nodes))
-        print("connections:" )
+        print("known nodes:" )
         for connection in known_nodes:
             print(f"    {connection[0]}")
-        
-        print(connections)
 
         broadcast_ip(IP)
 
@@ -170,7 +163,7 @@ def main():
     while True:
         connection, address = server.accept()
         conn_info = json.loads(connection.recv(1024).decode("utf-8"))
-        print(conn_info)
+        print(f"[{time.asctime()}]", conn_info)
 
         if conn_info["type"] == "NODE":
             manage_new_node(connection, address, conn_info)
