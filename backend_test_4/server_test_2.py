@@ -103,7 +103,10 @@ def connect_to_new_node():
     while True:
         ip = db.querry("SELECT ip FROM ips ORDER BY RAND() LIMIT 1;")
         print(f"[{time.asctime()}] tring to connect to {ip}")
-        if not check_if_connected(ip[0][0]):
+        ifn_connected = len(connections)
+        n_nodes = len(db.querry("SELECT * FROM ips;"))
+        n_suposed_connections = get_n_connected(n_nodes)
+        if n_connected < n_suposed_connections and not check_if_connected(ip[0][0]):
             host, port = ip[0][0].split(":")
     
             connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
