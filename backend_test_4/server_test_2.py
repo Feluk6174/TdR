@@ -113,6 +113,7 @@ def connect_to_new_node():
     n_nodes = len(db.querry("SELECT * FROM ips;"))
     n_suposed_connections = get_n_connected(n_nodes)
     if n_connected < n_suposed_connections:
+        print("returned bc full")
         return
 
     for i in range(10):
@@ -133,7 +134,7 @@ def connect_to_new_node():
                 thread.start()
                 break
 
-        if len(connections) <= len(db.querry("SELECT * FROM ips;")):
+        if len(db.querry("SELECT * FROM ips;")) <= len(connections):
             break
         print(2)
 
