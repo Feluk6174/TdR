@@ -25,7 +25,7 @@ db = database.connection()
 connections = []
 
 get_n_connected = lambda n: int(5*math.log2(n))
-get_n_connected = lambda n: 3
+get_n_connected = lambda n: 2
 
 server_info = json.loads("{"+f'"type": "NODE", "host": "{HOST}", "port": {PORT}, "ip": "{IP}"'+"}")
 
