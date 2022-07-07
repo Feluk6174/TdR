@@ -56,7 +56,7 @@ def ip_manager(msg_info:str):
         db.execute(f"INSERT INTO ips(ip, time_connected) VALUES('{ip}', {time.time()});")
         broadcast_ip(ip)
         return
-        
+
     print(res, res[0][1], int(time.time()) - seconds_to_update, res[0][1] <= int(time.time()) - seconds_to_update)
 
     if res[0][1] <= int(time.time()) - seconds_to_update:
@@ -85,10 +85,17 @@ def mainloop(connection, ip):
             if msg_info["type"] == "IP":
                 ip_manager(msg_info)
 
+            n_connected = len(connections)
+            n_suposed_connections = get_n_connected(n_nodes)
+            if n_connected < n_suposed_connections:
+                thread = threading.Thread(target=connect_to_new_node)
+                thread.start()
+
         except socket.error as e:
             print(e)
             connections.remove((ip, connection))
             break
+
 
 def connect_to_new_node():
     global connections, IP, server_info
