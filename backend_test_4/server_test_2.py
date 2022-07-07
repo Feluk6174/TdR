@@ -88,6 +88,7 @@ def ip_manager(msg_info:str):
         broadcast_ip(ip)
     
     print(12)
+    thread_lock.release()
     
 
 def check_if_connected(ip:str):
