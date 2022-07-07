@@ -32,10 +32,10 @@ class SearchScreen (Screen):
         self.Box0.orientation = "vertical"
         self.add_widget(self.Box0)
 
-        self.box1 = BoxLayout (size_hint = (1, 0.15))
+        self.box1 = BoxLayout (size_hint = (1, 0.1))
         self.Box0.add_widget(self.box1)
 
-        self.lab1 = Button (size_hint = (None, None), size = (80, 80), background_normal = 'logo.png', background_down = 'logo.png')
+        self.lab1 = Button (size_hint = (None, None), size = (Window.size[1] * 0.1, Window.size[1] * 0.1), background_normal = 'logo.png', background_down = 'logo.png')
         self.box1.add_widget(self.lab1)
         self.lab1.bind(on_release = self.press_btn13)
         
@@ -43,12 +43,12 @@ class SearchScreen (Screen):
         self.box1.add_widget(self.text1)
         self.text1.bind(on_text_validate = self.Search1)
         
-        self.btn1 = Button(text = "S", size_hint = (1, 1), background_normal = 'settings1.png', background_down = 'settings2.png')
+        self.btn1 = Button(size_hint = (None, None), size = (Window.size[1] * 0.1, Window.size[1] * 0.1), background_normal = 'settings1.png', background_down = 'settings2.png')
         self.box1.add_widget(self.btn1)
         self.btn1.bind(on_press = self.Settings)
         
 
-        self.box2 = BoxLayout ()
+        self.box2 = BoxLayout (size_hint = (1, 0.9))
         self.Box0.add_widget(self.box2)
         
         self.scroll = ScrollView ()
@@ -58,19 +58,19 @@ class SearchScreen (Screen):
         self.grid.bind(minimum_height=self.grid.setter('height'))
         self.scroll.add_widget (self.grid)
 
-        self.lab1 = TextInput(multiline = False, text = "Search post", size_hint_y = None, height = 50)
+        self.lab1 = TextInput(multiline = False, text = "Search post", size_hint_y = None, height = Window.size[1] / 15)
         self.grid.add_widget(self.lab1)
         self.lab1.bind(on_text_validate = self.search11)
 
-        self.lab2 = TextInput(multiline = False, text = "Search user", size_hint_y = None, height = 50)
+        self.lab2 = TextInput(multiline = False, text = "Search user", size_hint_y = None, height = Window.size[1] / 15)
         self.grid.add_widget(self.lab2)
         self.lab2.bind(on_text_validate = self.search12)
 
-        self.lab3 = TextInput(multiline = False, text = "Search hastag", size_hint_y = None, height = 50)
+        self.lab3 = TextInput(multiline = False, text = "Search hastag", size_hint_y = None, height = Window.size[1] / 15)
         self.grid.add_widget(self.lab3)
         self.lab2.bind(on_text_validate = self.search13)
    
-        self.u_posts_all = BoxLayout(size_hint_y = None, height = 100)
+        self.u_posts_all = BoxLayout(size_hint_y = None, height = Window.size[1] / 8)
         self.grid.add_widget(self.u_posts_all)
 
         self.popu_posts = Button(text = "Popular Posts")
@@ -99,7 +99,7 @@ class SearchScreen (Screen):
         """
 
 
-        self.box3 = BoxLayout (size_hint = (1, 0.15))
+        self.box3 = BoxLayout (size_hint_y = None, height = Window.size[0] / 5)
         self.Box0.add_widget(self.box3)
 
         self.btn11 = Button (text = ("C"))
@@ -157,12 +157,12 @@ class SearchScreen (Screen):
         self.u_posts_all.add_widget(self.fav)
         self.fav.bind(on_press = self.UserFavourites)
 
-        self.pop_posts = BoxLayout(size_hint_y = None, height = self.quant_p_p * 100, orientation = "vertical")
+        self.pop_posts = BoxLayout(size_hint_y = None, height = self.quant_p_p * Window.size[0] / 1.61, orientation = "vertical")
         self.grid.add_widget(self.pop_posts)
 
         #my posts
         for a in range (self.quant_p_p): 
-            self.btn_p = Button (size_hint_y = None, height = 100, text = "P" + (get_post_text(a)))
+            self.btn_p = Button (size_hint_y = None, height = Window.size[0] / 1.61, text = "P" + (get_post_text(a)))
             self.pop_posts.add_widget(self.btn_p)
             
         self.grid.bind(minimum_height=self.grid.setter('height'))
@@ -182,12 +182,12 @@ class SearchScreen (Screen):
         self.fav = Label (text = "Favourites")
         self.u_posts_all.add_widget(self.fav)
 
-        self.favourite_posts = BoxLayout(size_hint_y = None, height = self.quant_f_p * 100, orientation = "vertical")
+        self.favourite_posts = BoxLayout(size_hint_y = None, height = self.quant_f_p * Window.size[0] / 1.61, orientation = "vertical")
         self.grid.add_widget(self.favourite_posts)
 
         #favourite posts
         for a in range (self.quant_f_p):
-            self.btn_f = Button (size_hint_y = None, height = 100, text = "F" + (get_post_text(a)))
+            self.btn_f = Button (size_hint_y = None, height = Window.size[0] / 1.61, text = "F" + (get_post_text(a)))
             self.favourite_posts.add_widget(self.btn_f)
             
         self.grid.bind(minimum_height=self.grid.setter('height'))

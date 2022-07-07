@@ -23,7 +23,7 @@ from kivy.uix.screenmanager import SlideTransition
 
 import chat_screen, home_screen, loading_screen, post_screen, profile_screen, search_screen
 
-#Window.size = (400, 600)
+Window.size = (540*0.8, 880*0.8)
 
 class MyApp (App):
     def build(self):
@@ -42,5 +42,3 @@ if __name__ == "__main__":
 
 
 
-
-#random anchor down right float

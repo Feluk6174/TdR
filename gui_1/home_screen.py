@@ -23,7 +23,7 @@ from kivy.uix.screenmanager import FallOutTransition
 from kivy.uix.screenmanager import SlideTransition
 
 def get_post_text(num):
-    return str(Window.size)
+    return str(num)
 
 class MainScreen (Screen):
     def __init__(self, **kwargs):
@@ -33,22 +33,22 @@ class MainScreen (Screen):
         self.Box0.orientation = "vertical"
         self.add_widget(self.Box0)
 
-        self.box1 = BoxLayout (size_hint = (1, 0.15))
+        self.box1 = BoxLayout (size_hint = (1, 0.1))
         self.Box0.add_widget(self.box1)
 
-        self.lab1 = Button (size_hint = (None, None), size = (70, 70), background_normal = 'logo.png', background_down = 'logo.png')
+        self.lab1 = Button (size_hint = (None, None), size = (Window.size[1] * 0.1, Window.size[1] * 0.1), background_normal = 'logo.png', background_down = 'logo.png')
         self.box1.add_widget(self.lab1)
         
-        self.text1 = TextInput(multiline = False)
+        self.text1 = TextInput(multiline = False, size_hint = (2, 1))
         self.box1.add_widget(self.text1)
         self.text1.bind(on_text_validate = self.Search1)
         
-        self.btn1 = Button(size_hint = (None, None), size = (70, 70), background_normal = 'settings1.png', background_down = 'settings2.png')
+        self.btn1 = Button(size_hint = (None, None), size = (Window.size[1] * 0.1, Window.size[1] * 0.1), background_normal = 'settings1.png', background_down = 'settings2.png')
         self.box1.add_widget(self.btn1)
         self.btn1.bind(on_press = self.Settings)
         
         
-        self.box2 = BoxLayout (size_hint = (1, 1))
+        self.box2 = BoxLayout (size_hint = (1, 0.9))
         self.Box0.add_widget(self.box2)
         
         self.grid = GridLayout(cols = 1, size_hint_y = None, spacing = 3)
@@ -91,8 +91,9 @@ class MainScreen (Screen):
         self.txt = Button (text = "hello world")
         self.second_box.add_widget(self.txt)
 
-        for a in range (7):
-            self.btn_p = Button (size_hint_y = None, height = 100, text = "P" + (get_post_text(a)))
+        self.new_posts = 7
+        for a in range (self.new_posts):
+            self.btn_p = Button (size_hint_y = None, height = Window.size[0] / 1.61, text = "P" + (get_post_text(a)))
             self.grid.add_widget(self.btn_p)
 
         """
@@ -104,7 +105,7 @@ class MainScreen (Screen):
 
 
 
-        self.box3 = BoxLayout (size_hint = (1, 0.15))
+        self.box3 = BoxLayout (size_hint_y = None, height = Window.size[0] / 5)
         self.Box0.add_widget(self.box3)
 
         self.btn11 = Button (text = ("C"))

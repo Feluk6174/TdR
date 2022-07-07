@@ -31,10 +31,10 @@ class ChatScreen (Screen):
         self.Box0.orientation = "vertical"
         self.add_widget(self.Box0)
 
-        self.box1 = BoxLayout (size_hint = (1, 0.15))
+        self.box1 = BoxLayout (size_hint = (1, 0.1 / 0.9))
         self.Box0.add_widget(self.box1)
 
-        self.lab1 = Button (size_hint = (None, None), size = (80, 80), background_normal = 'logo.png', background_down = 'logo.png')
+        self.lab1 = Button (size_hint = (None, None), size = (Window.size[1] * 0.1, Window.size[1] * 0.1), background_normal = 'logo.png', background_down = 'logo.png')
         self.box1.add_widget(self.lab1)
         self.lab1.bind(on_release = self.press_btn13)
         
@@ -42,7 +42,7 @@ class ChatScreen (Screen):
         self.box1.add_widget(self.text1)
         self.text1.bind(on_text_validate = self.Search1)
         
-        self.btn1 = Button(text = "S", size_hint = (1, 1), background_normal = 'settings1.png', background_down = 'settings2.png')
+        self.btn1 = Button(size_hint = (None, None), size = (Window.size[1] * 0.1, Window.size[1] * 0.1), background_normal = 'settings1.png', background_down = 'settings2.png')
         self.box1.add_widget(self.btn1)
         self.btn1.bind(on_press = self.Settings)
         
@@ -56,19 +56,19 @@ class ChatScreen (Screen):
         self.grid.bind(minimum_height=self.grid.setter('height'))
 
         for a in range (20):
-            self.btn = Button (size_hint_y = None, height = 80, text = "A" + (get_post_text(a)))
+            self.btn = Button (size_hint_y = None, height = Window.size[0] / (1.61 * 2), text = "A" + (get_post_text(a)))
             self.grid.add_widget(self.btn)
 
         self.scroll = ScrollView ()
         self.scroll.add_widget (self.grid)
         self.box2.add_widget (self.scroll)
 
-        self.ran2 = Button (text = "Random", size_hint = (None, None), height = 65, width = 65, pos_hint = {"x" : 0.8, "y" : 0.035})
+        self.ran2 = Button (background_normal = 'dice1.PNG', size_hint = (None, None), height = Window.size[0] * 0.2, width = Window.size[0] * 0.2, pos_hint = {"x" : 0.75, "y" : 0.035})
         self.lay_float.add_widget(self.ran2)
         self.ran2.bind(on_press = self.random2)
 
 
-        self.box3 = BoxLayout (size_hint = (1, 0.15))
+        self.box3 = BoxLayout (size_hint_y = None, height = Window.size[0] / 5)
         self.Box0.add_widget(self.box3)
 
         self.btn11 = Label (text = ("Chat"))

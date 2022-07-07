@@ -31,10 +31,10 @@ class ProfileScreen (Screen):
         self.Box0.orientation = "vertical"
         self.add_widget(self.Box0)
 
-        self.box1 = BoxLayout (size_hint = (1, 0.15))
+        self.box1 = BoxLayout (size_hint = (1, 0.1))
         self.Box0.add_widget(self.box1)
 
-        self.lab1 = Button (size_hint = (None, None), size = (80, 80), background_normal = 'logo.png', background_down = 'logo.png')
+        self.lab1 = Button (size_hint = (None, None), size = (Window.size[1] * 0.1, Window.size[1] * 0.1), background_normal = 'logo.png', background_down = 'logo.png')
         self.box1.add_widget(self.lab1)
         self.lab1.bind(on_release = self.press_btn13)
         
@@ -42,12 +42,12 @@ class ProfileScreen (Screen):
         self.box1.add_widget(self.text1)
         self.text1.bind(on_text_validate = self.Search1)
         
-        self.btn1 = Button(text = "S", size_hint = (1, 1), background_normal = 'settings1.png', background_down = 'settings2.png')
+        self.btn1 = Button(size_hint = (None, None), size = (Window.size[1] * 0.1, Window.size[1] * 0.1), background_normal = 'settings1.png', background_down = 'settings2.png')
         self.box1.add_widget(self.btn1)
         self.btn1.bind(on_press = self.Settings)
         
 
-        self.box2 = BoxLayout (size_hint = (1, 1), orientation = "vertical")
+        self.box2 = BoxLayout (size_hint = (1, 0.9), orientation = "vertical")
         self.Box0.add_widget(self.box2)
 
         self.grid = GridLayout(cols = 1, size_hint_y = None)
@@ -57,10 +57,10 @@ class ProfileScreen (Screen):
         self.scroll.add_widget (self.grid)
         self.box2.add_widget (self.scroll)
 
-        self.user_n_f = BoxLayout(size_hint_y = None, height = 100)
+        self.user_n_f = BoxLayout(size_hint_y = None, height = (Window.size[1]  - Window.size[0] / 5) / 5)
         self.grid.add_widget(self.user_n_f)
 
-        self.us_image = Button(text = "Foto", size_hint = (0.5, 1))
+        self.us_image = Button(text = "Foto", size_hint_x = None, width =  (Window.size[1] * 0.9 - Window.size[0] / 5) / 5)
         self.user_n_f.add_widget(self.us_image)
         self.us_image.bind(on_press = self.UserImage)
 
@@ -68,11 +68,11 @@ class ProfileScreen (Screen):
         self.user_n_f.add_widget(self.us_name)
         self.us_name.bind(on_press = self.UserName)
 
-        self.us_des = Button(text = "Description", size_hint_y = None, height = 162)
+        self.us_des = Button(text = "Description", size_hint_y = None, height = (Window.size[1] * 0.9 - Window.size[0] / 5) * 2 / 5)
         self.grid.add_widget(self.us_des)
         self.us_des.bind(on_press = self.UserDescription)
 
-        self.user_foll = BoxLayout(size_hint_y = None, height = 100)
+        self.user_foll = BoxLayout(size_hint_y = None, height = (Window.size[1] * 0.9 - Window.size[0] / 5) / 5)
         self.grid.add_widget(self.user_foll)
 
         self.us_followers = Button(text = "Followers")
@@ -83,7 +83,7 @@ class ProfileScreen (Screen):
         self.user_foll.add_widget(self.us_following)
         self.us_following.bind(on_press = self.UserFollowing)
 
-        self.u_posts_all = BoxLayout(size_hint_y = None, height = 100)
+        self.u_posts_all = BoxLayout(size_hint_y = None, height = (Window.size[1] * 0.9 - Window.size[0] / 5) / 5)
         self.grid.add_widget(self.u_posts_all)
 
         self.us_posts = Button(text = "My Posts")
@@ -102,7 +102,7 @@ class ProfileScreen (Screen):
         self.us_posts.trigger_action(duration = 0)
 
 
-        self.box3 = BoxLayout (size_hint = (1, 0.15))
+        self.box3 = BoxLayout (size_hint_y = None, height = Window.size[0] / 5)
         self.Box0.add_widget(self.box3)
 
         self.btn11 = Button (text = ("C"))
@@ -160,12 +160,12 @@ class ProfileScreen (Screen):
         self.u_posts_all.add_widget(self.fav)
         self.fav.bind(on_press = self.UserFavourites)
 
-        self.my_posts = BoxLayout(size_hint_y = None, height = self.quant_m_p * 100, orientation = "vertical")
+        self.my_posts = BoxLayout(size_hint_y = None, height = self.quant_m_p * Window.size[0] / 1.61, orientation = "vertical")
         self.grid.add_widget(self.my_posts)
 
         #my posts
         for a in range (self.quant_m_p): 
-            self.btn_p = Button (size_hint_y = None, height = 100, text = "M" + (get_post_text(a)))
+            self.btn_p = Button (size_hint_y = None, height = Window.size[0] / 1.61, text = "M" + (get_post_text(a)))
             self.my_posts.add_widget(self.btn_p)
 
         self.us_posts = Label(text = "My Posts")
@@ -187,12 +187,12 @@ class ProfileScreen (Screen):
         self.fav = Label (text = "Favourites")
         self.u_posts_all.add_widget(self.fav)
 
-        self.favourite_posts = BoxLayout(size_hint_y = None, height = self.quant_f_p * 100, orientation = "vertical")
+        self.favourite_posts = BoxLayout(size_hint_y = None, height = self.quant_f_p * Window.size[0] / 1.61, orientation = "vertical")
         self.grid.add_widget(self.favourite_posts)
 
         #favourite posts
         for a in range (self.quant_f_p):
-            self.btn_f = Button (size_hint_y = None, height = 100, text = "F" + (get_post_text(a)))
+            self.btn_f = Button (size_hint_y = None, height = Window.size[0] / 1.61, text = "F" + (get_post_text(a)))
             self.favourite_posts.add_widget(self.btn_f)
             
         
