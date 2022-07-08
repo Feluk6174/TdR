@@ -3,13 +3,13 @@ import random
 import threading
 import time
 
-class database():
+class Database():
     def __init__(self):
         self.connect()
-
         self.queue = []
-
         self.return_response = []
+        thread = threading.Thread(target=self.proces_queue)
+        thread.start()
 
     def connect(self):
         self.connection = mysql.connector.connect(
@@ -18,6 +18,10 @@ class database():
             password = "root",
             database = "TdR"
         )
+
+    def stop(self):
+        queue_id = random.randint(1000000000, 9999999999)
+        self.queue.append(("s", "stop", queue_id))
 
     def querry(self, querry:str):
         queue_id = random.randint(1000000000, 9999999999)
@@ -39,9 +43,10 @@ class database():
                     return 
 
     def proces_queue(self):
+        print("[STARTED QUEUE PROCESOR]")
         while True:
-            print(self.queue)
             if len(self.queue) > 0:
+                #print(self.queue)
                 if self.queue[0][0] == "q":
                     try:
                         cursor = self.connection.cursor()
@@ -50,7 +55,6 @@ class database():
 
                     except mysql.connector.Error as e:
                         print(f"[ERROR]({threading.current_thread().name})", e)
-                        print(self.queue)
                         self.connect()
                         self.return_response.append((self.queue[0][2], "ERROR"))
 
@@ -63,10 +67,13 @@ class database():
                         
                     except mysql.connector.Error as e:
                         print(f"[ERROR]{threading.current_thread().name}", e)
-                        print(self.queue)
                         self.connect()
                         self.return_response.append((self.queue[0][2], "ERROR"))
                 
+                elif self.queue[0][0] == "s":
+                    self.queue.pop(0)
+                    break
+
                 self.queue.pop(0)
             time.sleep(0.1)
 
@@ -78,9 +85,9 @@ class database():
         cursor.execute("DROP TABLE IF EXISTS posts;")
         cursor.execute("DROP TABLE IF EXISTS users;")
 
-        cursor.execute("CREATE TABLE users(id INT NOT NULL PRIMARY KEY, user_name VARCHAR(16) NOT NULL UNIQUE, public_key INT NOT NULL UNIQUE, info VARCHAR(255));")
-        cursor.execute("CREATE TABLE posts(id INT NOT NULL PRIMARY KEY, user_id INT NOT NULL, post VARCHAR(255) NOT NULL, FOREIGN KEY (user_id) REFERENCES users (id));")
-        cursor.execute("CREATE TABLE comments(id INT NOT NULL PRIMARY KEY, user_id INT NOT NULL, post_id INT NOT NULL, comment VARCHAR(255) NOT NULL, FOREIGN KEY (user_id) REFERENCES users (id), FOREIGN KEY (post_id) REFERENCES posts (id));")
+        cursor.execute("CREATE TABLE users(user_name VARCHAR(16) NOT NULL UNIQUE PRIMARY KEY, public_key INT NOT NULL UNIQUE, time_created INT NOT NULL, profile_picture VARCHAR(64) NOT NULL, info VARCHAR(255));")
+        cursor.execute("CREATE TABLE posts(id VARCHAR(23) NOT NULL PRIMARY KEY, user_id VARCHAR(16) NOT NULL, post VARCHAR(255) NOT NULL, time_posted INT NOT NULL, FOREIGN KEY (user_id) REFERENCES users (user_name));")
+        cursor.execute("CREATE TABLE comments(id INT NOT NULL PRIMARY KEY, user_id VARCHAR(16) NOT NULL, post_id VARCHAR(23) NOT NULL, comment VARCHAR(255) NOT NULL, FOREIGN KEY (user_id) REFERENCES users (user_name), FOREIGN KEY (post_id) REFERENCES posts (id));")
 
     
         cursor.execute("DROP TABLE IF EXISTS ips;")

@@ -1,6 +1,6 @@
 import socket
 import threading
-import database
+import database as db
 import time
 import sys
 import json
@@ -22,8 +22,6 @@ client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 thread_lock = threading.Lock()
 
-db = database.connection(thread_lock)
-
 connections = []
 
 get_n_connected = lambda n: int(5*math.log2(n))
@@ -36,39 +34,65 @@ def broadcast_ip(ip:str):
     #broadcasts ip to all connections
     global conections
 
-    print(f"[{time.asctime()}]broadcasting:", ip)
+    print(f"({threading.current_thread().name})[{time.asctime()}] broadcasting:", ip)
     for connection in connections:
         connection[2].send(("{"+f'"type": "IP", "ip": "{ip}"'+"}").encode("utf-8"))
 
 def ip_manager(msg_info:str):
     global db, IP
 
-    print(f"[{time.asctime()}]managing:", msg_info)
+    print(threading.current_thread().name, 1)
+    print(f"({threading.current_thread().name})[{time.asctime()}] managing:", msg_info)
     
+    print(threading.current_thread().name, 2)
     ip = msg_info["ip"]
 
+    print(threading.current_thread().name, 3)
     if ip == IP:
         return
 
+    print(threading.current_thread().name, 4)
     seconds_to_delete = 120
     seconds_to_update = 60
-    db.execute(f"DELETE FROM ips WHERE time_connected <= {int(time.time()) - seconds_to_delete}")
-    res = db.querry(f"SELECT * FROM ips WHERE ip = '{ip}';")
     
+    print(threading.current_thread().name, 5)
+    thread_lock.acquire()
+    print(threading.current_thread().name, 5.5)
+    db.execute(f"DELETE FROM ips WHERE time_connected <= {int(time.time()) - seconds_to_delete}")
+    print(threading.current_thread().name, 6)
+    res = db.querry(f"SELECT * FROM ips WHERE ip = '{ip}';")
+    print(threading.current_thread().name, 7)
+        
+    print(res, int(time.time()) - seconds_to_update, len(res))
+
+    print(threading.current_thread().name, 8)
     if len(res) == 0:
+        print("1", db.querry("SELECT * FROM ips;"))
         db.execute(f"INSERT INTO ips(ip, time_connected) VALUES('{ip}', {time.time()});")
+            
+        print(threading.current_thread().name, 9)
         broadcast_ip(ip)
+        thread_lock.release()
         return
 
-    if res[0][1] <= int(time.time()) - seconds_to_update:
+    elif res[0][1] <= int(time.time()) - seconds_to_update:
+        print("2", db.querry("SELECT * FROM ips;"))
         db.execute(f"DELETE FROM ips WHERE ip = '{ip}';")
+            
+        print(threading.current_thread().name, 10)
         db.execute(f"INSERT INTO ips(ip, time_connected) VALUES('{ip}', {time.time()});")
+            
+        print(threading.current_thread().name, 11)
         broadcast_ip(ip)
-
+    
+    print(threading.current_thread().name, 12)
+    thread_lock.release()
     
 
 def check_if_connected(ip:str):
     global connections
+
+    print(f"({threading.current_thread().name})[{time.asctime()}] checking if connected:", ip)
     for connection in connections:
         if connection[0] == ip:
             return True
@@ -76,6 +100,8 @@ def check_if_connected(ip:str):
 
 def mainloop(connection, ip):
     global connections, HOST, PORT
+
+    print(f"({threading.current_thread().name})[{time.asctime()}] mainloop:", ip)
     while True:
         try:
             msg_info = json.loads(connection.recv(1024).decode("utf-8"))
@@ -93,20 +119,25 @@ def mainloop(connection, ip):
                 thread.start()
 
         except socket.error as e:
-            print(e)
+            print("[ERROR]", e)
             connections.remove((ip, connection))
             break
 
 
 def connect_to_new_node():
     global connections, IP, server_info, get_n_connected
-    while True:
+    n_connected = len(connections)
+    n_nodes = len(db.querry("SELECT * FROM ips;"))
+    n_suposed_connections = get_n_connected(n_nodes)
+    print(n_connected, n_suposed_connections,)
+    if n_suposed_connections < n_connected:
+        print("returned bc full")
+        return
+
+    for i in range(10):
         ip = db.querry("SELECT ip FROM ips ORDER BY RAND() LIMIT 1;")
-        print(f"[{time.asctime()}] tring to connect to {ip}")
-        n_connected = len(connections)
-        n_nodes = len(db.querry("SELECT * FROM ips;"))
-        n_suposed_connections = get_n_connected(n_nodes)
-        if n_connected < n_suposed_connections and not check_if_connected(ip[0][0]):
+        print(f"({threading.current_thread().name})[{time.asctime()}] tring to connect to {ip}")
+        if not check_if_connected(ip[0][0]):
             host, port = ip[0][0].split(":")
     
             connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -127,6 +158,7 @@ def connect_to_new_node():
 
 def manage_new_node(connection, address, conn_info):
     global connections, get_n_connected, db
+    print(f"({threading.current_thread().name})[{time.asctime()}] managing new node:", conn_info)
     n_connected = len(connections)
     n_nodes = len(db.querry("SELECT * FROM ips;"))
     n_suposed_connections = get_n_connected(n_nodes)
@@ -140,14 +172,16 @@ def manage_new_node(connection, address, conn_info):
 
 def ip_share_loop():
     global HOST, PORT, IP, connections, db
+    print(f"({threading.current_thread().name})[{time.asctime()}] ip sharing loop:")
     while True:
         print(f"[{time.asctime()}]")
         print("num connecions: ", len(connections))
         print("connections:" )
         for connection in connections:
             print(f"    {connection[0]}")
-
+        print(1)
         known_nodes = db.querry("SELECT * FROM ips;")
+        print(2)
         print("num known nodes: ", len(known_nodes))
         print("known nodes:" )
         for connection in known_nodes:
