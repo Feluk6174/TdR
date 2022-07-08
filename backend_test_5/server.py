@@ -43,7 +43,9 @@ def new_post(msg_info, connection, ip=None):
     print(res)
     if len(res) == 0:
         print(1)
-        db.querry(f"INSERT INTO posts(id, user_id, post, time_posted) VALUES('{msg_info['post_id']}', '{msg_info['user_name']}', '{msg_info['content']}', {int(time.time())});")
+        sql = f"INSERT INTO posts(id, user_id, post, time_posted) VALUES('{msg_info['post_id']}', '{msg_info['user_name']}', '{msg_info['content']}', {int(time.time())});"
+        print(sql)
+        db.querry(sql)
         print(2)
         broadcast(msg_info, ip)
         print(3)
