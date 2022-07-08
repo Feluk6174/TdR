@@ -35,7 +35,7 @@ class SearchScreen (Screen):
         self.box1 = BoxLayout (size_hint = (1, 0.1))
         self.Box0.add_widget(self.box1)
 
-        self.lab1 = Button (size_hint = (None, None), size = (Window.size[1] * 0.1, Window.size[1] * 0.1), background_normal = 'logo.png', background_down = 'logo.png')
+        self.lab1 = Button (border = (0, 0, 0, 0), size_hint = (None, None), size = ((Window.size[1] - Window.size[0] / 5) * 0.1, (Window.size[1] - Window.size[0] / 5) * 0.1), background_normal = 'logo.png', background_down = 'logo.png')
         self.box1.add_widget(self.lab1)
         self.lab1.bind(on_release = self.press_btn13)
         
@@ -43,7 +43,7 @@ class SearchScreen (Screen):
         self.box1.add_widget(self.text1)
         self.text1.bind(on_text_validate = self.Search1)
         
-        self.btn1 = Button(size_hint = (None, None), size = (Window.size[1] * 0.1, Window.size[1] * 0.1), background_normal = 'settings1.png', background_down = 'settings2.png')
+        self.btn1 = Button(border = (0, 0, 0, 0), size_hint = (None, None), size = ((Window.size[1] - Window.size[0] / 5) * 0.1, (Window.size[1] - Window.size[0] / 5) * 0.1), background_normal = 'settings1.png', background_down = 'settings2.png')
         self.box1.add_widget(self.btn1)
         self.btn1.bind(on_press = self.Settings)
         
@@ -150,7 +150,7 @@ class SearchScreen (Screen):
         
         self.u_posts_all.clear_widgets()
 
-        self.popu_posts = Label(text = "My Posts")
+        self.popu_posts = Label(text = "Popular Posts")
         self.u_posts_all.add_widget(self.popu_posts)
         
         self.fav = Button (text = "Favourites")
@@ -175,7 +175,7 @@ class SearchScreen (Screen):
         
         self.u_posts_all.clear_widgets()
         
-        self.popu_posts = Button(text = "My Posts")
+        self.popu_posts = Button(text = "Popular Posts")
         self.u_posts_all.add_widget(self.popu_posts)
         self.popu_posts.bind(on_press = self.UserPosts)
 

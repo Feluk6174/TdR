@@ -34,7 +34,7 @@ class ProfileScreen (Screen):
         self.box1 = BoxLayout (size_hint = (1, 0.1))
         self.Box0.add_widget(self.box1)
 
-        self.lab1 = Button (size_hint = (None, None), size = (Window.size[1] * 0.1, Window.size[1] * 0.1), background_normal = 'logo.png', background_down = 'logo.png')
+        self.lab1 = Button (border = (0, 0, 0, 0), size_hint = (None, None), size = ((Window.size[1] - Window.size[0] / 5) * 0.1, (Window.size[1] - Window.size[0] / 5) * 0.1), background_normal = 'logo.png', background_down = 'logo.png')
         self.box1.add_widget(self.lab1)
         self.lab1.bind(on_release = self.press_btn13)
         
@@ -42,7 +42,7 @@ class ProfileScreen (Screen):
         self.box1.add_widget(self.text1)
         self.text1.bind(on_text_validate = self.Search1)
         
-        self.btn1 = Button(size_hint = (None, None), size = (Window.size[1] * 0.1, Window.size[1] * 0.1), background_normal = 'settings1.png', background_down = 'settings2.png')
+        self.btn1 = Button(border = (0, 0, 0, 0), size_hint = (None, None), size = (Window.size[1] * 0.1, Window.size[1] * 0.1), background_normal = 'settings1.png', background_down = 'settings2.png')
         self.box1.add_widget(self.btn1)
         self.btn1.bind(on_press = self.Settings)
         
@@ -57,10 +57,10 @@ class ProfileScreen (Screen):
         self.scroll.add_widget (self.grid)
         self.box2.add_widget (self.scroll)
 
-        self.user_n_f = BoxLayout(size_hint_y = None, height = (Window.size[1]  - Window.size[0] / 5) / 5)
+        self.user_n_f = BoxLayout(size_hint_y = None, height = (Window.size[1]  - Window.size[0] / 5) * 0.9 / 5)
         self.grid.add_widget(self.user_n_f)
 
-        self.us_image = Button(text = "Foto", size_hint_x = None, width =  (Window.size[1] * 0.9 - Window.size[0] / 5) / 5)
+        self.us_image = Button(text = "Foto", size_hint_x = None, width =  (Window.size[1] - Window.size[0] / 5) * 0.9 / 5)
         self.user_n_f.add_widget(self.us_image)
         self.us_image.bind(on_press = self.UserImage)
 
@@ -68,11 +68,11 @@ class ProfileScreen (Screen):
         self.user_n_f.add_widget(self.us_name)
         self.us_name.bind(on_press = self.UserName)
 
-        self.us_des = Button(text = "Description", size_hint_y = None, height = (Window.size[1] * 0.9 - Window.size[0] / 5) * 2 / 5)
+        self.us_des = Button(text = "Description", size_hint_y = None, height = (Window.size[1] - Window.size[0] / 5) * 2 * 0.9 / 5)
         self.grid.add_widget(self.us_des)
         self.us_des.bind(on_press = self.UserDescription)
 
-        self.user_foll = BoxLayout(size_hint_y = None, height = (Window.size[1] * 0.9 - Window.size[0] / 5) / 5)
+        self.user_foll = BoxLayout(size_hint_y = None, height = (Window.size[1] - Window.size[0] / 5) * 0.9 / 5)
         self.grid.add_widget(self.user_foll)
 
         self.us_followers = Button(text = "Followers")
@@ -83,7 +83,7 @@ class ProfileScreen (Screen):
         self.user_foll.add_widget(self.us_following)
         self.us_following.bind(on_press = self.UserFollowing)
 
-        self.u_posts_all = BoxLayout(size_hint_y = None, height = (Window.size[1] * 0.9 - Window.size[0] / 5) / 5)
+        self.u_posts_all = BoxLayout(size_hint_y = None, height = (Window.size[1] - Window.size[0] / 5) * 0.9 / 5)
         self.grid.add_widget(self.u_posts_all)
 
         self.us_posts = Button(text = "My Posts")

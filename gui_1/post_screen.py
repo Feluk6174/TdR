@@ -21,6 +21,11 @@ from kivy.clock import Clock
 from kivy.uix.screenmanager import FallOutTransition
 from kivy.uix.screenmanager import SlideTransition
 
+def SendPostFinal(post_flags, textp, nlikes):
+    #content, post_id, user_name
+    #user_name, user_image, post_flags, textp, nlikes, date
+    pass
+
 class PostUserScreen (Screen):
     def __init__(self, **kwargs):
         super(PostUserScreen, self).__init__(**kwargs)
@@ -31,7 +36,7 @@ class PostUserScreen (Screen):
         self.box1 = BoxLayout (size_hint = (1, 0.1))
         self.Box0.add_widget(self.box1)
 
-        self.lab1 = Button (size_hint = (None, None), size = (Window.size[1] * 0.1, Window.size[1] * 0.1), background_normal = 'logo.png', background_down = 'logo.png')
+        self.lab1 = Button (border = (0, 0, 0, 0), size_hint = (None, None), size = ((Window.size[1] - Window.size[0] / 5) * 0.1, (Window.size[1] - Window.size[0] / 5) * 0.1), background_normal = 'logo.png', background_down = 'logo.png')
         self.box1.add_widget(self.lab1)
         self.lab1.bind(on_release = self.press_btn13)
         
@@ -39,7 +44,7 @@ class PostUserScreen (Screen):
         self.box1.add_widget(self.text1)
         self.text1.bind(on_text_validate = self.Search1)
         
-        self.btn1 = Button(size_hint = (None, None), size = (Window.size[1] * 0.1, Window.size[1] * 0.1), background_normal = 'settings1.png', background_down = 'settings2.png')
+        self.btn1 = Button(border = (0, 0, 0, 0), size_hint = (None, None), size = ((Window.size[1] - Window.size[0] / 5) * 0.1, (Window.size[1] - Window.size[0] / 5) * 0.1), background_normal = 'settings1.png', background_down = 'settings2.png')
         self.box1.add_widget(self.btn1)
         self.btn1.bind(on_press = self.Settings)
         
@@ -50,17 +55,40 @@ class PostUserScreen (Screen):
         self.grid = BoxLayout(orientation = "vertical")
         self.box2.add_widget(self.grid)
 
-        self.actp = TextInput(multiline = True, size_hint = (1, 4))
+        self.actp = TextInput(multiline = True, size_hint = (1, 3.5))
         self.grid.add_widget(self.actp)
-        #self.actp.bind(on_text_validate = self.NotYet)
 
-        self.actp2 = TextInput(multiline = False, size_hint = (1, 0.5), text = "Author")
+        self.actp2 = TextInput(multiline = False, size_hint = (1, 0.5), text = "")
         self.grid.add_widget(self.actp2)
 
-        self.actp3 = TextInput(multiline = False, size_hint = (1, 0.5), text = "Source")
+        self.actp3 = TextInput(multiline = False, size_hint = (1, 0.5), text = "")
         self.grid.add_widget(self.actp3)
 
-        self.send = Button (text = "Publish", size_hint = (1, 0.8))
+        self.flag_box = BoxLayout(size_hint = (1, 0.5))
+        self.grid.add_widget(self.flag_box)
+
+        #flags
+        #self.fl_bt = Button(text = "flags to add")
+        #self.flag_box.add_widget(self.fl_bt)
+
+        self.grid2 = GridLayout(rows = 1, size_hint_x = None, spacing = 1)
+        self.grid2.bind(minimum_width=self.grid2.setter('width'))
+        
+        self.scroll = ScrollView ()
+        self.scroll.add_widget (self.grid2)
+        self.flag_box.add_widget (self.scroll)
+
+        self.all_flags = [['check_verd.PNG'], ['age18.PNG'], ['blood.PNG'], ['fist.PNG'], ['soga.PNG'], ['white.PNG'], ['white.PNG'], ['white.PNG'], ['white.PNG'], ['white.PNG'], ['white.PNG']]
+        for d in range(len(self.all_flags) - 1):
+            self.all_flags[d + 1].append(str(d + 1))
+        for x in range (len(self.all_flags) - 1):
+            self.f_btn = Button(border = (0, 0, 0, 0), font_size = 1, size_hint_x = None, width = (Window.size[1] - Window.size[0] / 5) * 0.9 / 12, text = str(self.all_flags[x + 1][1]), on_release = self.Flag_press, background_normal = self.all_flags[x + 1][0])
+            self.all_flags[x + 1].append(self.f_btn)
+            self.all_flags[x + 1].append(0)
+            self.grid2.add_widget(self.f_btn)
+            
+        
+        self.send = Button (text = "Publish", size_hint = (1, 1))
         self.grid.add_widget(self.send)
         self.send.bind(on_press = self.SendPost)
 
@@ -96,16 +124,27 @@ class PostUserScreen (Screen):
 
     def Settings(self, instance):
         pass
-
-    def NotYet(instance, value):
-        pass
+    
+    def Flag_press(self, instance):
+        flag = int(instance.text)
+        self.all_flags[flag][3] = (self.all_flags[flag][3] + 1) % 2
+        if self.all_flags[flag][3] == 1:
+            instance.background_normal = self.all_flags[0][0]
+        if self.all_flags[flag][3] == 0:
+            instance.background_normal = self.all_flags[flag][0]
 
     def SendPost(self, instance):
-        pass
-
-    def LastPosts(self, instance):
-        pass
-
+        self.flag_list = []
+        for y in range (len(self.all_flags) - 1):
+            self.flag_list.append(self.all_flags[y + 1][3])
+        SendPostFinal(self.flag_list, str(self.actp.text) + ". " + str(self.actp2.text) + ". " + str(self.actp3.text), 0)
+        self.actp.text = ""
+        self.actp2.text = ""
+        self.actp3.text = ""
+        for y in range (len(self.all_flags) - 1):
+            if self.all_flags[y + 1][3] == 1:
+                self.all_flags[y + 1][2].trigger_action(duration = 0)
+        
     def press_btn11(self, instance):
         self.manager.current = "chat"
         self.manager.transition.direction = "right"
