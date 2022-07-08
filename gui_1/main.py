@@ -27,9 +27,8 @@ Window.size = (540*0.7, 880*0.7)
 
 class MyApp (App):
     def build(self):
-        sm = ScreenManager(transition = FallOutTransition())
-        sm.add_widget(loading_screen.LoadScreen(name = "load"))
-        sm.transition = SlideTransition()
+        sm = ScreenManager()
+        #sm.add_widget(loading_screen.LoadScreen(name = "load"))
         sm.add_widget(home_screen.MainScreen(name = "main"))
         sm.add_widget(chat_screen.ChatScreen(name = "chat"))
         sm.add_widget(search_screen.SearchScreen(name = "search"))
