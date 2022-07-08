@@ -77,7 +77,7 @@ def get_posts(msg_info, connection):
     for i, post in enumerate(posts):
         print(i)
         msg = "{"+f'"id": "{post[0]}", "user_id": "{post[1]}", "content": "{post[2]}", "time_posted": {post[3]}'+"}"
-        msg.send(msg.encode("utf-8"))
+        connection.send(msg.encode("utf-8"))
         if not connection.recv(1024).decode("utf-8") == "OK":
             break
 
