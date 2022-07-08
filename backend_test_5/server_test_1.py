@@ -110,7 +110,7 @@ def connect_to_new_node():
 
 def manage_new_node(connection, address, conn_info):
     global connections, get_suposed_connected
-    n_connected = len(connection)
+    n_connected = len(connections)
     n_nodes = len("SELECT * FROM ips;")
     n_suposed_connections = get_suposed_connected(n_nodes)
 
