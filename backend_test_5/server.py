@@ -49,7 +49,7 @@ def register_user(msg_info, connection, ip=None):
     print(f"({threading.current_thread().name})[{time.asctime()}] regitering user:", msg_info, ip)
     global db
     #"CREATE TABLE users(user_name VARCHAR(16) NOT NULL UNIQUE PRIMARY KEY, public_key INT NOT NULL UNIQUE, time_created INT NOT NULL, profile_picture VARCHAR(64) NOT NULL, info VARCHAR(255));")
-    res = db.querry(f"SELECT * FROM users WHERE user_name = '{msg_info['user_name']}'")
+    res = db.querry(f"SELECT * FROM users WHERE id = '{msg_info['post_id']}'")
 
     if len(res) == 0:
         db.execute(f"INSERT INTO users(user_name, public_key, time_created, profile_picture, info) VALUES('{msg_info['user_name']}', {msg_info['public_key']}, {int(time.time())}, '{msg_info['profile_picture']}', '{msg_info['info']}');")
