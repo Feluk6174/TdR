@@ -51,6 +51,8 @@ def register_user(msg_info, connection, ip=None):
         broadcast(msg_info, ip)
 
 def client_main_loop(connection):
+    global clients
+    print(f"[{time.asctime()}] client_main_loop")
     while True:
         try:
             msg_info = json.loads(connection.recv(1024).decode("utf-8"))
@@ -64,15 +66,17 @@ def client_main_loop(connection):
 
         except socket.error as e:
             print("[ERROR]", e)
-            connections.remove((ip, connection, real_ip))
+            clients.remove((ip, connection, real_ip))
             break
 
 def manage_new_client(connection, conn_info):
     global clients, max_clients
+    print(f"[{time.asctime()}] manage new node")
+    print(len(clients), max_clients)
     if len(clients) <= max_clients:
         clients.append((connection, conn_info))
+        print(3)
         thread = threading.Thread(target=client_main_loop, args=(connection, ))
-
 
 # Node - Node comunication
 def broadcast_ip(ip, node_ip):
