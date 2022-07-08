@@ -66,7 +66,7 @@ def node_main_loop(connection, ip, real_ip):
         
             n_connected = len(connections)
             n_nodes = len(db.querry("SELECT * FROM ips;"))
-            n_suposed_connections = get_n_connected(n_nodes)
+            n_suposed_connections = get_suposed_connected(n_nodes)
             if n_connected < n_suposed_connections:
                 thread = threading.Thread(target=connect_to_new_node)
                 thread.start()
