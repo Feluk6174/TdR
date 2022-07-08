@@ -13,21 +13,74 @@ server.bind((HOST, PORT))
 server.listen()
 
 connections = []
+clients = []
 
-db = database.database()
+db = database.Database()
 
 get_suposed_connected = lambda n: int(5*math.log2(n))
 get_suposed_connected = lambda n: 2
 
 server_info = json.loads("{"+f'"type": "NODE", "host": "{HOST}", "port": {PORT}, "ip": "{IP}"'+"}")
 
+max_clients = 10
+
+#Client Node comunication
+
+def broadcast(msg, ip):
+    global connections
+    for connection in connections:
+        if not connection[0] == ip:
+            connection[1].send(msg.encode("utf-8"))
+
+def new_post(msg_info, connection, ip=None):
+    global db
+    #CREATE TABLE posts(id INT NOT NULL PRIMARY KEY, user_id VARCHAR(16) NOT NULL, post VARCHAR(255) NOT NULL, time_posted INT NOT NULL, FOREIGN KEY (user_id) REFERENCES users (user_name));")
+    res = db.querry(f"SELECT * FROM posts WHERE id = '{msg_info['post_id']}';")
+    if len(res) == 0:
+        db.querry(f"INSERT INTO posts(id, user_id, post, time_posted) VALUES('{msg_info['post_id']}', '{msg_info['user_name']}', '{msg_info['content']}', {int(time.time())});")
+        broadcast(msg_info, ip)
+
+
+def register_user(msg_info, connection, ip=None):
+    global db
+    #"CREATE TABLE users(user_name VARCHAR(16) NOT NULL UNIQUE PRIMARY KEY, public_key INT NOT NULL UNIQUE, time_created INT NOT NULL, profile_picture VARCHAR(64) NOT NULL, info VARCHAR(255));")
+    res = db.querry(f"SELECT * FROM users WHERE user_name = '{msg_info['user_name']}'")
+
+    if len(res) == 0:
+        db.execute(f"INSERT INTO users(user_name, public_key, time_created, profile_picture, info) VALUES('{msg_info['user_name']}', {msg_info['public_key']}, {int(time.time())}, '{msg_info['profile_picture']}', '{msg_info['info']}');")
+        broadcast(msg_info, ip)
+
+def client_main_loop(connection):
+    while True:
+        try:
+            msg_info = json.loads(connection.recv(1024).decode("utf-8"))
+            print(msg_info)
+
+            if msg_info["type"] == "REGISTER":
+                register_user(msg_info, connection)
+
+            if msg_info["type"] == "POST":
+                new_post(msg_info, connection)
+
+        except socket.error as e:
+            print("[ERROR]", e)
+            connections.remove((ip, connection, real_ip))
+            break
+
+def manage_new_client(connection, conn_info):
+    global clients, max_clients
+    if len(clients) <= max_clients:
+        clients.append((connection, conn_info))
+        thread = threading.Thread(target=client_main_loop, args=(connection, ))
+
+
+# Node - Node comunication
 def broadcast_ip(ip, node_ip):
     global connections
     msg_content = "{"+f'"type": "IP", "ip": "{ip}"'+"}"
     for connection in connections:
         if not connection[0] == node_ip:
             connection[1].send(msg_content.encode("utf-8"))
-
 
 def manage_ip(msg_info, node_ip):
     global IP, db
@@ -50,8 +103,6 @@ def manage_ip(msg_info, node_ip):
         db.execute(f"INSERT INTO ips(ip, time_connected) VALUES('{ip}', {time.time()});")
         broadcast_ip(ip, node_ip)
 
-
-
 def node_main_loop(connection, ip, real_ip):
     global db, get_suposed_connected, connections
     while True:
@@ -63,7 +114,13 @@ def node_main_loop(connection, ip, real_ip):
             if msg_info["type"] == "IP":
                 manage_ip(msg_info, ip)
 
-        
+            if msg_info["type"] == "REGISTER":
+                register_user(msg_info, connection, ip=ip)
+
+            if msg_info["type"] == "POST":
+                new_post(msg_info, connection, ip=ip)
+
+
             n_connected = len(connections)
             n_nodes = len(db.querry("SELECT * FROM ips;"))
             n_suposed_connections = get_suposed_connected(n_nodes)
@@ -90,7 +147,7 @@ def connect_to_new_node():
     n_connected = len(connections)
     if n_suposed_connections < n_connected:
         return
-    for i in range(10):
+    for i in range(5):
         ip = db.querry("SELECT ip FROM ips ORDER BY RAND() LIMIT 1;")
         if not check_if_connected(ip[0][0]):
             host, port = ip[0][0].split(":")
@@ -145,14 +202,15 @@ def main():
         if conn_info["type"] == "NODE":
             manage_new_node(connection, address, conn_info)
 
+        elif conn_info["type"] == "CLIENT":
+            manage_new_client(connection, conn_info)
+
 def start():
     time.sleep(10)
     connect_to_new_node()
 
 if __name__ == "__main__":
     print(f"========[SERVER RUNNING ON {IP}]========")
-    thread = threading.Thread(target=db.proces_queue)
-    thread.start()
     thread = threading.Thread(target=clock)
     thread.start()
     thread = threading.Thread(target=start)
