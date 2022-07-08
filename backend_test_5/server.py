@@ -30,6 +30,7 @@ def broadcast(msg, ip):
     global connections
     for connection in connections:
         if not connection[0] == ip:
+            print(json.dumps(msg))
             connection[1].send(json.dumps(msg).encode("utf-8"))
 
 def new_post(msg_info, connection, ip=None):
