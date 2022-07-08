@@ -74,6 +74,7 @@ def client_main_loop(connection, conn_info):
             msg = connection.recv(1024).decode("utf-8")
             if msg == "":
                 raise socket.error
+            print(msg)
             msg_info = json.loads(msg)
             print(f"({threading.current_thread().name})[{time.asctime()}] recived:", msg_info)
 
