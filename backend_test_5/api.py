@@ -34,6 +34,7 @@ def get_posts(user_name):
     msg = "{"+f'"type": "GET POSTS", "user_name": "{user_name}"'+"}"
     connection.send(msg.encode("utf-8"))
     num = int(connection.recv(1024).decode("utf-8"))
+    print(num)
     for _ in range(num):
         posts.append(json.loads(connection.recv(1024).decode("utf-8")))
         connection.send("OK".encode("utf-8"))

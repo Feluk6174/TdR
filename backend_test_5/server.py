@@ -40,9 +40,13 @@ def new_post(msg_info, connection, ip=None):
     global db
     #CREATE TABLE posts(id INT NOT NULL PRIMARY KEY, user_id VARCHAR(16) NOT NULL, post VARCHAR(255) NOT NULL, time_posted INT NOT NULL, FOREIGN KEY (user_id) REFERENCES users (user_name));")
     res = db.querry(f"SELECT * FROM posts WHERE id = '{msg_info['post_id']}';")
+    print(res)
     if len(res) == 0:
+        print(1)
         db.querry(f"INSERT INTO posts(id, user_id, post, time_posted) VALUES('{msg_info['post_id']}', '{msg_info['user_name']}', '{msg_info['content']}', {int(time.time())});")
+        print(2)
         broadcast(msg_info, ip)
+        print(3)
         connection.send("OK".encode("utf-8"))
 
 
