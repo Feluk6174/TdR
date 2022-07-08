@@ -196,7 +196,9 @@ def main():
     global server
     while True:
         connection, address = server.accept()
-        conn_info = json.loads(connection.recv(1024).decode("utf-8"))
+        temp = connection.recv(1024).decode("utf-8")
+        print(temp)
+        conn_info = json.loads(temp)
         print(f"[{time.asctime()}]", conn_info)
 
         if conn_info["type"] == "NODE":
