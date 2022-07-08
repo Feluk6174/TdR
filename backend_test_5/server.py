@@ -30,8 +30,9 @@ def broadcast(msg, ip):
     global connections
     for connection in connections:
         if not connection[0] == ip:
-            print(json.dumps(msg))
+            print("b",json.dumps(msg))
             connection[1].send(json.dumps(msg).encode("utf-8"))
+            
 
 def new_post(msg_info, connection, ip=None):
     global db
@@ -155,7 +156,7 @@ def connect_to_new_node():
     n_connected = len(connections)
     if n_suposed_connections < n_connected:
         return
-    for i in range(5):
+    for i in range(10):
         ip = db.querry("SELECT ip FROM ips ORDER BY RAND() LIMIT 1;")
         if not check_if_connected(ip[0][0]):
             host, port = ip[0][0].split(":")
