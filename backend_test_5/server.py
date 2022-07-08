@@ -77,6 +77,7 @@ def manage_new_client(connection, conn_info):
         clients.append((connection, conn_info))
         print(3)
         thread = threading.Thread(target=client_main_loop, args=(connection, ))
+        thread.start()
 
 # Node - Node comunication
 def broadcast_ip(ip, node_ip):
