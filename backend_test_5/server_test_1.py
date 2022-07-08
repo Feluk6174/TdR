@@ -23,7 +23,7 @@ server_info = json.loads("{"+f'"type": "NODE", "host": "{HOST}", "port": {PORT},
 
 def broadcast_ip(ip, node_ip):
     global connections
-    msg_content = "{"+f'"type": "IP", "ip": {ip}'+"}"
+    msg_content = "{"+f'"type": "IP", "ip": "{ip}"'+"}"
     for connection in connections:
         if not connection[0] == node_ip:
             connection[1].send(msg_content.encode("utf-8"))
