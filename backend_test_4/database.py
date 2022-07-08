@@ -31,15 +31,14 @@ def querry(querry:str):
 
 def execute(sql:str):
     connection = connect()
-    while True:
-        try:
-            cursor = connection.cursor()
-            cursor.execute(sql)
-            connection.commit()
-            break
-        except mysql.connector.Error as e:
-            print(f"[ERROR]{threading.current_thread().name}", e)
-            connect()
+    try:
+        cursor = connection.cursor()
+        cursor.execute(sql)
+        connection.commit()
+        
+    except mysql.connector.Error as e:
+        print(f"[ERROR]{threading.current_thread().name}", e)
+        connect()
     connection.close()
 
 

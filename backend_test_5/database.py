@@ -6,9 +6,7 @@ import time
 class database():
     def __init__(self):
         self.connect()
-
         self.queue = []
-
         self.return_response = []
 
     def connect(self):
@@ -18,6 +16,10 @@ class database():
             password = "root",
             database = "TdR"
         )
+
+    def stop(self):
+        queue_id = random.randint(1000000000, 9999999999)
+        self.queue.append(("s", "stop", queue_id))
 
     def querry(self, querry:str):
         queue_id = random.randint(1000000000, 9999999999)
@@ -39,9 +41,10 @@ class database():
                     return 
 
     def proces_queue(self):
+        print("[STARTED QUEUE PROCESOR]")
         while True:
-            print(self.queue)
             if len(self.queue) > 0:
+                print(self.queue)
                 if self.queue[0][0] == "q":
                     try:
                         cursor = self.connection.cursor()
@@ -50,7 +53,6 @@ class database():
 
                     except mysql.connector.Error as e:
                         print(f"[ERROR]({threading.current_thread().name})", e)
-                        print(self.queue)
                         self.connect()
                         self.return_response.append((self.queue[0][2], "ERROR"))
 
@@ -63,10 +65,13 @@ class database():
                         
                     except mysql.connector.Error as e:
                         print(f"[ERROR]{threading.current_thread().name}", e)
-                        print(self.queue)
                         self.connect()
                         self.return_response.append((self.queue[0][2], "ERROR"))
                 
+                elif self.queue[0][0] == "s":
+                    self.queue.pop(0)
+                    break
+
                 self.queue.pop(0)
             time.sleep(0.1)
 

@@ -38,7 +38,7 @@ def receive_connections():
     global usernames, clients
     while True:
         client, address = server.accept()
-?!?jedi=0, ?!?                   (*_*data: bytes*_*, flags: int=...) ?!?jedi?!?
+        print(address)
         client.send("@username".encode("utf-8"))
         username = client.recv(1024).decode("utf-8")
     
