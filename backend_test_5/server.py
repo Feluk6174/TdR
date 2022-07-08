@@ -55,7 +55,9 @@ def client_main_loop(connection):
     print(f"[{time.asctime()}] client_main_loop")
     while True:
         try:
-            msg_info = json.loads(connection.recv(1024).decode("utf-8"))
+            temp = connection.recv(1024).decode("utf-8")
+            print(temp)
+            msg_info = json.loads(temp)
             print(msg_info)
 
             if msg_info["type"] == "REGISTER":
