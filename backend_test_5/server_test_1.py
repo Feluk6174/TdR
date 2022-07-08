@@ -56,7 +56,9 @@ def node_main_loop(connection, ip, real_ip):
     global db, get_suposed_connected, connections
     while True:
         try:
-            msg_info = json.loads(connection.recv(1024).decode("utf-8"))
+            res = connection.recv(1024).decode("utf-8")
+            print(res)
+            msg_info = json.loads(res)
 
             if msg_info["type"] == "IP":
                 manage_ip(msg_info, ip)
