@@ -62,7 +62,7 @@ class MainScreen (Screen):
         self.list_posts = []
         for post in self.all_posts_info:
             self.list_posts.append(post)
-            self.make_post_btn(post["username"], post["userimage"], post["postflags"], post["posttext"], post["postlikes"], post["postdate"])
+            self.make_post_btn(post["user_name"], post["profile_image"], post["post_flags"], post["content"], post["post_likes"], post["post_date"])
 
         """
         #posts prova
@@ -190,11 +190,18 @@ class MainScreen (Screen):
         self.third_box = BoxLayout(size_hint = (1, 0.5))
         self.post.add_widget(self.third_box)
 
-        self.flags = BoxLayout(size_hint = (2, 1))
+        self.flags = BoxLayout(size_hint = (1, 1))
         self.third_box.add_widget(self.flags)
 
-        self.flag_text = Button (text = "more")
-        self.flags.add_widget(self.flag_text)
+        self.all_flags = [['check_verd.PNG'], ['age18.PNG'], ['blood.PNG'], ['fist.PNG'], ['soga.PNG'], ['white.PNG'], ['white.PNG'], ['white.PNG'], ['white.PNG'], ['white.PNG'], ['white.PNG']]
+        for d in range(len(self.all_flags) - 1):
+            self.all_flags[d + 1].append(str(d + 1))
+        for x in range (len(self.all_flags) - 1):
+            if post_flags[x] == 1:
+                self.f_btn = Button(border = (0, 0, 0, 0), font_size = 1, size_hint_x = None, width = (Window.size[1] - Window.size[0] / 5) * 0.9 / 12, text = str(self.all_flags[x + 1][1]), background_normal = self.all_flags[x + 1][0])
+                #self.all_flags[x + 1].append(self.f_btn)
+                #self.all_flags[x + 1].append(0)
+                self.flags.add_widget(self.f_btn)
 
         self.likes = BoxLayout(size_hint = (None, 1), width = Window.size[0] / 1.61 / 3)
         self.third_box.add_widget(self.likes)
