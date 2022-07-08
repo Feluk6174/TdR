@@ -55,6 +55,17 @@ def register_user(msg_info, connection, ip=None):
         db.execute(f"INSERT INTO users(user_name, public_key, time_created, profile_picture, info) VALUES('{msg_info['user_name']}', {msg_info['public_key']}, {int(time.time())}, '{msg_info['profile_picture']}', '{msg_info['info']}');")
         broadcast(msg_info, ip)
 
+def get_posts(msg_info, connection):
+    print(f"({threading.current_thread().name})[{time.asctime()}] geting posts:", msg_info)
+
+    posts = db.querry(f"SELECT * FROM posts WHERE user_id = '{msg_info['user_name']}'")
+
+    connection.send(str(len(posts)).encode("utf-8"))
+
+    for post in posts:
+        msg = "{"+f'"id": "{post[0]}", "user_id": "{post[1]}", "content": "{post[2]}", "time_posted": {post[3]}'+"}"
+        msg.send(msg.encode("utf-8"))
+
 def client_main_loop(connection, conn_info):
     global clients
     print(f"[{time.asctime()}] client_main_loop")
@@ -71,6 +82,9 @@ def client_main_loop(connection, conn_info):
 
             if msg_info["type"] == "POST":
                 new_post(msg_info, connection)
+
+            if msg_info["type"] == "GET POSTS":
+                get_posts(msg_info, connection)
 
         except socket.error as e:
             print("[ERROR]", e)
