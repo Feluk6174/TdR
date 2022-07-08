@@ -27,6 +27,7 @@ max_clients = 10
 #Client Node comunication
 
 def broadcast(msg, ip):
+    print(f"({threading.current_thread().name})[{time.asctime()}] broadcsasting:", msg, ip)
     global connections
     for connection in connections:
         if not connection[0] == ip:
@@ -35,6 +36,7 @@ def broadcast(msg, ip):
             
 
 def new_post(msg_info, connection, ip=None):
+    print(f"({threading.current_thread().name})[{time.asctime()}] posting:", msg_info, ip)
     global db
     #CREATE TABLE posts(id INT NOT NULL PRIMARY KEY, user_id VARCHAR(16) NOT NULL, post VARCHAR(255) NOT NULL, time_posted INT NOT NULL, FOREIGN KEY (user_id) REFERENCES users (user_name));")
     res = db.querry(f"SELECT * FROM posts WHERE id = '{msg_info['post_id']}';")
@@ -44,6 +46,7 @@ def new_post(msg_info, connection, ip=None):
 
 
 def register_user(msg_info, connection, ip=None):
+    print(f"({threading.current_thread().name})[{time.asctime()}] regitering user:", msg_info, ip)
     global db
     #"CREATE TABLE users(user_name VARCHAR(16) NOT NULL UNIQUE PRIMARY KEY, public_key INT NOT NULL UNIQUE, time_created INT NOT NULL, profile_picture VARCHAR(64) NOT NULL, info VARCHAR(255));")
     res = db.querry(f"SELECT * FROM users WHERE user_name = '{msg_info['user_name']}'")
@@ -58,7 +61,7 @@ def client_main_loop(connection):
     while True:
         try:
             temp = connection.recv(1024).decode("utf-8")
-            print(temp)
+            print(f"({threading.current_thread().name})[{time.asctime()}] recived:", temp)
             msg_info = json.loads(temp)
             print(msg_info)
 
@@ -75,7 +78,7 @@ def client_main_loop(connection):
 
 def manage_new_client(connection, conn_info):
     global clients, max_clients
-    print(f"[{time.asctime()}] manage new node")
+    print(f"({threading.current_thread().name})[{time.asctime()}] managing nrew client")
     print(len(clients), max_clients)
     if len(clients) <= max_clients:
         clients.append((connection, conn_info))
