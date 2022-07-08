@@ -47,7 +47,8 @@ def new_post(msg_info, connection, ip=None):
         print(2)
         broadcast(msg_info, ip)
         print(3)
-        connection.send("OK".encode("utf-8"))
+        if ip == None:
+            connection.send("OK".encode("utf-8"))
 
 
 def register_user(msg_info, connection, ip=None):
@@ -59,7 +60,8 @@ def register_user(msg_info, connection, ip=None):
     if len(res) == 0:
         db.execute(f"INSERT INTO users(user_name, public_key, time_created, profile_picture, info) VALUES('{msg_info['user_name']}', {msg_info['public_key']}, {int(time.time())}, '{msg_info['profile_picture']}', '{msg_info['info']}');")
         broadcast(msg_info, ip)
-        connection.send("OK".encode("utf-8"))
+        if ip == None:
+            connection.send("OK".encode("utf-8"))
 
 def get_posts(msg_info, connection):
     print(f"({threading.current_thread().name})[{time.asctime()}] geting posts:", msg_info)
