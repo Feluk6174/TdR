@@ -82,10 +82,10 @@ def check_if_connected(ip):
     return False
 
 def connect_to_new_node():
-    global server_info, db
+    global server_info, db, get_suposed_connected, connections
     n_nodes = len("SELECT * FROM ips;")
     n_suposed_connections = get_suposed_connected(n_nodes)
-    n_connected = len(connection)
+    n_connected = len(connections)
     if n_suposed_connections < n_connected:
         return
     for i in range(10):
@@ -129,7 +129,7 @@ def clock():
         res = db.querry("SELECT * FROM ips;")
         print("num of known nodes:", len(res))
         for ip in res:
-            print(f"    {ip[1]}")
+            print(f"    {ip[0]}")
         broadcast_ip(IP, IP)
         time.sleep(60)
 
