@@ -20,7 +20,7 @@ connection.send(msg.encode("utf-8"))
 
 time.sleep(1)
 
-msg = '{"post_id": "1", "user_name": "Feluk6174", "content": "Hello world"}'
+msg = '{"type": "POST", "post_id": "1", "user_name": "Feluk6174", "content": "Hello world"}'
 print(msg)
 connection.send(msg.encode("utf-8"))
 

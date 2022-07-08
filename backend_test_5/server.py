@@ -55,15 +55,16 @@ def register_user(msg_info, connection, ip=None):
         db.execute(f"INSERT INTO users(user_name, public_key, time_created, profile_picture, info) VALUES('{msg_info['user_name']}', {msg_info['public_key']}, {int(time.time())}, '{msg_info['profile_picture']}', '{msg_info['info']}');")
         broadcast(msg_info, ip)
 
-def client_main_loop(connection):
+def client_main_loop(connection, conn_info):
     global clients
     print(f"[{time.asctime()}] client_main_loop")
     while True:
         try:
-            temp = connection.recv(1024).decode("utf-8")
-            print(f"({threading.current_thread().name})[{time.asctime()}] recived:", temp)
-            msg_info = json.loads(temp)
-            print(msg_info)
+            msg = connection.recv(1024).decode("utf-8")
+            if msg == "":
+                raise socket.error
+            msg_info = json.loads(msg)
+            print(f"({threading.current_thread().name})[{time.asctime()}] recived:", msg_info)
 
             if msg_info["type"] == "REGISTER":
                 register_user(msg_info, connection)
@@ -73,7 +74,7 @@ def client_main_loop(connection):
 
         except socket.error as e:
             print("[ERROR]", e)
-            clients.remove((ip, connection, real_ip))
+            clients.remove((connection, conn_info))
             break
 
 def manage_new_client(connection, conn_info):
@@ -83,7 +84,7 @@ def manage_new_client(connection, conn_info):
     if len(clients) <= max_clients:
         clients.append((connection, conn_info))
         print(3)
-        thread = threading.Thread(target=client_main_loop, args=(connection, ))
+        thread = threading.Thread(target=client_main_loop, args=(connection, conn_info))
         thread.start()
 
 # Node - Node comunication
