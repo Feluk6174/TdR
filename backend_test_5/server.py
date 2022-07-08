@@ -43,6 +43,7 @@ def new_post(msg_info, connection, ip=None):
     if len(res) == 0:
         db.querry(f"INSERT INTO posts(id, user_id, post, time_posted) VALUES('{msg_info['post_id']}', '{msg_info['user_name']}', '{msg_info['content']}', {int(time.time())});")
         broadcast(msg_info, ip)
+        connection.send("OK".encode("utf-8"))
 
 
 def register_user(msg_info, connection, ip=None):
@@ -54,6 +55,7 @@ def register_user(msg_info, connection, ip=None):
     if len(res) == 0:
         db.execute(f"INSERT INTO users(user_name, public_key, time_created, profile_picture, info) VALUES('{msg_info['user_name']}', {msg_info['public_key']}, {int(time.time())}, '{msg_info['profile_picture']}', '{msg_info['info']}');")
         broadcast(msg_info, ip)
+        connection.send("OK".encode("utf-8"))
 
 def get_posts(msg_info, connection):
     print(f"({threading.current_thread().name})[{time.asctime()}] geting posts:", msg_info)
@@ -65,6 +67,9 @@ def get_posts(msg_info, connection):
     for post in posts:
         msg = "{"+f'"id": "{post[0]}", "user_id": "{post[1]}", "content": "{post[2]}", "time_posted": {post[3]}'+"}"
         msg.send(msg.encode("utf-8"))
+        if not connection.recv(1024).decode("utf-8") == "OK":
+            break
+
 
 def client_main_loop(connection, conn_info):
     global clients
