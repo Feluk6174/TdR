@@ -21,10 +21,10 @@ def register_user(user_name, public_key, profile_picture, info):
     time.sleep(1)
 
 
-def post(content, post_id, user_name):
+def post(content, post_id, user_name, flags):
     global connection
     print(2)
-    msg = "{"+f'"type": "POST", "post_id": "{post_id}", "user_name": "{user_name}", "content": "{content}"'+"}"
+    msg = "{"+f'"type": "POST", "post_id": "{post_id}", "user_name": "{user_name}", "content": "{content}, "flags": "{flags}"'+"}"
     connection.send(msg.encode("utf-8"))
     response = connection.recv(1024).decode("utf-8")
     if not response == "OK":
