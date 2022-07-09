@@ -28,8 +28,6 @@ import chat_screen, home_screen, loading_screen, post_screen, profile_screen, se
 Window.size = (540*0.7, 880*0.7)
 
 
-
-
 class MyApp (App):
     def build(self):
         sm = ScreenManager()

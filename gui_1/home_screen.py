@@ -34,12 +34,12 @@ def GetNewPosts():
         foll_posts = api.get_posts(following)
         foll_info = api.get_user(following)
         for post in foll_posts:
-            all_posts.append((following, foll_info["profile_picture"], post["flags"], post["content"], 0, ChangeTime(post["time_posted"])))
+            all_posts.append((following, foll_info["profile_picture"], post["flags"], post["content"], 0, post["time_posted"]))
     return all_posts
 
 def ChangeTime(date):
-    date_post = date
-    dt_obj = datetime.fromtimestamp(date_post).strftime('%d/%m/%y')
+    date_post = int(date)
+    dt_obj = datetime.fromtimestamp(date_post).strftime('%d-%m-%y')
     return dt_obj
 
 def hex_color(hex_num):
@@ -225,7 +225,7 @@ class MainScreen (Screen):
             
         self.im = GridLayout(cols = 8, size_hint_x = None, width = Window.size[0] / 1.61 / 6)
         self.first_box.add_widget(self.im)
-        self.BuildImage(self, user_image)
+        self.BuildImage(user_image)
         
         self.pname = Button(text = user_name)
         self.first_box.add_widget(self.pname)
@@ -272,7 +272,7 @@ class MainScreen (Screen):
         for x in range (64):
             self.color_bit = Button(background_normal = '', background_color = kivy.utils.get_color_from_hex(hex_color(self.color_list[x])), on_release = self.Image_press)
             self.color_button_list.append(self.color_bit)
-            self.im.add_widget(self.color_button_list)
+            self.im.add_widget(self.color_bit)
 
     def Name_press(self, instance):
         pass
