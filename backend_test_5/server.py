@@ -35,7 +35,7 @@ def broadcast(msg, ip):
             connection[1].send(json.dumps(msg).encode("utf-8"))
             if not ip == None:
                 response = connection[1].recv(1024).decode("utf-8")
-                print(response)
+                print(msg, ip, response)
                 if not response == "OK":
                     print(response)
             
