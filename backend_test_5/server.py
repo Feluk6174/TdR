@@ -100,12 +100,12 @@ def client_main_loop(connection, conn_info):
             print(f"({threading.current_thread().name})[{time.asctime()}] recived:", msg_info)
 
             if msg_info["type"] == "REGISTER":
-                connection.send("OK".encode("utf-8"))
                 register_user(msg_info, connection)
+                connection.send("OK".encode("utf-8"))
 
             if msg_info["type"] == "POST":
-                connection.send("OK".encode("utf-8"))
                 new_post(msg_info, connection)
+                connection.send("OK".encode("utf-8"))
 
             if msg_info["type"] == "GET POSTS":
                 get_posts(msg_info, connection)
@@ -166,12 +166,12 @@ def node_main_loop(connection, ip, real_ip):
                 manage_ip(msg_info, ip)
 
             if msg_info["type"] == "REGISTER":
-                connection.send("OK".encode("utf-8"))
                 register_user(msg_info, connection, ip=ip)
+                connection.send("OK".encode("utf-8"))
 
             if msg_info["type"] == "POST":
-                connection.send("OK".encode("utf-8"))
                 new_post(msg_info, connection, ip=ip)
+                connection.send("OK".encode("utf-8"))
 
 
             n_connected = len(connections)
