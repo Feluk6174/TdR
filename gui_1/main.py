@@ -47,7 +47,7 @@ class MyApp (App):
     def build(self):
         sm = ScreenManager()
         #sm.add_widget(loading_screen.LoadScreen(name = "load"))
-        sm.add_widget(register_screen.RegisterScreen(name = "register"))
+        #sm.add_widget(register_screen.RegisterScreen(name = "register"))
         sm.add_widget(home_screen.MainScreen(name = "main"))
         sm.add_widget(chat_screen.ChatScreen(name = "chat"))
         sm.add_widget(search_screen.SearchScreen(name = "search"))
