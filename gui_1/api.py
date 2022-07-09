@@ -44,9 +44,15 @@ def get_posts(user_name:str):
     time.sleep(1)
     return posts
 
+def get_user(user_name:str):
+    global connection
+    msg = "{"+f'"type": "GET USER", "user_name": "{user_name}"'+"}"
+    connection.send(msg.encode("utf-8"))
+    response = connection.recv(1024).decode("utf-8")
+    print(response)
+    time.sleep(1)
+    return json.loads(response)
+
 def close():
     global connection
     connection.close()
-
-
-

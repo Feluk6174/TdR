@@ -23,9 +23,9 @@ from kivy.uix.screenmanager import SlideTransition
 import kivy.utils
 import json
 
-import chat_screen, home_screen, loading_screen, post_screen, profile_screen, search_screen, acces_my_info
+import chat_screen, home_screen, loading_screen, post_screen, profile_screen, search_screen, acces_my_info, register_screen
 
-#Window.size = (540*0.7, 880*0.7)
+Window.size = (540*0.7, 880*0.7)
 
 
 
@@ -34,6 +34,7 @@ class MyApp (App):
     def build(self):
         sm = ScreenManager()
         #sm.add_widget(loading_screen.LoadScreen(name = "load"))
+        #sm.add_widget(register_screen.RegisterScreen(name = "register"))
         sm.add_widget(home_screen.MainScreen(name = "main"))
         sm.add_widget(chat_screen.ChatScreen(name = "chat"))
         sm.add_widget(search_screen.SearchScreen(name = "search"))
