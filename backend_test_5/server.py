@@ -33,7 +33,10 @@ def broadcast(msg, ip):
         if not connection[0] == ip:
             print("b",json.dumps(msg))
             connection[1].send(json.dumps(msg).encode("utf-8"))
-            time.sleep(0.1)
+            response = connection.recv(1024).decode("utf-8")
+            if not response == "OK":
+                print(response)
+            
             
 
 def new_post(msg_info, connection, ip=None):
@@ -97,9 +100,11 @@ def client_main_loop(connection, conn_info):
             print(f"({threading.current_thread().name})[{time.asctime()}] recived:", msg_info)
 
             if msg_info["type"] == "REGISTER":
+                connection.send("OK".encode("utf-8"))
                 register_user(msg_info, connection)
 
             if msg_info["type"] == "POST":
+                connection.send("OK".encode("utf-8"))
                 new_post(msg_info, connection)
 
             if msg_info["type"] == "GET POSTS":
@@ -161,9 +166,11 @@ def node_main_loop(connection, ip, real_ip):
                 manage_ip(msg_info, ip)
 
             if msg_info["type"] == "REGISTER":
+                connection.send("OK".encode("utf-8"))
                 register_user(msg_info, connection, ip=ip)
 
             if msg_info["type"] == "POST":
+                connection.send("OK".encode("utf-8"))
                 new_post(msg_info, connection, ip=ip)
 
 
