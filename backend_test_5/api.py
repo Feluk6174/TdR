@@ -12,6 +12,7 @@ time.sleep(0.01)
 
 def register_user(user_name, public_key, profile_picture, info):
     global connection
+    print(1)
     msg = "{"+f'"type": "REGISTER", "user_name": "{user_name}", "public_key": {public_key}, "profile_picture": "{profile_picture}", "info": "{info}"'+"}"
     connection.send(msg.encode("utf-8"))
     response = connection.recv(1024).decode("utf-8")
@@ -21,6 +22,7 @@ def register_user(user_name, public_key, profile_picture, info):
 
 def post(content, post_id, user_name):
     global connection
+    print(2)
     msg = "{"+f'"type": "POST", "post_id": "{post_id}", "user_name": "{user_name}", "content": "{content}"'+"}"
     connection.send(msg.encode("utf-8"))
     response = connection.recv(1024).decode("utf-8")
@@ -30,6 +32,7 @@ def post(content, post_id, user_name):
 
 def get_posts(user_name):
     global connection
+    print(3)
     posts = []
     msg = "{"+f'"type": "GET POSTS", "user_name": "{user_name}"'+"}"
     connection.send(msg.encode("utf-8"))
