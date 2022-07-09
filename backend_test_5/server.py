@@ -29,11 +29,13 @@ max_clients = 10
 def broadcast(msg, ip):
     print(f"({threading.current_thread().name})[{time.asctime()}] broadcsasting:", msg, ip)
     global connections
-    for connection in connections:
+    for i, connection in enumerate(connections):
+        print(1)
         if not connection[0] == ip:
             print("b",json.dumps(msg))
             connection[1].send(json.dumps(msg).encode("utf-8"))
             if not ip == None:
+                print(2)
                 response = connection[1].recv(1024).decode("utf-8")
                 print(msg, ip, response)
                 if not response == "OK":
