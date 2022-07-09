@@ -43,10 +43,10 @@ def SendPostFinal(postflags, textp, nlikes):
     content = textp
     user_name = GetName()
     post_flags = str(postflags)
-    post_likes = nlikes
-    date = int(time.time())
-    post_id = hash(str(content) + str(user_name) + str(post_flags) + str(date))
-    return (content, post_id, user_name, post_flags, post_likes, date)
+    #post_likes = nlikes
+    #date = int(time.time())
+    post_id = hash(str(content) + str(user_name) + str(post_flags))
+    return (content, post_id, user_name, post_flags)
 
 class PostUserScreen (Screen):
     def __init__(self, **kwargs):
