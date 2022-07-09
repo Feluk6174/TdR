@@ -29,17 +29,10 @@ max_clients = 10
 def broadcast(msg, ip):
     print(f"({threading.current_thread().name})[{time.asctime()}] broadcsasting:", msg, ip)
     global connections
-    for i, connection in enumerate(connections):
-        print(1)
+    for connection in connections:
         if not connection[0] == ip:
             print("b",json.dumps(msg))
             connection[1].send(json.dumps(msg).encode("utf-8"))
-            if not ip == None:
-                print(2, connection)
-                response = connection[1].recv(1024).decode("utf-8")
-                print(msg, ip, response)
-                if not response == "OK":
-                    print("[ERROR]",response)
             
 
 def new_post(msg_info, connection, ip=None):
@@ -95,7 +88,6 @@ def client_main_loop(connection, conn_info):
     print(f"[{time.asctime()}] client_main_loop")
     while True:
         try:
-            print(connection)
             msg = connection.recv(1024).decode("utf-8")
             if msg == "":
                 raise socket.error
@@ -134,11 +126,6 @@ def broadcast_ip(ip, node_ip):
     for connection in connections:
         if not connection[0] == node_ip:
             connection[1].send(msg_content.encode("utf-8"))
-            response = connection[1].recv(1024).decode("utf-8")
-            print(ip, node_ip, response)
-            if not response == "OK":
-                print("[ERROR]",response)
-
 
 def manage_ip(msg_info, node_ip):
     global IP, db
@@ -166,19 +153,16 @@ def node_main_loop(connection, ip, real_ip):
     while True:
         try:
             res = connection.recv(1024).decode("utf-8")
-            print(res, ip)
+            print(res)
             msg_info = json.loads(res)
 
             if msg_info["type"] == "IP":
-                connection.send("OK".encode("utf-8"))
                 manage_ip(msg_info, ip)
 
             if msg_info["type"] == "REGISTER":
-                connection.send("OK".encode("utf-8"))
                 register_user(msg_info, connection, ip=ip)
 
             if msg_info["type"] == "POST":
-                connection.send("OK".encode("utf-8"))
                 new_post(msg_info, connection, ip=ip)
 
 
