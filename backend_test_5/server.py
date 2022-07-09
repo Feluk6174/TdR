@@ -162,12 +162,9 @@ def node_main_loop(connection, ip, real_ip):
 
             if msg_info["type"] == "REGISTER":
                 register_user(msg_info, connection, ip=ip)
-                connection.send("RES".encode("utf-8"))
 
             if msg_info["type"] == "POST":
                 new_post(msg_info, connection, ip=ip)
-                connection.send("RES".encode("utf-8"))
-
 
             n_connected = len(connections)
             n_nodes = len(db.querry("SELECT * FROM ips;"))
