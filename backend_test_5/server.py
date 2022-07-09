@@ -159,7 +159,7 @@ def node_main_loop(connection, ip, real_ip):
     while True:
         try:
             res = connection.recv(1024).decode("utf-8")
-            print(res)
+            print("n_m", ip, res)
             msg_info = json.loads(res)
 
             if msg_info["type"] == "IP":
