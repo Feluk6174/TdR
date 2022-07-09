@@ -1,5 +1,5 @@
 import database
-import threading, time, socket, sys, json
+import threading, time, socket, sys, json, math
 
 HOST = "192.168.178.138"
 try:
@@ -68,6 +68,7 @@ def register_user(msg_info, connection, ip=None):
         connection.send("ALREADY EXISTS".encode("utf-8"))
 
 def get_posts(msg_info, connection):
+    global db
     print(f"({threading.current_thread().name})[{time.asctime()}] geting posts:", msg_info)
 
     posts = db.querry(f"SELECT * FROM posts WHERE user_id = '{msg_info['user_name']}'")
@@ -82,6 +83,16 @@ def get_posts(msg_info, connection):
         connection.send(msg.encode("utf-8"))
         if not connection.recv(1024).decode("utf-8") == "OK":
             break
+
+def get_user_info(msg_info, connection):
+    global db
+    # (user_name, public_key, time_created, profile_picture, info)
+    user_info = db.querry(f"SELECT * FROM users WHERE user_name = '{msg_info['user_name']}';")
+    print(user_info)
+    user_info = user_info[0]
+    msg = "{"+f'"user_name": "{user_info[0]}", "public_key": {user_info[1]}, "time_created": {user_info[2]}, "profile_picture": "{user_info[3]}", "info": "{user_info[4]}"'+"}"
+    connection.send(msg.encode("utf-8"))
+
 
 
 def client_main_loop(connection, conn_info):
@@ -104,6 +115,9 @@ def client_main_loop(connection, conn_info):
 
             if msg_info["type"] == "GET POSTS":
                 get_posts(msg_info, connection)
+            
+            if msg_info["type"] == "GET USER":
+                get_user_info(msg_info, connection)
 
         except socket.error as e:
             print("[ERROR]", e)
