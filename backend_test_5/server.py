@@ -31,7 +31,7 @@ def broadcast(msg, ip):
     global connections
     for connection in connections:
         if not connection[0] == ip:
-            print("b",json.dumps(msg))
+            print("b", ip, connection[0], json.dumps(msg))
             connection[1].send(json.dumps(msg).encode("utf-8"))
             response = connection[1].recv(1024).decode("utf-8")
             if not response == "OK":
