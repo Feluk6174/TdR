@@ -25,7 +25,7 @@ import json
 
 import chat_screen, home_screen, loading_screen, post_screen, profile_screen, search_screen
 
-Window.size = (540*0.7, 880*0.7)
+#Window.size = (540*0.7, 880*0.7)
 
 my_user_info = json.loads(open("my_info.json", "r").read())
 username = my_user_info["user_name"]
