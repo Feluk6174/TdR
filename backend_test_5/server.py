@@ -31,11 +31,11 @@ def broadcast(msg, ip):
     global connections
     for connection in connections:
         if not connection[0] == ip:
-            print("b",json.dumps(msg))
+            print("b", ip, connection[0], json.dumps(msg))
             connection[1].send(json.dumps(msg).encode("utf-8"))
             response = connection[1].recv(1024).decode("utf-8")
-            if not response == "OK":
-                print(response)
+            if not response == "RES":
+                print("b", response)
             
             
 
@@ -62,7 +62,7 @@ def register_user(msg_info, connection, ip=None):
 
     if len(res) == 0:
         sql = f"INSERT INTO users(user_name, public_key, time_created, profile_picture, info) VALUES('{msg_info['user_name']}', {msg_info['public_key']}, {int(time.time())}, '{msg_info['profile_picture']}', '{msg_info['info']}');"
-        print(sql)
+        print("r",sql)
         db.execute(sql)
         broadcast(msg_info, ip)
         if ip == None:
@@ -95,17 +95,17 @@ def client_main_loop(connection, conn_info):
             msg = connection.recv(1024).decode("utf-8")
             if msg == "":
                 raise socket.error
-            print(msg)
+            print("m", msg)
             msg_info = json.loads(msg)
             print(f"({threading.current_thread().name})[{time.asctime()}] recived:", msg_info)
 
             if msg_info["type"] == "REGISTER":
-                connection.send("OK".encode("utf-8"))
                 register_user(msg_info, connection)
+                connection.send("OK".encode("utf-8"))
 
             if msg_info["type"] == "POST":
-                connection.send("OK".encode("utf-8"))
                 new_post(msg_info, connection)
+                connection.send("OK".encode("utf-8"))
 
             if msg_info["type"] == "GET POSTS":
                 get_posts(msg_info, connection)
@@ -159,19 +159,19 @@ def node_main_loop(connection, ip, real_ip):
     while True:
         try:
             res = connection.recv(1024).decode("utf-8")
-            print(res)
+            print("n_m", ip, res)
             msg_info = json.loads(res)
 
             if msg_info["type"] == "IP":
                 manage_ip(msg_info, ip)
 
             if msg_info["type"] == "REGISTER":
-                connection.send("OK".encode("utf-8"))
                 register_user(msg_info, connection, ip=ip)
+                connection.send("RES".encode("utf-8"))
 
             if msg_info["type"] == "POST":
-                connection.send("OK".encode("utf-8"))
                 new_post(msg_info, connection, ip=ip)
+                connection.send("RES".encode("utf-8"))
 
 
             n_connected = len(connections)
