@@ -20,9 +20,63 @@ import time
 from kivy.clock import Clock
 from kivy.uix.screenmanager import FallOutTransition
 from kivy.uix.screenmanager import SlideTransition
+import kivy.utils
+from kivy.uix.dropdown import DropDown
+import json
 
 def get_post_text(num):
     return(str(num))
+
+
+my_user_info = json.loads(open("my_info.json", "r").read())
+user_name = my_user_info["user_name"]
+profile_image = my_user_info["profile_image"]
+user_pub_key = my_user_info["user_pub_key"]
+user_priv_key = my_user_info["user_priv_key"]
+
+def GetName():
+    return user_name
+def GetImage():
+    return profile_image
+def GetPubKey():
+    return user_pub_key
+def GetPrivKey():
+    return user_priv_key
+
+def hex_color(hex_num):
+    if hex_num == "0":
+        col = '#000000'
+    if hex_num == "1":
+        col = '#7e7e7e'
+    if hex_num == "2":
+        col = '#bebebe'
+    if hex_num == "3":
+        col = '#ffffff'
+    if hex_num == "4":
+        col = '#7e0000'
+    if hex_num == "5":
+        col = '#fe0000'
+    if hex_num == "6":
+        col = '#047e00'
+    if hex_num == "7":
+        col = '#06ff04'
+    if hex_num == "8":
+        col = '#7e7e00'
+    if hex_num == "9":
+        col = '#ffff04'
+    if hex_num == "A":
+        col = '#00007e'
+    if hex_num == "B":
+        col = '#0000ff'
+    if hex_num == "C":
+        col = '#7e007e'
+    if hex_num == "D":
+        col = '#fe00ff'
+    if hex_num == "E":
+        col = '#047e7e'
+    if hex_num == "F":
+        col = '#06ffff'
+    return col
 
 class ProfileScreen (Screen):
     def __init__(self, **kwargs):
@@ -42,7 +96,7 @@ class ProfileScreen (Screen):
         self.box1.add_widget(self.text1)
         self.text1.bind(on_text_validate = self.Search1)
         
-        self.btn1 = Button(border = (0, 0, 0, 0), size_hint = (None, None), size = (Window.size[1] * 0.1, Window.size[1] * 0.1), background_normal = 'settings1.png', background_down = 'settings2.png')
+        self.btn1 = Button(border = (0, 0, 0, 0), size_hint = (None, None), size = ((Window.size[1] - Window.size[0] / 5) * 0.1, (Window.size[1] - Window.size[0] / 5) * 0.1), background_normal = 'settings1.png', background_down = 'settings2.png')
         self.box1.add_widget(self.btn1)
         self.btn1.bind(on_press = self.Settings)
         
@@ -60,11 +114,12 @@ class ProfileScreen (Screen):
         self.user_n_f = BoxLayout(size_hint_y = None, height = (Window.size[1]  - Window.size[0] / 5) * 0.9 / 5)
         self.grid.add_widget(self.user_n_f)
 
-        self.us_image = Button(text = "Foto", size_hint_x = None, width =  (Window.size[1] - Window.size[0] / 5) * 0.9 / 5)
+        self.us_image = GridLayout(cols = 8, size_hint_x = None, width =  (Window.size[1] - Window.size[0] / 5) * 0.9 / 5)
         self.user_n_f.add_widget(self.us_image)
-        self.us_image.bind(on_press = self.UserImage)
+        self.us_image_list = GetImage()
+        self.BuildImage(self.us_image_list)        
 
-        self.us_name = Button(text = "Name")
+        self.us_name = Button(text = GetName())
         self.user_n_f.add_widget(self.us_name)
         self.us_name.bind(on_press = self.UserName)
 
@@ -131,10 +186,19 @@ class ProfileScreen (Screen):
     def Settings(self, instance):
         pass
 
+    def BuildImage(self, user_image):
+        self.color_list = user_image
+        self.color_button_list = []
+        for x in range (64):
+            self.color_bit = Button(background_normal = '', background_color = kivy.utils.get_color_from_hex(hex_color(self.color_list[x])), on_release = self.Image_press)
+            self.color_button_list.append(self.color_bit)
+            self.us_image.add_widget(self.color_bit)
+
+
     def UserName(self, instance):
         pass
 
-    def UserImage(self, instance):
+    def Image_press(self, instance):
         pass
 
     def UserDescription(self, instance):
@@ -194,8 +258,6 @@ class ProfileScreen (Screen):
         for a in range (self.quant_f_p):
             self.btn_f = Button (size_hint_y = None, height = Window.size[0] / 1.61, text = "F" + (get_post_text(a)))
             self.favourite_posts.add_widget(self.btn_f)
-            
-        
         
         self.grid.bind(minimum_height=self.grid.setter('height'))
         self.current_posts = 2

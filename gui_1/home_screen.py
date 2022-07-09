@@ -21,6 +21,53 @@ import time
 from kivy.clock import Clock
 from kivy.uix.screenmanager import FallOutTransition
 from kivy.uix.screenmanager import SlideTransition
+import kivy.utils
+from datetime import datetime
+  
+
+def GetNewPosts():
+    all_posts = []
+    return all_posts
+
+def ChangeTime(date):
+    date_post = date
+    dt_obj = datetime.fromtimestamp(date_post).strftime('%d/%m/%y')
+    return dt_obj
+
+def hex_color(hex_num):
+    if hex_num == "0":
+        col = '#000000'
+    if hex_num == "1":
+        col = '#7e7e7e'
+    if hex_num == "2":
+        col = '#bebebe'
+    if hex_num == "3":
+        col = '#ffffff'
+    if hex_num == "4":
+        col = '#7e0000'
+    if hex_num == "5":
+        col = '#fe0000'
+    if hex_num == "6":
+        col = '#047e00'
+    if hex_num == "7":
+        col = '#06ff04'
+    if hex_num == "8":
+        col = '#7e7e00'
+    if hex_num == "9":
+        col = '#ffff04'
+    if hex_num == "A":
+        col = '#00007e'
+    if hex_num == "B":
+        col = '#0000ff'
+    if hex_num == "C":
+        col = '#7e007e'
+    if hex_num == "D":
+        col = '#fe00ff'
+    if hex_num == "E":
+        col = '#047e7e'
+    if hex_num == "F":
+        col = '#06ffff'
+    return col
 
 def get_post_text(num):
     return str(num)
@@ -58,7 +105,7 @@ class MainScreen (Screen):
         self.scroll.add_widget (self.grid)
         self.box2.add_widget (self.scroll)
 
-        self.all_posts_info = []
+        self.all_posts_info = GetNewPosts()
         self.list_posts = []
         for post in self.all_posts_info:
             self.list_posts.append(post)
@@ -170,15 +217,15 @@ class MainScreen (Screen):
         self.first_box = BoxLayout(orientation = "horizontal", size_hint = (1, 0.5))
         self.post.add_widget(self.first_box)
             
-        self.im = Button(size_hint_x = None, width = Window.size[0] / 1.61 / 6)
+        self.im = GridLayout(cols = 8, size_hint_x = None, width = Window.size[0] / 1.61 / 6)
         self.first_box.add_widget(self.im)
-        self.im.bind(on_press = partial(self.Image_press))
+        self.BuildImage(self, user_image)
         
         self.pname = Button(text = user_name)
         self.first_box.add_widget(self.pname)
         self.pname.bind(on_press = partial(self.Name_press))
 
-        self.date = Label(size_hint_x = None, width = Window.size[0] / 1.61 / 3, text = date)
+        self.date = Label(size_hint_x = None, width = Window.size[0] / 1.61 / 3, text = str(ChangeTime(date)))
         self.first_box.add_widget(self.date)
 
         self.second_box = BoxLayout(size_hint = (1, 2))
@@ -206,12 +253,20 @@ class MainScreen (Screen):
         self.likes = BoxLayout(size_hint = (None, 1), width = Window.size[0] / 1.61 / 3)
         self.third_box.add_widget(self.likes)
 
-        self.like_heart = Button(background_normal = 'heart.png')
+        self.like_heart = Button(border = (0, 0, 0, 0), background_normal = 'heart.png')
         self.likes.add_widget(self.like_heart)
         self.like_heart.bind(on_press = self.Like_press)
 
         self.num_likes = Label (text = (str(nlikes)), size_hint = (1, 1))
         self.likes.add_widget(self.num_likes)
+    
+    def BuildImage(self, user_image):
+        self.color_list = user_image
+        self.color_button_list = []
+        for x in range (64):
+            self.color_bit = Button(background_normal = '', background_color = kivy.utils.get_color_from_hex(hex_color(self.color_list[x])), on_release = self.Image_press)
+            self.color_button_list.append(self.color_bit)
+            self.im.add_widget(self.color_button_list)
 
     def Name_press(self, instance):
         pass

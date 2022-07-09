@@ -20,11 +20,33 @@ import time
 from kivy.clock import Clock
 from kivy.uix.screenmanager import FallOutTransition
 from kivy.uix.screenmanager import SlideTransition
+import kivy.utils
+import json
+import random
 
-def SendPostFinal(post_flags, textp, nlikes):
-    #content, post_id, user_name
-    #user_name, user_image, post_flags, textp, nlikes, date
-    pass
+my_user_info = json.loads(open("my_info.json", "r").read())
+username = my_user_info["user_name"]
+profileimage = my_user_info["profile_image"]
+user_pub_key = my_user_info["user_pub_key"]
+user_priv_key = my_user_info["user_priv_key"]
+
+def GetName():
+    return username
+def GetImage():
+    return profileimage
+def GetPubKey():
+    return user_pub_key
+def GetPrivKey():
+    return user_priv_key
+
+def SendPostFinal(postflags, textp, nlikes):
+    content = textp
+    user_name = GetName()
+    post_flags = str(postflags)
+    post_likes = nlikes
+    date = int(time.time())
+    post_id = hash(str(content) + str(user_name) + str(post_flags) + str(date))
+    print (content, post_id, user_name, post_flags, post_likes, date)
 
 class PostUserScreen (Screen):
     def __init__(self, **kwargs):
@@ -87,7 +109,6 @@ class PostUserScreen (Screen):
             self.all_flags[x + 1].append(0)
             self.grid2.add_widget(self.f_btn)
             
-        
         self.send = Button (text = "Publish", size_hint = (1, 1))
         self.grid.add_widget(self.send)
         self.send.bind(on_press = self.SendPost)
@@ -134,9 +155,9 @@ class PostUserScreen (Screen):
             instance.background_normal = self.all_flags[flag][0]
 
     def SendPost(self, instance):
-        self.flag_list = []
+        self.flag_list = ""
         for y in range (len(self.all_flags) - 1):
-            self.flag_list.append(self.all_flags[y + 1][3])
+            self.flag_list = self.flag_list + str(self.all_flags[y + 1][3])
         SendPostFinal(self.flag_list, str(self.actp.text) + ". " + str(self.actp2.text) + ". " + str(self.actp3.text), 0)
         self.actp.text = ""
         self.actp2.text = ""

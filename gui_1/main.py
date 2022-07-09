@@ -20,10 +20,28 @@ import time
 from kivy.clock import Clock
 from kivy.uix.screenmanager import FallOutTransition
 from kivy.uix.screenmanager import SlideTransition
+import kivy.utils
+import json
 
 import chat_screen, home_screen, loading_screen, post_screen, profile_screen, search_screen
 
 Window.size = (540*0.7, 880*0.7)
+
+my_user_info = json.loads(open("my_info.json", "r").read())
+username = my_user_info["user_name"]
+profileimage = my_user_info["profile_image"]
+user_pub_key = my_user_info["user_pub_key"]
+user_priv_key = my_user_info["user_priv_key"]
+
+def GetName():
+    return username
+def GetImage():
+    return profileimage
+def GetPubKey():
+    return user_pub_key
+def GetPrivKey():
+    return user_priv_key
+
 
 class MyApp (App):
     def build(self):

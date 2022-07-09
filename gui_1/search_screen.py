@@ -21,6 +21,7 @@ import time
 from kivy.clock import Clock
 from kivy.uix.screenmanager import FallOutTransition
 from kivy.uix.screenmanager import SlideTransition
+import kivy.utils
 
 def get_post_text(num):
     return (str(num))
