@@ -64,7 +64,7 @@ class ChatScreen (Screen):
         self.scroll.add_widget (self.grid)
         self.box2.add_widget (self.scroll)
 
-        self.ran2 = Button (border = (0, 0, 0, 0), background_normal = 'dice1.PNG', size_hint = (None, None), height = Window.size[0] * 0.2, width = Window.size[0] * 0.2, pos_hint = {"x" : 0.75, "y" : 0.035})
+        self.ran2 = Button (border = (0, 0, 0, 0), background_normal = 'dice1.png', size_hint = (None, None), height = Window.size[0] * 0.2, width = Window.size[0] * 0.2, pos_hint = {"x" : 0.75, "y" : 0.035})
         self.lay_float.add_widget(self.ran2)
         self.ran2.bind(on_press = self.random2)
 
