@@ -51,6 +51,8 @@ def new_post(msg_info, connection, ip=None):
         print(3)
         if ip == None:
             connection.send("OK".encode("utf-8"))
+    elif ip == None:
+        connection.send("ALREADY EXISTS".encode("utf-8"))
 
 
 def register_user(msg_info, connection, ip=None):
@@ -66,6 +68,8 @@ def register_user(msg_info, connection, ip=None):
         broadcast(msg_info, ip)
         if ip == None:
             connection.send("OK".encode("utf-8"))
+    elif ip == None:
+        connection.send("ALREADY EXISTS".encode("utf-8"))
 
 def get_posts(msg_info, connection):
     print(f"({threading.current_thread().name})[{time.asctime()}] geting posts:", msg_info)
