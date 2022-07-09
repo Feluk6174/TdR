@@ -3,12 +3,12 @@ import json
 import time
 
 connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-connection.connect(("192.168.178.138", 30002))
+connection.connect(("192.168.178.138", 30003))
 
 msg = '{"type": "CLIENT"}'
 connection.send(msg.encode("utf-8"))
 
-time.sleep(0.01)
+time.sleep(1)
 
 def register_user(user_name, public_key, profile_picture, info):
     global connection
@@ -18,6 +18,7 @@ def register_user(user_name, public_key, profile_picture, info):
     response = connection.recv(1024).decode("utf-8")
     if not response == "OK":
         print(response)
+    time.sleep(1)
 
 
 def post(content, post_id, user_name):
@@ -28,6 +29,7 @@ def post(content, post_id, user_name):
     response = connection.recv(1024).decode("utf-8")
     if not response == "OK":
         print(response)
+    time.sleep(1)
 
 
 def get_posts(user_name):
@@ -42,6 +44,7 @@ def get_posts(user_name):
     for _ in range(num):
         posts.append(json.loads(connection.recv(1024).decode("utf-8")))
         connection.send("OK".encode("utf-8"))
+    time.sleep(1)
     return posts
 
 def close():
