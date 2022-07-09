@@ -35,7 +35,7 @@ def broadcast(msg, ip):
             print("b",json.dumps(msg))
             connection[1].send(json.dumps(msg).encode("utf-8"))
             if not ip == None:
-                print(2)
+                print(2, connection)
                 response = connection[1].recv(1024).decode("utf-8")
                 print(msg, ip, response)
                 if not response == "OK":
@@ -95,6 +95,7 @@ def client_main_loop(connection, conn_info):
     print(f"[{time.asctime()}] client_main_loop")
     while True:
         try:
+            print(connection)
             msg = connection.recv(1024).decode("utf-8")
             if msg == "":
                 raise socket.error
