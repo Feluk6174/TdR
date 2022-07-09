@@ -39,7 +39,7 @@ def broadcast(msg, ip):
                 response = connection[1].recv(1024).decode("utf-8")
                 print(msg, ip, response)
                 if not response == "OK":
-                    print(response)
+                    print("[ERROR]",response)
             
 
 def new_post(msg_info, connection, ip=None):
@@ -161,7 +161,7 @@ def node_main_loop(connection, ip, real_ip):
     while True:
         try:
             res = connection.recv(1024).decode("utf-8")
-            print(res)
+            print(res, ip)
             msg_info = json.loads(res)
 
             if msg_info["type"] == "IP":
