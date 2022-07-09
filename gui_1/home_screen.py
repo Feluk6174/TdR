@@ -246,12 +246,10 @@ class MainScreen (Screen):
         self.flags = BoxLayout(size_hint = (1, 1))
         self.third_box.add_widget(self.flags)
 
-        self.all_flags = [['check_verd.PNG'], ['age18.PNG'], ['blood.PNG'], ['fist.PNG'], ['soga.PNG'], ['white.PNG'], ['white.PNG'], ['white.PNG'], ['white.PNG'], ['white.PNG'], ['white.PNG']]
-        for d in range(len(self.all_flags) - 1):
-            self.all_flags[d + 1].append(str(d + 1))
+        self.all_flags = [['check_verd.png'], ['age18.png'], ['blood.png'], ['fist.png'], ['soga.png'], ['white.png'], ['white.png'], ['white.png'], ['white.png'], ['white.png'], ['white.png']]
         for x in range (len(self.all_flags) - 1):
             if post_flags[x] == 1:
-                self.f_btn = Button(border = (0, 0, 0, 0), font_size = 1, size_hint_x = None, width = (Window.size[1] - Window.size[0] / 5) * 0.9 / 12, text = str(self.all_flags[x + 1][1]), background_normal = self.all_flags[x + 1][0])
+                self.f_btn = Button(border = (0, 0, 0, 0), size_hint_x = None, width = (Window.size[1] - Window.size[0] / 5) * 0.9 / 12, background_normal = self.all_flags[x + 1][0])
                 #self.all_flags[x + 1].append(self.f_btn)
                 #self.all_flags[x + 1].append(0)
                 self.flags.add_widget(self.f_btn)
@@ -259,7 +257,7 @@ class MainScreen (Screen):
         self.likes = BoxLayout(size_hint = (None, 1), width = Window.size[0] / 1.61 / 3)
         self.third_box.add_widget(self.likes)
 
-        self.like_heart = Button(border = (0, 0, 0, 0), background_normal = 'heart.png')
+        self.like_heart = Button(border = (0, 0, 0, 0),font_size = 1, text = "0", background_normal = 'heart.png')
         self.likes.add_widget(self.like_heart)
         self.like_heart.bind(on_press = self.Like_press)
 
@@ -281,9 +279,11 @@ class MainScreen (Screen):
         pass
 
     def Like_press(self, instance):
-        self.post_like = (self.post_like + 1) % 2
-        if self.post_like == 1:
-            self.like_heart.background_normal = 'heart2.PNG'
-        if self.post_like == 0:
-            self.like_heart.background_normal = 'heart.PNG'
+        num = int(instance.text)
+        num = (num + 1) % 2
+        if num == 1:
+            instance.background_normal = 'heart2.PNG'
+        if num == 0:
+            instance.background_normal = 'heart.PNG'
+        instance.text = str(num)
         
