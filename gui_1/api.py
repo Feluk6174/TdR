@@ -10,7 +10,7 @@ connection.send(msg.encode("utf-8"))
 
 time.sleep(1)
 
-def register_user(user_name, public_key, profile_picture, info):
+def register_user(user_name:str, public_key:int, profile_picture:str, info:str):
     global connection
     msg = "{"+f'"type": "REGISTER", "user_name": "{user_name}", "public_key": {public_key}, "profile_picture": "{profile_picture}", "info": "{info}"'+"}"
     connection.send(msg.encode("utf-8"))
@@ -20,7 +20,7 @@ def register_user(user_name, public_key, profile_picture, info):
     time.sleep(1)
 
 
-def post(content, post_id, user_name, flags):
+def post(content:str, post_id:str, user_name:str, flags:str):
     global connection
     msg = "{"+f'"type": "POST", "post_id": "{post_id}", "user_name": "{user_name}", "content": "{content}", "flags": "{flags}"'+"}"
     connection.send(msg.encode("utf-8"))
@@ -30,7 +30,7 @@ def post(content, post_id, user_name, flags):
     time.sleep(1)
 
 
-def get_posts(user_name):
+def get_posts(user_name:str):
     #return format: {'id': 'str(23)', 'user_id': 'str(16)', 'content': 'str(255)', 'flags': 'str(10)', 'time_posted': int}
     global connection
     posts = []
