@@ -22,7 +22,7 @@ def register_user(user_name, public_key, profile_picture, info):
 
 def post(content, post_id, user_name, flags):
     global connection
-    msg = "{"+f'"type": "POST", "post_id": "{post_id}", "user_name": "{user_name}", "content": "{content}, "flags": "{flags}"'+"}"
+    msg = "{"+f'"type": "POST", "post_id": "{post_id}", "user_name": "{user_name}", "content": "{content}", "flags": "{flags}"'+"}"
     connection.send(msg.encode("utf-8"))
     response = connection.recv(1024).decode("utf-8")
     if not response == "OK":
@@ -31,6 +31,7 @@ def post(content, post_id, user_name, flags):
 
 
 def get_posts(user_name):
+    #return format: {'id': 'str(23)', 'user_id': 'str(16)', 'content': 'str(255)', 'flags': 'str(10)', 'time_posted': int}
     global connection
     posts = []
     msg = "{"+f'"type": "GET POSTS", "user_name": "{user_name}"'+"}"
