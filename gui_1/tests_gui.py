@@ -20,8 +20,46 @@ import time
 from kivy.clock import Clock
 from kivy.uix.screenmanager import FallOutTransition
 from kivy.uix.screenmanager import SlideTransition
+import kivy.utils
 
-Window.size = (300, 500)
+
+Window.size = (500, 500)
+
+def hex_color(hex_num):
+    if hex_num == "0":
+        col = '#000000'
+    if hex_num == "1":
+        col = '#7e7e7e'
+    if hex_num == "2":
+        col = '#bebebe'
+    if hex_num == "3":
+        col = '#ffffff'
+    if hex_num == "4":
+        col = '#7e0000'
+    if hex_num == "5":
+        col = '#fe0000'
+    if hex_num == "6":
+        col = '#047e00'
+    if hex_num == "7":
+        col = '#06ff04'
+    if hex_num == "8":
+        col = '#7e7e00'
+    if hex_num == "9":
+        col = '#ffff04'
+    if hex_num == "A":
+        col = '#00007e'
+    if hex_num == "B":
+        col = '#0000ff'
+    if hex_num == "C":
+        col = '#7e007e'
+    if hex_num == "D":
+        col = '#fe00ff'
+    if hex_num == "E":
+        col = '#047e7e'
+    if hex_num == "F":
+        col = '#06ffff'
+    print(col)
+    return col
 
 class test(BoxLayout):
     def __init__(self, **kwargs):
@@ -33,8 +71,16 @@ class test(BoxLayout):
         for post in self.all_posts_info:
             self.make_post_btn(post["username"], post["userimage"], post["posttext"], post["postlikes"], post["postdate"])
         
-        self.btn_1 = Button(text = "A", on_press = self.Hey)
-        self.add_widget(self.btn_1)
+        self.grid = GridLayout(cols = 8)
+        self.add_widget(self.grid)
+
+        self.color_list = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "A", "B", "C", "D", "E", "F", "5", "6", "7", "8", "1", "2", "3", "4", "9", "0", "A", "B", "D", "E", "F", "5", "5", "6", "7", "8", "1", "2", "3", "4", "6", "7", "8", "9", "0", "A", "B", "C", "6", "7", "8", "1", "2", "3", "4", "6", "8", "1", "2", "3", "4", "9", "0", "A"]
+        self.color_button_list = []
+
+        for x in range (64):
+            self.color_bit = Button(background_normal = '', background_color = kivy.utils.get_color_from_hex(hex_color(self.color_list[x])))
+            self.color_button_list.append(self.color_bit)
+            self.grid.add_widget(self.color_bit)
 
 
         #self.make_post_btn("aniol", 0, "Hello World", 10, "14/3/1984")
