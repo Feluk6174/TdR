@@ -23,25 +23,11 @@ from kivy.uix.screenmanager import SlideTransition
 import kivy.utils
 from kivy.uix.dropdown import DropDown
 import json
+import acces_my_info
+import api
 
 def get_post_text(num):
     return(str(num))
-
-
-my_user_info = json.loads(open("my_info.json", "r").read())
-user_name = my_user_info["user_name"]
-profile_image = my_user_info["profile_image"]
-user_pub_key = my_user_info["user_pub_key"]
-user_priv_key = my_user_info["user_priv_key"]
-
-def GetName():
-    return user_name
-def GetImage():
-    return profile_image
-def GetPubKey():
-    return user_pub_key
-def GetPrivKey():
-    return user_priv_key
 
 def hex_color(hex_num):
     if hex_num == "0":
@@ -116,23 +102,27 @@ class ProfileScreen (Screen):
 
         self.us_image = GridLayout(cols = 8, size_hint_x = None, width =  (Window.size[1] - Window.size[0] / 5) * 0.9 / 5)
         self.user_n_f.add_widget(self.us_image)
-        self.us_image_list = GetImage()
+        self.us_image_list = acces_my_info.GetImage()
         self.BuildImage(self.us_image_list)        
 
-        self.us_name = Button(text = GetName())
+        self.us_name = Button(text = acces_my_info.GetName())
         self.user_n_f.add_widget(self.us_name)
         self.us_name.bind(on_press = self.UserName)
 
-        self.us_des = Button(text = "Description", size_hint_y = None, height = (Window.size[1] - Window.size[0] / 5) * 2 * 0.9 / 5)
+        self.us_des = Button(text = acces_my_info.GetDescription(), size_hint_y = None, height = (Window.size[1] - Window.size[0] / 5) * 2 * 0.9 / 5)
         self.grid.add_widget(self.us_des)
         self.us_des.bind(on_press = self.UserDescription)
 
         self.user_foll = BoxLayout(size_hint_y = None, height = (Window.size[1] - Window.size[0] / 5) * 0.9 / 5)
         self.grid.add_widget(self.user_foll)
 
-        self.us_followers = Button(text = "Followers")
-        self.user_foll.add_widget(self.us_followers)
-        self.us_followers.bind(on_press = self.UserFollowers)
+        #self.us_followers = Button(text = "Followers")
+        #self.user_foll.add_widget(self.us_followers)
+        #self.us_followers.bind(on_press = self.UserFollowers)
+
+        self.register_btn = Button(text = "Register", on_press = self.Reg_f)
+        self.user_foll.add_widget(self.register_btn)
+        #self.us_followers.bind(on_press = self.UserFollowers)
 
         self.us_following = Button(text = "Following")
         self.user_foll.add_widget(self.us_following)
@@ -179,6 +169,12 @@ class ProfileScreen (Screen):
         self.btn15 = Label (text = ("User"))
         self.box3.add_widget(self.btn15)
         
+    def Reg_f(self, instance):
+        user_name = acces_my_info.GetName()
+        public_key = acces_my_info.GetPubKey()
+        profile_picture = acces_my_info.GetImage()
+        info = acces_my_info.GetDescription()
+        api.register_user(user_name, public_key, profile_picture, info)
 
     def Search1(instance, value):
         pass

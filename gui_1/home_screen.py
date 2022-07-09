@@ -23,10 +23,18 @@ from kivy.uix.screenmanager import FallOutTransition
 from kivy.uix.screenmanager import SlideTransition
 import kivy.utils
 from datetime import datetime
+import acces_my_info
+import api
   
 
 def GetNewPosts():
+    all_my_following = acces_my_info.GetFollowing()
     all_posts = []
+    for following in all_my_following:
+        foll_posts = api.get_posts(following)
+        foll_info = api.get_user(following)
+        for post in foll_posts:
+            all_posts.append((following, foll_info["profile_picture"], post["flags"], post["content"], 0, ChangeTime(post["time_posted"])))
     return all_posts
 
 def ChangeTime(date):
@@ -106,10 +114,8 @@ class MainScreen (Screen):
         self.box2.add_widget (self.scroll)
 
         self.all_posts_info = GetNewPosts()
-        self.list_posts = []
         for post in self.all_posts_info:
-            self.list_posts.append(post)
-            self.make_post_btn(post["user_name"], post["profile_image"], post["post_flags"], post["content"], post["post_likes"], post["post_date"])
+            self.make_post_btn(post[0], post[1], post[2], post[3], post[4], post[5])
 
         """
         #posts prova

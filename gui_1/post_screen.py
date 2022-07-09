@@ -23,30 +23,17 @@ from kivy.uix.screenmanager import SlideTransition
 import kivy.utils
 import json
 import random
-
-my_user_info = json.loads(open("my_info.json", "r").read())
-username = my_user_info["user_name"]
-profileimage = my_user_info["profile_image"]
-user_pub_key = my_user_info["user_pub_key"]
-user_priv_key = my_user_info["user_priv_key"]
-
-def GetName():
-    return username
-def GetImage():
-    return profileimage
-def GetPubKey():
-    return user_pub_key
-def GetPrivKey():
-    return user_priv_key
+import acces_my_info
+import api
 
 def SendPostFinal(postflags, textp, nlikes):
     content = textp
-    user_name = GetName()
+    user_name = acces_my_info.GetName()
     post_flags = str(postflags)
     #post_likes = nlikes
     #date = int(time.time())
     post_id = hash(str(content) + str(user_name) + str(post_flags))
-    return (content, post_id, user_name, post_flags)
+    api.post(content, post_id, user_name, post_flags)
 
 class PostUserScreen (Screen):
     def __init__(self, **kwargs):

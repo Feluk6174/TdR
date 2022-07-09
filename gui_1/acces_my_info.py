@@ -23,26 +23,24 @@ from kivy.uix.screenmanager import SlideTransition
 import kivy.utils
 import json
 
-import chat_screen, home_screen, loading_screen, post_screen, profile_screen, search_screen, acces_my_info
 
-#Window.size = (540*0.7, 880*0.7)
+my_user_info = json.loads(open("my_info.json", "r").read())
+username = my_user_info["basic_info"]["user_name"]
+profileimage = my_user_info["semi_basic_info"]["profile_image"]
+user_pub_key = my_user_info["basic_info"]["user_pub_key"]
+user_priv_key = my_user_info["basic_info"]["user_priv_key"]
+user_description = my_user_info["semi_basic_info"]["description"]
+user_following = my_user_info["semi_basic_info"]["user_following"]
 
-
-
-
-class MyApp (App):
-    def build(self):
-        sm = ScreenManager()
-        #sm.add_widget(loading_screen.LoadScreen(name = "load"))
-        sm.add_widget(home_screen.MainScreen(name = "main"))
-        sm.add_widget(chat_screen.ChatScreen(name = "chat"))
-        sm.add_widget(search_screen.SearchScreen(name = "search"))
-        sm.add_widget(post_screen.PostUserScreen(name = "last"))
-        sm.add_widget(profile_screen.ProfileScreen(name = "profile"))
-        return sm
-
-if __name__ == "__main__":
-    MyApp().run()
-
-
-
+def GetName():
+    return username
+def GetImage():
+    return profileimage
+def GetPubKey():
+    return user_pub_key
+def GetPrivKey():
+    return user_priv_key
+def GetDescription():
+    return user_description
+def GetFollowing():
+    return user_following
