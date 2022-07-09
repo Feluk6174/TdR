@@ -133,11 +133,11 @@ def broadcast_ip(ip, node_ip):
     msg_content = "{"+f'"type": "IP", "ip": "{ip}"'+"}"
     for connection in connections:
         if not connection[0] == node_ip:
+            connection[1].send(msg_content.encode("utf-8"))
             response = connection[1].recv(1024).decode("utf-8")
             print(ip, node_ip, response)
             if not response == "OK":
                 print("[ERROR]",response)
-            connection[1].send(msg_content.encode("utf-8"))
 
 
 def manage_ip(msg_info, node_ip):
