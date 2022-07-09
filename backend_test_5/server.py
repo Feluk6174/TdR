@@ -35,7 +35,7 @@ def broadcast(msg, ip):
             connection[1].send(json.dumps(msg).encode("utf-8"))
             response = connection[1].recv(1024).decode("utf-8")
             if not response == "OK":
-                print(response)
+                print("b", response)
             
             
 
@@ -62,7 +62,7 @@ def register_user(msg_info, connection, ip=None):
 
     if len(res) == 0:
         sql = f"INSERT INTO users(user_name, public_key, time_created, profile_picture, info) VALUES('{msg_info['user_name']}', {msg_info['public_key']}, {int(time.time())}, '{msg_info['profile_picture']}', '{msg_info['info']}');"
-        print(sql)
+        print("r",sql)
         db.execute(sql)
         broadcast(msg_info, ip)
         if ip == None:
@@ -95,7 +95,7 @@ def client_main_loop(connection, conn_info):
             msg = connection.recv(1024).decode("utf-8")
             if msg == "":
                 raise socket.error
-            print(msg)
+            print("m", msg)
             msg_info = json.loads(msg)
             print(f"({threading.current_thread().name})[{time.asctime()}] recived:", msg_info)
 
