@@ -33,6 +33,10 @@ def broadcast(msg, ip):
         if not connection[0] == ip:
             print("b",json.dumps(msg))
             connection[1].send(json.dumps(msg).encode("utf-8"))
+            if not ip == None:
+                iresponse = connection.recv(1024).decode("utf-8")
+                if not response == "OK":
+                    print(response)
             
 
 def new_post(msg_info, connection, ip=None):
@@ -40,15 +44,10 @@ def new_post(msg_info, connection, ip=None):
     global db
     #CREATE TABLE posts(id INT NOT NULL PRIMARY KEY, user_id VARCHAR(16) NOT NULL, post VARCHAR(255) NOT NULL, time_posted INT NOT NULL, FOREIGN KEY (user_id) REFERENCES users (user_name));")
     res = db.querry(f"SELECT * FROM posts WHERE id = '{msg_info['post_id']}';")
-    print(res)
     if len(res) == 0:
-        print(1)
         sql = f"INSERT INTO posts(id, user_id, post, time_posted) VALUES('{msg_info['post_id']}', '{msg_info['user_name']}', '{msg_info['content']}', {int(time.time())});"
-        print(sql)
         db.querry(sql)
-        print(2)
         broadcast(msg_info, ip)
-        print(3)
         if ip == None:
             connection.send("OK".encode("utf-8"))
     elif ip == None:
@@ -165,9 +164,11 @@ def node_main_loop(connection, ip, real_ip):
                 manage_ip(msg_info, ip)
 
             if msg_info["type"] == "REGISTER":
+                connection.send("OK".encode("utf-8"))
                 register_user(msg_info, connection, ip=ip)
 
             if msg_info["type"] == "POST":
+                connection.send("OK".encode("utf-8"))
                 new_post(msg_info, connection, ip=ip)
 
 

@@ -11,3 +11,6 @@ api.post("I just wanted to save the world", "3", "Feluk6174")
 api.post("ja no se que dir", "4", "Feluk6174")
 
 print(api.get_posts("Feluk6174"))
+
+#while True:
+#    command = input("Command: ")

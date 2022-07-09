@@ -3,7 +3,7 @@ import json
 import time
 
 connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-connection.connect(("192.168.178.138", 30001))
+connection.connect(("192.168.178.138", 30002))
 
 msg = '{"type": "CLIENT"}'
 connection.send(msg.encode("utf-8"))
