@@ -101,11 +101,11 @@ def client_main_loop(connection, conn_info):
 
             if msg_info["type"] == "REGISTER":
                 register_user(msg_info, connection)
-                connection.send("RES".encode("utf-8"))
+                connection.send("OK".encode("utf-8"))
 
             if msg_info["type"] == "POST":
                 new_post(msg_info, connection)
-                connection.send("RES".encode("utf-8"))
+                connection.send("OK".encode("utf-8"))
 
             if msg_info["type"] == "GET POSTS":
                 get_posts(msg_info, connection)
@@ -167,11 +167,11 @@ def node_main_loop(connection, ip, real_ip):
 
             if msg_info["type"] == "REGISTER":
                 register_user(msg_info, connection, ip=ip)
-                connection.send("OK".encode("utf-8"))
+                connection.send("RES".encode("utf-8"))
 
             if msg_info["type"] == "POST":
                 new_post(msg_info, connection, ip=ip)
-                connection.send("OK".encode("utf-8"))
+                connection.send("RES".encode("utf-8"))
 
 
             n_connected = len(connections)
