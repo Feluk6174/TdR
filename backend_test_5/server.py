@@ -33,9 +33,6 @@ def broadcast(msg, ip):
         if not connection[0] == ip:
             print("b", ip, connection[0], json.dumps(msg))
             connection[1].send(json.dumps(msg).encode("utf-8"))
-            response = connection[1].recv(1024).decode("utf-8")
-            if not response == "RES":
-                print("b", response)
             
             
 
@@ -101,11 +98,9 @@ def client_main_loop(connection, conn_info):
 
             if msg_info["type"] == "REGISTER":
                 register_user(msg_info, connection)
-                connection.send("OK".encode("utf-8"))
 
             if msg_info["type"] == "POST":
                 new_post(msg_info, connection)
-                connection.send("OK".encode("utf-8"))
 
             if msg_info["type"] == "GET POSTS":
                 get_posts(msg_info, connection)
