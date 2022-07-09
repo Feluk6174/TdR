@@ -33,6 +33,7 @@ def broadcast(msg, ip):
         if not connection[0] == ip:
             print("b",json.dumps(msg))
             connection[1].send(json.dumps(msg).encode("utf-8"))
+            time.sleep(0.1)
             
 
 def new_post(msg_info, connection, ip=None):
