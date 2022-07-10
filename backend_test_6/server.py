@@ -33,8 +33,10 @@ def broadcast(msg, ip):
     global connections
     for connection in connections:
         if not connection.ip == ip:
+            msg_text = json.dumps(msg)
+            formated_msg = msg_text.replace('"', '\\"')
             print("b", ip, connection.ip, json.dumps(msg))
-            connection.queue.append("{"+f'"type": "SEND", "msg": "{json.dumps(msg)}"'+"}")
+            connection.queue.append("{"+f'"type": "SEND", "msg": "{formated_msg}"'+"}")
             
             
 
