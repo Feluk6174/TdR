@@ -321,7 +321,7 @@ def connect_to_new_node():
             if connection.recv(1024).decode("utf-8") == "OK":
                 #(ip[0][0], connection, ip[0][0])
                 conn_class = NodeConnection(connection, {"ip": ip[0][0]}, ip[0][0])
-                connections.append()
+                connections.append(conn_class)
                 thread = threading.Thread(target=node_main_loop, args=(connection, ip[0][0], ip[0][0]))
                 thread.start()
                 break
