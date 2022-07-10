@@ -40,7 +40,7 @@ def get_posts(user_name:str):
     print(num)
     if not num == 0: 
         print(1)
-        for i in range(num):
+        for _ in range(num):
             posts.append(json.loads(connection.recv(1024).decode("utf-8")))
         return posts
     return {}
