@@ -79,6 +79,8 @@ def get_posts(msg_info, connection):
 
     connection.send(str(len(posts)).encode("utf-8"))
 
+    time.sleep(0.1)
+
     for i, post in enumerate(posts):
         print(i)
         msg = "{"+f'"id": "{post[0]}", "user_id": "{post[1]}", "content": "{post[2]}", "flags": "{post[3]}", "time_posted": {post[4]}'+"}"
