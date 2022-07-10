@@ -319,7 +319,9 @@ def connect_to_new_node():
             connection.send(json.dumps(server_info).encode("utf-8"))
 
             if connection.recv(1024).decode("utf-8") == "OK":
-                connections.append((ip[0][0], connection, ip[0][0]))
+                #(ip[0][0], connection, ip[0][0])
+                conn_class = NodeConnection(connection, {"ip": ip[0][0]}, ip[0][0])
+                connections.append()
                 thread = threading.Thread(target=node_main_loop, args=(connection, ip[0][0], ip[0][0]))
                 thread.start()
                 break
