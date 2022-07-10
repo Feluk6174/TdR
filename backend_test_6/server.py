@@ -190,6 +190,7 @@ def broadcast_ip(ip, node_ip):
     msg_content = "{"+f'"type": "IP", "ip": "{ip}"'+"}"
     for connection in connections:
         if not connection.ip == node_ip:
+            print(msg_content)
             connection.queue.append("{"+f'"type": "SEND", "msg": "{json.dumps(msg_content)}"'+"}")
 
 def manage_ip(msg_info, node_ip):
