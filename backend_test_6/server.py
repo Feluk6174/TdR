@@ -34,7 +34,7 @@ def broadcast(msg, ip):
     for connection in connections:
         if not connection.ip == ip:
             print("b", ip, connection.ip, json.dumps(msg))
-            connection.queue.append("{"+f'"type": "SEND", "msg": {json.dumps(msg)}'+"}")
+            connection.queue.append("{"+f'"type": "SEND", "msg": "{json.dumps(msg)}"'+"}")
             
             
 
@@ -91,8 +91,11 @@ def get_user_info(msg_info, connection):
     # (user_name, public_key, time_created, profile_picture, info)
     user_info = db.querry(f"SELECT * FROM users WHERE user_name = '{msg_info['user_name']}';")
     print(user_info)
-    user_info = user_info[0]
-    msg = "{"+f'"user_name": "{user_info[0]}", "public_key": {user_info[1]}, "time_created": {user_info[2]}, "profile_picture": "{user_info[3]}", "info": "{user_info[4]}"'+"}"
+    if not len(user_info) == 0:
+        user_info = user_info[0]
+        msg = "{"+f'"user_name": "{user_info[0]}", "public_key": {user_info[1]}, "time_created": {user_info[2]}, "profile_picture": "{user_info[3]}", "info": "{user_info[4]}"'+"}"
+    else:
+        msg = "{}"
     connection.send(msg.encode("utf-8"))
 
 class ClientConnection():

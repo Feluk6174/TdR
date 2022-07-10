@@ -38,11 +38,13 @@ def get_posts(user_name:str):
     connection.send(msg.encode("utf-8"))
     num = int(connection.recv(1024).decode("utf-8"))
     connection.send("OK".encode("utf-8"))
-    for _ in range(num):
-        posts.append(json.loads(connection.recv(1024).decode("utf-8")))
-        connection.send("OK".encode("utf-8"))
-    time.sleep(1)
-    return posts
+    if not num == 0: 
+        for _ in range(num):
+            posts.append(json.loads(connection.recv(1024).decode("utf-8")))
+            connection.send("OK".encode("utf-8"))
+        time.sleep(1)
+        return posts
+    return {}
 
 def get_user(user_name:str):
     global connection

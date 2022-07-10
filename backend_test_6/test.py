@@ -1,3 +1,3 @@
-j = {"type": "test"}
-
-print(type(j) == dict)
+import json
+t = "{}"
+print(t, json.loads(t))
