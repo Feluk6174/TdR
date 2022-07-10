@@ -199,8 +199,8 @@ def manage_ip(msg_info, node_ip):
     if ip == IP:
         return
 
-    seconds_to_delete = 120
-    seconds_to_update = 60
+    seconds_to_delete = 60
+    seconds_to_update = 30
 
     db.execute(f"DELETE FROM ips WHERE time_connected <= {int(time.time()) - seconds_to_delete}")
     res = db.querry(f"SELECT * FROM ips WHERE ip = '{ip}';")
@@ -355,7 +355,7 @@ def clock():
         for ip in res:
             print(f"    {ip[0]}")
         broadcast_ip(IP, IP)
-        time.sleep(60)
+        time.sleep(30)
 
 def main():
     global server
