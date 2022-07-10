@@ -1,6 +1,8 @@
 import database
 import threading, time, socket, sys, json, math
 
+#todo fix
+
 HOST = "192.168.178.138"
 try:
     PORT = int(sys.argv[1])
@@ -119,6 +121,7 @@ class ClientConnection():
     def process_queue(self):
         while True:
             if not self.queue == 0:
+                print(self.queue)
                 msg_info = json.loads(self.queue[0])
                 print(f"({threading.current_thread().name})[{time.asctime()}] recived:", msg_info)
 
@@ -237,6 +240,7 @@ class NodeConnection():
     def process_queue(self):
         while True:
             if not self.queue == 0:
+                print(self.queue)
                 msg_info = json.loads(self.queue[0])
 
                 if msg_info["type"] == "IP":
