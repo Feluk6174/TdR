@@ -292,7 +292,7 @@ def node_main_loop(connection, ip, real_ip):
         except socket.error as e:
             print("[ERROR]", e)
             connections.remove((ip, connection, real_ip))
-            break
+            break"""
 
 def check_if_connected(ip):
     global connections
@@ -327,7 +327,7 @@ def connect_to_new_node():
                 break
 
         if len(db.querry("SELECT * FROM ips;")) <= len(connections):
-            break"""
+            break
 
 def manage_new_node(connection, address, conn_info):
     global connections, get_suposed_connected
