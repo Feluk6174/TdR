@@ -26,9 +26,12 @@ import json
 
 my_user_info = json.loads(open("my_info.json", "r").read())
 username = my_user_info["basic_info"]["user_name"]
+password = my_user_info["basic_info"]["password"]
 profileimage = my_user_info["semi_basic_info"]["profile_image"]
 user_pub_key = my_user_info["basic_info"]["user_pub_key"]
+public_key = json.loads(open(user_pub_key, "r").read())
 user_priv_key = my_user_info["basic_info"]["user_priv_key"]
+private_key = json.loads(open(user_priv_key, "r").read())
 user_description = my_user_info["semi_basic_info"]["description"]
 user_following = my_user_info["semi_basic_info"]["user_following"]
 
@@ -37,10 +40,12 @@ def GetName():
 def GetImage():
     return profileimage
 def GetPubKey():
-    return user_pub_key
+    return public_key
 def GetPrivKey():
-    return user_priv_key
+    return private_key
 def GetDescription():
     return user_description
 def GetFollowing():
     return user_following
+def GetPassword():
+    return password  
