@@ -116,12 +116,12 @@ class ProfileScreen (Screen):
         self.user_foll = BoxLayout(size_hint_y = None, height = (Window.size[1] - Window.size[0] / 5) * 0.9 / 5)
         self.grid.add_widget(self.user_foll)
 
-        #self.us_followers = Button(text = "Followers")
-        #self.user_foll.add_widget(self.us_followers)
-        #self.us_followers.bind(on_press = self.UserFollowers)
+        self.us_followers = Button(text = "Followers")
+        self.user_foll.add_widget(self.us_followers)
+        self.us_followers.bind(on_press = self.UserFollowers)
 
-        self.register_btn = Button(text = "Register", on_press = self.Reg_f)
-        self.user_foll.add_widget(self.register_btn)
+        #self.register_btn = Button(text = "Register", on_press = self.Reg_f)
+        #self.user_foll.add_widget(self.register_btn)
         #self.us_followers.bind(on_press = self.UserFollowers)
 
         self.us_following = Button(text = "Following")
@@ -169,12 +169,6 @@ class ProfileScreen (Screen):
         self.btn15 = Label (text = ("User"))
         self.box3.add_widget(self.btn15)
         
-    def Reg_f(self, instance):
-        user_name = acces_my_info.GetName()
-        public_key = acces_my_info.GetPubKey()
-        profile_picture = acces_my_info.GetImage()
-        info = acces_my_info.GetDescription()
-        api.register_user(user_name, public_key, profile_picture, info)
 
     def Search1(instance, value):
         pass
