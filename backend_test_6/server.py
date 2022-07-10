@@ -79,7 +79,7 @@ def get_posts(msg_info, connection):
 
     connection.send(str(len(posts)).encode("utf-8"))
 
-    connection.recv(1024)
+    print(connection.recv(1024))
 
     for i, post in enumerate(posts):
         print(i)
@@ -114,6 +114,7 @@ class ClientConnection():
         while True:
             try:
                 msg = self.connection.recv(1024).decode("utf-8")
+                print("----", msg)
                 if msg == "":
                     raise socket.error
                 self.queue.append(msg)
