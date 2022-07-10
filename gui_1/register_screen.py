@@ -4,6 +4,16 @@ from kivy.core.window import Window
 from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
+import json
+import api
+import random
+
+def KeyGen():
+    p_key = random.randint(1, 10^20)
+    return p_key
+
+def create_my_info_file():
+    pass
 
 class RegisterScreen (Screen):
     def __init__(self, **kwargs):
@@ -22,11 +32,14 @@ class RegisterScreen (Screen):
         self.title = Label (text = ("Small brother"))
         self.title_box.add_widget(self.title)
 
-        self.username_box = BoxLayout(size_hint = (1, 1))
-        self.main_box.add_widget(self.username_box)
+        self.username_password_box = BoxLayout(size_hint = (1, 1), orientation = "vertical")
+        self.main_box.add_widget(self.username_password_box)
 
         self.username_text_box = TextInput(size_hint = (1, 1), text = "username")
-        self.username_box.add_widget(self.username_text_box)
+        self.username_password_box.add_widget(self.username_text_box)
+
+        self.password_text_box = TextInput(size_hint = (1, 1), text = "password")
+        self.username_password_box.add_widget(self.password_text_box)
 
         self.profile_image_box = BoxLayout(size_hint = (1, 1))
         self.main_box.add_widget(self.profile_image_box)
@@ -51,7 +64,12 @@ class RegisterScreen (Screen):
         
         self.register_button = Button(size_hint = (1, 1), text = "Register")
         self.register_box.add_widget(self.register_button)
-        self.lab1.bind(on_release = self.register)
+        self.register_button.bind(on_release = self.register)
+
+    
 
     def register(self):
-        pass
+        self.following = self.following_text_box.text.split(", ")
+        pub, priv = KeyGen()
+        create_my_info_file()
+        api.register_user(self.username_text_box.text, pub, self.profile_image_text_box.text, self.description_text_box.text)
