@@ -79,14 +79,10 @@ def get_posts(msg_info, connection):
 
     connection.send(str(len(posts)).encode("utf-8"))
 
-    print(connection.recv(1024))
-
     for i, post in enumerate(posts):
         print(i)
         msg = "{"+f'"id": "{post[0]}", "user_id": "{post[1]}", "content": "{post[2]}", "flags": "{post[3]}", "time_posted": {post[4]}'+"}"
         connection.send(msg.encode("utf-8"))
-        if not connection.recv(1024).decode("utf-8") == "OK":
-            break
 
 def get_user_info(msg_info, connection):
     global db
