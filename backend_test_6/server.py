@@ -293,7 +293,7 @@ def node_main_loop(connection, ip, real_ip):
 def check_if_connected(ip):
     global connections
     for connection in connections:
-        if ip == connection[0]:
+        if ip == connection.ip:
             return True
     return False
 
