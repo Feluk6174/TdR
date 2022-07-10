@@ -122,12 +122,7 @@ class ClientConnection():
         while True:
             if not len(self.queue) == 0:
                 print(self.queue)
-
-                if type(self.queue[0]) == str:
-                    msg_info = json.loads(self.queue[0])
-                elif type(self.queue[0]) == dict:
-                    msg_info = self.queue[0]
-
+                msg_info = json.loads(self.queue[0])
                 print(f"({threading.current_thread().name})[{time.asctime()}] recived:", msg_info)
 
                 if msg_info["type"] == "REGISTER":
@@ -194,7 +189,7 @@ def broadcast_ip(ip, node_ip):
     msg_content = "{"+f'"type": "IP", "ip": "{ip}"'+"}"
     for connection in connections:
         if not connection.ip == node_ip:
-            connection.queue.append({"type": "SEND", "msg": json.dumps(msg_content)})
+            connection.queue.append("{"+f'"type": "SEND", "msg": {json.dumps(msg_content)}'+"}")
 
 def manage_ip(msg_info, node_ip):
     global IP, db
@@ -246,10 +241,7 @@ class NodeConnection():
         while True:
             if not len(self.queue) == 0:
                 print(self.queue)
-                if type(self.queue[0]) == str:
-                    msg_info = json.loads(self.queue[0])
-                elif type(self.queue[0]) == dict:
-                    msg_info = self.queue[0]
+                msg_info = json.loads(self.queue[0])
 
                 if msg_info["type"] == "IP":
                     manage_ip(msg_info, self.ip)
@@ -272,7 +264,7 @@ class NodeConnection():
 
 
                 self.queue.pop(0)
-
+"""
 def node_main_loop(connection, ip, real_ip):
     global db, get_suposed_connected, connections
     while True:
@@ -335,8 +327,7 @@ def connect_to_new_node():
                 break
 
         if len(db.querry("SELECT * FROM ips;")) <= len(connections):
-            break
-        
+            break"""
 
 def manage_new_node(connection, address, conn_info):
     global connections, get_suposed_connected
