@@ -44,7 +44,6 @@ def get_user(user_name:str):
     msg = "{"+f'"type": "GET USER", "user_name": "{user_name}"'+"}"
     connection.send(msg.encode("utf-8"))
     response = connection.recv(1024).decode("utf-8")
-    time.sleep(1)
     return json.loads(response)
 
 def close():
