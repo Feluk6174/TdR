@@ -1,9 +1,3 @@
-import json
+j = {"type": "test"}
 
-t = '{"type": "hello"}'
-
-j = json.loads(t)
-
-print("t", t, type(t))
-
-print("j", j, type(j))
+print(type(j) == dict)
