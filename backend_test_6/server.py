@@ -33,8 +33,10 @@ def broadcast(msg, ip):
     global connections
     for connection in connections:
         if not connection.ip == ip:
+            msg_text = json.dumps(msg)
+            formated_msg = msg_text.replace('"', '\\"')
             print("b", ip, connection.ip, json.dumps(msg))
-            connection.queue.append("{"+f'"type": "SEND", "msg": "{json.dumps(msg)}"'+"}")
+            connection.queue.append("{"+f'"type": "SEND", "msg": "{formated_msg}"'+"}")
             
             
 
@@ -77,14 +79,13 @@ def get_posts(msg_info, connection):
 
     connection.send(str(len(posts)).encode("utf-8"))
 
-    connection.recv(1024)
+    time.sleep(0.1)
 
     for i, post in enumerate(posts):
         print(i)
         msg = "{"+f'"id": "{post[0]}", "user_id": "{post[1]}", "content": "{post[2]}", "flags": "{post[3]}", "time_posted": {post[4]}'+"}"
         connection.send(msg.encode("utf-8"))
-        if not connection.recv(1024).decode("utf-8") == "OK":
-            break
+        time.sleep(0.1)
 
 def get_user_info(msg_info, connection):
     global db
@@ -112,6 +113,7 @@ class ClientConnection():
         while True:
             try:
                 msg = self.connection.recv(1024).decode("utf-8")
+                print("----", msg)
                 if msg == "":
                     raise socket.error
                 self.queue.append(msg)
@@ -200,8 +202,8 @@ def manage_ip(msg_info, node_ip):
     if ip == IP:
         return
 
-    seconds_to_delete = 120
-    seconds_to_update = 60
+    seconds_to_delete = 60
+    seconds_to_update = 30
 
     db.execute(f"DELETE FROM ips WHERE time_connected <= {int(time.time()) - seconds_to_delete}")
     res = db.querry(f"SELECT * FROM ips WHERE ip = '{ip}';")
@@ -356,7 +358,7 @@ def clock():
         for ip in res:
             print(f"    {ip[0]}")
         broadcast_ip(IP, IP)
-        time.sleep(60)
+        time.sleep(30)
 
 def main():
     global server

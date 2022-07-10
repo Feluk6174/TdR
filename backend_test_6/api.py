@@ -7,8 +7,7 @@ connection.connect(("192.168.178.138", 30003))
 
 msg = '{"type": "CLIENT"}'
 connection.send(msg.encode("utf-8"))
-
-time.sleep(1)
+time.sleep(0.1)
 
 def register_user(user_name:str, public_key:int, profile_picture:str, info:str):
     global connection
@@ -17,7 +16,6 @@ def register_user(user_name:str, public_key:int, profile_picture:str, info:str):
     response = connection.recv(1024).decode("utf-8")
     if not response == "OK":
         print(response)
-    time.sleep(1)
 
 
 def post(content:str, post_id:str, user_name:str, flags:str):
@@ -27,8 +25,6 @@ def post(content:str, post_id:str, user_name:str, flags:str):
     response = connection.recv(1024).decode("utf-8")
     if not response == "OK":
         print(response)
-    time.sleep(1)
-
 
 def get_posts(user_name:str):
     #return format: {'id': 'str(23)', 'user_id': 'str(16)', 'content': 'str(255)', 'flags': 'str(10)', 'time_posted': int}
@@ -37,12 +33,9 @@ def get_posts(user_name:str):
     msg = "{"+f'"type": "GET POSTS", "user_name": "{user_name}"'+"}"
     connection.send(msg.encode("utf-8"))
     num = int(connection.recv(1024).decode("utf-8"))
-    connection.send("OK".encode("utf-8"))
     if not num == 0: 
         for _ in range(num):
             posts.append(json.loads(connection.recv(1024).decode("utf-8")))
-            connection.send("OK".encode("utf-8"))
-        time.sleep(1)
         return posts
     return {}
 
@@ -51,8 +44,6 @@ def get_user(user_name:str):
     msg = "{"+f'"type": "GET USER", "user_name": "{user_name}"'+"}"
     connection.send(msg.encode("utf-8"))
     response = connection.recv(1024).decode("utf-8")
-    print(response)
-    time.sleep(1)
     return json.loads(response)
 
 def close():
