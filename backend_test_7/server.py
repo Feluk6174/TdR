@@ -72,7 +72,7 @@ def register_user(msg_info, connection, ip=None):
     elif ip == None:
         connection.connection.send("ALREADY EXISTS".encode("utf-8"))
 
-def get_posts(msg_info, connection):
+def get_posts(msg_info:dict, connection):
     global db
     print(f"({threading.current_thread().name})[{time.asctime()}] geting posts:", msg_info)
 
@@ -80,13 +80,17 @@ def get_posts(msg_info, connection):
 
     connection.connection.send(str(len(posts)).encode("utf-8"))
 
-    #if connection.recv() == "OK":
+    res = connection.recv()
+    if not res == "OK":
+        print(res)
 
     for i, post in enumerate(posts):
         print(i)
         msg = "{"+f'"id": "{post[0]}", "user_id": "{post[1]}", "content": "{post[2]}", "flags": "{post[3]}", "time_posted": {post[4]}'+"}"
         connection.connection.send(msg.encode("utf-8"))
-        time.sleep(0.1)
+        res = connection.recv()
+        if not res == "OK":
+            print(res)
 
 def get_user_info(msg_info, connection):
     global db
@@ -161,12 +165,12 @@ class ClientConnection():
 
 def manage_new_client(connection, conn_info):
     global clients, max_clients
-    print(f"({threading.current_thread().name})[{time.asctime()}] managing nrew client")
+    print(f"({threading.current_thread().name})[{time.asctime()}] managing new client")
     print(len(clients), max_clients)
     conn_class = ClientConnection(connection, conn_info)
     if len(clients) <= max_clients:
         clients.append(conn_class)
-        print(3)
+        connection.send("OK".encode("utf-8"))
         thread = threading.Thread(target=conn_class.manage_requests)
         thread.start()
 
