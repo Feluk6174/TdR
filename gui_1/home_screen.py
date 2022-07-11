@@ -113,9 +113,10 @@ class MainScreen (Screen):
         self.scroll.add_widget (self.grid)
         self.box2.add_widget (self.scroll)
 
-        self.all_posts_info = GetNewPosts()
-        for post in self.all_posts_info:
-            self.make_post_btn(post[0], post[1], post[2], post[3], post[4], post[5])
+        self.post_btn_test = Button(size_hint_y = None, height = 100, text = "Load Posts", on_release = self.get_my_posts)
+        self.grid.add_widget(self.post_btn_test)
+        
+        #self.get_my_posts(0)
 
         """
         #posts prova
@@ -213,6 +214,11 @@ class MainScreen (Screen):
         self.manager.current = "profile"
         self.manager.transition.direction = "left"
     
+    def get_my_posts(self, instance):
+        self.all_posts_info = GetNewPosts()
+        for post in self.all_posts_info:
+            self.make_post_btn(post[0], post[1], post[2], post[3], post[4], post[5])
+
     #def crear botó. Estructura "correcta"
     def make_post_btn(self, user_name, user_image, post_flags, textp, nlikes, date):
     

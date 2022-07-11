@@ -21,11 +21,12 @@ def Reg_f():
         api.register_user(user_name, public_key, profile_picture, info)
 
 def check_register():
-    my_user_info = json.loads(open("my_info.json", "r").read())
-    if my_user_info == "":
-        return False
-    else:
+    try:
+        my_user_info = json.loads(open("my_info.json", "r").read())
         return True
+    except FileNotFoundError:
+        return False
+    
 
     
 
@@ -73,10 +74,11 @@ def check_password(word):
                 word_cheme[p] = 4
     if not 0 in word_cheme:
         if 1 in word_cheme and 2 in word_cheme and 3 in word_cheme and 4 in word_cheme:
-            final_truth = True
+            return True
+        else:
+            return False
     else:
-        final_truth = False
-    return final_truth
+        return False
     
 def check_image(image):
     all_hex = "0123456789ABCDEF"
@@ -86,11 +88,11 @@ def check_image(image):
             for b in range (len(image)):
                 if all_hex[a] == image[b]:
                     check_list = check_list + 1
-    elif check_list == 64:
-        final = True
-    elif check_list != 64:
-        final = False
-    return final
+    if check_list == 64:
+        return True
+    if check_list != 64:
+        return False
+    
 
 
 class RegisterScreen (Screen):
@@ -145,21 +147,21 @@ class RegisterScreen (Screen):
         self.register_button.bind(on_release = self.register)
 
     
-    def register(self):
+    def register(self, instance):
         self.other_users = api.get_user(self.username_text_box.text)
         if self.other_users != {}:
             self.username_text_box.text = "USERNAME"
             self.register_button.text = "Register. Try again"
         elif self.other_users == {}:
             self.password_check = check_password(self.password_text_box.text)
-            self.color_check = check_image(self.profile_image_text_box)
+            self.color_check = check_image(self.profile_image_text_box.text)
             if self.password_check == False:
                 self.password_text_box.text = "PASSWORD"
                 self.register_button.text = "Register. Try again"
-            elif self.color_check == False:
+            if self.color_check == False:
                 self.profile_image_text_box.text = "PROFILE IMAGE"
                 self.register_button.text = "Register. Try again"
-            elif self.password_check == True and self.color_check == True:
+            if self.password_check == True and self.color_check == True:
                 rsa_gui.gen_key(self.username_text_box.text, self.password_text_box.text)
                 following = self.following_text_box.text.split(", ")
                 create_my_info_file(self.username_text_box.text, self.password_text_box.text, "pub_my_key_storage.pem", "priv_my_key_storage.pem", self.profile_image_text_box.text, self.description_text_box.text, following)
