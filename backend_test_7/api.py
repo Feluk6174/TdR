@@ -34,11 +34,11 @@ def get_posts(user_name:str):
     msg = "{"+f'"type": "ACTION", "action": "GET POSTS", "user_name": "{user_name}"'+"}"
     connection.send(msg.encode("utf-8"))
     num = int(connection.recv(1024).decode("utf-8"))
-    connection.send('{"type": "RESPONSE", "response": "OK"}')
+    connection.send('{"type": "RESPONSE", "response": "OK"}'.encode("utf-8"))
     if not num == 0: 
         for _ in range(num):
             posts.append(json.loads(connection.recv(1024).decode("utf-8")))
-            connection.send('{"type": "RESPONSE", "response": "OK"}')
+            connection.send('{"type": "RESPONSE", "response": "OK"}'.encode("utf-8"))
         return posts
     return {}
 

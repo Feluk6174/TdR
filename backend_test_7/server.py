@@ -220,6 +220,7 @@ class NodeConnection():
         while True:
             try:
                 msg = self.connection.recv(1024).decode("utf-8")
+                print(msg)
                 #print(".......", type(msg), msg)
                 msg = json.loads(msg)
                 #print(".......", type(msg), msg)
