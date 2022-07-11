@@ -132,8 +132,8 @@ class ClientConnection():
     def process_queue(self):
         while True:
             if not len(self.queue) == 0:
-                print(f"({threading.current_thread().name})[{time.asctime()}] recived:", msg_info)
                 msg_info = self.queue[0]
+                print(f"({threading.current_thread().name})[{time.asctime()}] recived:", msg_info)
 
                 if msg_info["action"] == "REGISTER":
                     register_user(msg_info, self)
@@ -318,8 +318,9 @@ def manage_new_node(connection, address, conn_info):
         thread.start()
 
 def clock():
-    global connections, db, IP
+    global connections, clients, db, IP
     while True:
+        print("num of connected clients: ", len(clients))
         print("num of connections:", len(connections))
         for connection in connections:
             print(f"    {connection.ip}")
