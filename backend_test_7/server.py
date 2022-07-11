@@ -122,10 +122,10 @@ class ClientConnection():
             try:
                 msg = self.connection.recv(1024).decode("utf-8")
                 print(msg)
-                msg = json.loads(msg)
                 #print("----", msg)
                 if msg == "":
                     raise socket.error
+                msg = json.loads(msg)
 
                 if msg["type"] == "ACTION":
                     self.queue.append(msg)
@@ -226,10 +226,11 @@ class NodeConnection():
                 msg = self.connection.recv(1024).decode("utf-8")
                 print(msg)
                 #print(".......", type(msg), msg)
-                msg = json.loads(msg)
                 #print(".......", type(msg), msg)
-                if msg == {}:
+                if msg == "":
                     raise socket.error
+                
+                msg = json.loads(msg)
 
                 if msg["type"] == "ACTION":
                     self.queue.append(msg)
