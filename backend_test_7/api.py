@@ -7,7 +7,8 @@ connection.connect(("192.168.178.138", 30003))
 
 msg = '{"type": "CLIENT"}'
 connection.send(msg.encode("utf-8"))
-time.sleep(0.1)
+if connection.recv(1024).decode("utf-8") == "OK":
+    print("[ESTABLISHED CONNECTION]")
 
 def register_user(user_name:str, public_key:str, profile_picture:str, info:str):
     global connection
@@ -33,9 +34,15 @@ def get_posts(user_name:str):
     msg = "{"+f'"type": "ACTION", "action": "GET POSTS", "user_name": "{user_name}"'+"}"
     connection.send(msg.encode("utf-8"))
     num = int(connection.recv(1024).decode("utf-8"))
+    connection.send('{"type": "RESPONSE", "response": "OK"}'.encode("utf-8"))
     if not num == 0: 
         for _ in range(num):
             posts.append(json.loads(connection.recv(1024).decode("utf-8")))
+            connection.send('{"type": "RESPONSE", "response": "OK"}'.encode("utf-8"))
+        response = connection.recv(1024).decode("utf-8")
+        if not response == "OK":
+            print(response)
+
         return posts
     return {}
 
