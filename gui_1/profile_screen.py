@@ -68,7 +68,7 @@ class ProfileScreen (Screen):
     def __init__(self, **kwargs):
         super(ProfileScreen, self).__init__(**kwargs)
 
-        self.bind(on_enter = self.check_check)
+        self.bind(on_enter = self.checkcheck)
 
         self.Box0 = BoxLayout()
         self.Box0.orientation = "vertical"

@@ -42,8 +42,9 @@ def get_posts(user_name:str):
         response = connection.recv(1024).decode("utf-8")
         if not response == "OK":
             print(response)
-
+        print(posts)
         return posts
+    print("{}")
     return {}
 
 def get_user(user_name:str):
@@ -51,6 +52,7 @@ def get_user(user_name:str):
     msg = "{"+f'"type": "ACTION", "action": "GET USER", "user_name": "{user_name}"'+"}"
     connection.send(msg.encode("utf-8"))
     response = connection.recv(1024).decode("utf-8")
+    print(1, response)
     return json.loads(response)
 
 def close():

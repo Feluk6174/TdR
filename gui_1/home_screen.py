@@ -84,6 +84,8 @@ class MainScreen (Screen):
     def __init__(self, **kwargs):
         super(MainScreen, self).__init__(**kwargs)
         
+        self.bind(on_enter = self.checkcheck())
+
         self.Box0 = BoxLayout()
         self.Box0.orientation = "vertical"
         self.add_widget(self.Box0)
