@@ -23,9 +23,10 @@ from kivy.uix.screenmanager import FallOutTransition
 from kivy.uix.screenmanager import SlideTransition
 import kivy.utils
 from kivy.graphics import BorderImage
+from kivy.lang import Builder
 
 
-Window.size = (700, 700)
+Window.size = (300, 600)
 
 def hex_color(hex_num):
     if hex_num == "0":
@@ -62,10 +63,69 @@ def hex_color(hex_num):
         col = '#06ffff'
     return col
 
-class test(AnchorLayout):
+class test(BoxLayout):
     def __init__(self, **kwargs):
         super(test, self).__init__(**kwargs)
-        
+
+        self.box0 = BoxLayout(orientation = "vertical")
+        self.add_widget(self.box0)
+
+        self.box01 = BoxLayout(size_hint_y = None, height = Window.size[0] * 0.7, orientation = "horizontal")
+        self.box0.add_widget(self.box01)
+
+        self.box2 = BoxLayout()
+        self.box01.add_widget(self.box2)
+
+        self.box1 = GridLayout(spacing = 5, cols = 8, size_hint = (None, None), size = (Window.size[0] * 0.7, Window.size[0] * 0.7))
+        self.box01.add_widget(self.box1)
+
+        self.color_list = []
+        for x in range (64):
+            self.color_list.append("0")
+
+        for y in range (64):
+            self.btn = Button(background_normal = '', font_size = 1, text = str(y), background_color = (1, 1, 1, 1), on_press = self.button_1)
+            self.box1.add_widget(self.btn)
+
+        self.box3 = BoxLayout()
+        self.box01.add_widget(self.box3)
+
+    
+        self.box02 = BoxLayout()
+        self.box0.add_widget(self.box02)
+
+
+        self.box03 = BoxLayout(size_hint_y = None, height = Window.size[0] * 0.7, orientation = "horizontal")
+        self.box0.add_widget(self.box03)
+
+        self.box4 = BoxLayout()
+        self.box03.add_widget(self.box4)
+
+        self.box5 = GridLayout(cols = 4, size_hint = (None, None), size = (Window.size[0] * 0.7, Window.size[0] * 0.7))
+        self.box03.add_widget(self.box5)
+
+        self.all_colors = [("0", '#1B1A1A'), ("1", '#7e7e7e'), ("2", '#bebebe'), ("3", '#ffffff'), ("4", '#7e0000'), ("5", '#fe0000'), ("6", '#047e00'), ("7", '#06ff04'), ("8", '#7e7e00'), ("9", '#ffff04'), ("A", '#00007e'), ("B", '#0000ff'), ("C", '#7e007e'), ("D", '#fe00ff'), ("E", '#047e7e'), ("F", '#06ffff')]
+
+        for x in range (len(self.all_colors)):
+            self.btn1 = Button(border = (0, 0, 0, 0), background_normal = '', font_size = 1, text = str(x), background_color = kivy.utils.get_color_from_hex(self.all_colors[x][1]), on_press = self.button_2)
+            self.box5.add_widget(self.btn1)
+
+        self.box6 = BoxLayout()
+        self.box03.add_widget(self.box6)
+
+        self.actual_btn1 = self.btn
+        self.actual_btn2 = self.btn1
+
+    def button_1(self, instance):
+        instance.background_color = self.actual_btn2.background_color
+        self.color_list.append(self.all_colors[int(self.actual_btn2.text)][0])
+        self.actual_btn1 = instance
+
+    def button_2(self, instance):
+        self.actual_btn2.background_normal = ""
+        instance.background_normal = "check_verd.png"
+        self.actual_btn2 = instance
+        """
         self.orientation = "vertical"
 
         self.all_posts_info = []
@@ -81,7 +141,6 @@ class test(AnchorLayout):
         self.grid = GridLayout(cols = 8)
         self.anch_lay.add_widget(self.grid)
         
-        """
         self.box1 = BoxLayout()
         self.grid.add_widget(self.box1)
         
@@ -105,11 +164,11 @@ class test(AnchorLayout):
         
         self.box8 = BoxLayout()
         self.grid.add_widget(self.box8)
-        """
-
-        self.color_list = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "A", "B", "C", "D", "E", "F", "5", "6", "7", "8", "1", "2", "3", "4", "9", "0", "A", "B", "D", "E", "F", "5", "5", "6", "7", "8", "1", "2", "3", "4", "6", "7", "8", "9", "0", "A", "B", "C", "6", "7", "8", "1", "2", "3", "4", "6", "8", "1", "2", "3", "4", "9", "0", "A"]
         
-        self.BuildImage()
+
+        #self.color_list = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "A", "B", "C", "D", "E", "F", "5", "6", "7", "8", "1", "2", "3", "4", "9", "0", "A", "B", "D", "E", "F", "5", "5", "6", "7", "8", "1", "2", "3", "4", "6", "7", "8", "9", "0", "A", "B", "C", "6", "7", "8", "1", "2", "3", "4", "6", "8", "1", "2", "3", "4", "9", "0", "A"]
+        
+        #self.BuildImage()
 
     def BuildImage(self):
         #self.color_list = self.color_list
@@ -119,7 +178,7 @@ class test(AnchorLayout):
             self.color_button_list.append(self.color_bit)
             self.grid.add_widget(self.color_bit)
             
-            """
+            
             if x < 8:
                 self.box1.add_widget(self.color_bit)
             elif x  > 7 and x < 16:

@@ -5,6 +5,7 @@ import acces_my_info
 
 
 def gen_key(Username, Password):
+    print("2")
     priv_my_key_storage = "priv_my_key_storage.pem"
     pub_my_key_storage = "pub_my_key_storage.pem"
     secret_code = (str(Username) + str(Password))
@@ -20,6 +21,7 @@ def gen_key(Username, Password):
     file_out = open(pub_my_key_storage, "wb")
     file_out.write(public_key)
     file_out.close()
+    print("3")
 
 
 def encrypt(message, sec_doc, pub_other_key_1):

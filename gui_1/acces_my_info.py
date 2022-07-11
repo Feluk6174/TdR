@@ -23,29 +23,56 @@ from kivy.uix.screenmanager import SlideTransition
 import kivy.utils
 import json
 
+def change_my_color(col_list):
+    col_str = ""
+    for a in range (len(col_list)):
+        col_str = col_str + col_list[a]
+    my_user_info = json.loads(open("my_info.json", "r").read())
+    my_user_info["semi_basic_info"]["description "] = col_str
+    file_my = open("my_info.json", "w").write(my_user_info)
+    file_my.close()
 
-my_user_info = json.loads(open("my_info.json", "r").read())
-username = my_user_info["basic_info"]["user_name"]
-password = my_user_info["basic_info"]["password"]
-profileimage = my_user_info["semi_basic_info"]["profile_image"]
-user_pub_key = my_user_info["basic_info"]["user_pub_key"]
-public_key = json.loads(open(user_pub_key, "r").read())
-user_priv_key = my_user_info["basic_info"]["user_priv_key"]
-private_key = json.loads(open(user_priv_key, "r").read())
-user_description = my_user_info["semi_basic_info"]["description"]
-user_following = my_user_info["semi_basic_info"]["user_following"]
+def Get(num):
+    try:
+        my_user_info = json.loads(open("my_info.json", "r").read())
+    except FileNotFoundError:
+        my_user_info = ""
+
+    username = my_user_info["basic_info"]["user_name"]
+    password = my_user_info["basic_info"]["password"]
+    profileimage = my_user_info["semi_basic_info"]["profile_image"]
+    user_pub_key = my_user_info["basic_info"]["user_pub_key"]
+    public_key = json.loads(open(user_pub_key, "r").read())
+    user_priv_key = my_user_info["basic_info"]["user_priv_key"]
+    private_key = json.loads(open(user_priv_key, "r").read())
+    user_description = my_user_info["semi_basic_info"]["description"]
+    user_following = my_user_info["semi_basic_info"]["user_following"]
+    if num == 0:
+        return username
+    if num == 1:
+        return profileimage
+    if num == 2:
+        return public_key
+    if num == 3:
+        return private_key
+    if num == 4:
+        return user_description
+    if num == 5:
+        return user_following
+    if num == 6:
+        return password
 
 def GetName():
-    return username
+    return Get(0)
 def GetImage():
-    return profileimage
+    return Get(1)
 def GetPubKey():
-    return public_key
+    return Get(2)
 def GetPrivKey():
-    return private_key
+    return Get(3)
 def GetDescription():
-    return user_description
+    return Get(4)
 def GetFollowing():
-    return user_following
+    return Get(5)
 def GetPassword():
-    return password  
+    return Get(6) 

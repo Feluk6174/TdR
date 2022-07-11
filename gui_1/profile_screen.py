@@ -102,14 +102,14 @@ class ProfileScreen (Screen):
 
         self.us_image = GridLayout(cols = 8, size_hint_x = None, width =  (Window.size[1] - Window.size[0] / 5) * 0.9 / 5)
         self.user_n_f.add_widget(self.us_image)
-        self.us_image_list = acces_my_info.GetImage()
-        self.BuildImage(self.us_image_list)        
+        #self.us_image_list = acces_my_info.GetImage()
+        #self.BuildImage(self.us_image_list)        
 
-        self.us_name = Button(text = acces_my_info.GetName())
+        self.us_name = Button(text = "")
         self.user_n_f.add_widget(self.us_name)
         self.us_name.bind(on_press = self.UserName)
 
-        self.us_des = Button(text = acces_my_info.GetDescription(), size_hint_y = None, height = (Window.size[1] - Window.size[0] / 5) * 2 * 0.9 / 5)
+        self.us_des = Button(text = "", size_hint_y = None, height = (Window.size[1] - Window.size[0] / 5) * 2 * 0.9 / 5)
         self.grid.add_widget(self.us_des)
         self.us_des.bind(on_press = self.UserDescription)
 
@@ -120,9 +120,8 @@ class ProfileScreen (Screen):
         self.user_foll.add_widget(self.us_followers)
         self.us_followers.bind(on_press = self.UserFollowers)
 
-        #self.register_btn = Button(text = "Register", on_press = self.Reg_f)
-        #self.user_foll.add_widget(self.register_btn)
-        #self.us_followers.bind(on_press = self.UserFollowers)
+        self.register_btn = Button(text = "Foto upload", on_press = self.FotoGet)
+        self.user_foll.add_widget(self.register_btn)
 
         self.us_following = Button(text = "Following")
         self.user_foll.add_widget(self.us_following)
@@ -184,6 +183,11 @@ class ProfileScreen (Screen):
             self.color_button_list.append(self.color_bit)
             self.us_image.add_widget(self.color_bit)
 
+    def FotoGet(self, instance):
+        self.us_name.text = acces_my_info.GetName()
+        self.us_des.text = acces_my_info.GetDescription()
+        self.us_image_list = acces_my_info.GetImage()
+        self.BuildImage(self.us_image_list)   
 
     def UserName(self, instance):
         pass
