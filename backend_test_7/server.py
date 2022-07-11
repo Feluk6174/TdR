@@ -113,6 +113,7 @@ class ClientConnection():
         self.info = conn_info
         self.queue = []
         self.responses = []
+        self.ip = None
 
         thread = threading.Thread(target=self.process_queue)
         thread.start()
