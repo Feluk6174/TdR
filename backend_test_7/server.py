@@ -115,7 +115,7 @@ class ClientConnection():
         while True:
             try:
                 msg = json.loads(self.connection.recv(1024).decode("utf-8"))
-                print("----", msg)
+                #print("----", msg)
                 if msg == "":
                     raise socket.error
 
@@ -133,7 +133,7 @@ class ClientConnection():
         while True:
             if not len(self.queue) == 0:
                 msg_info = self.queue[0]
-                print(f"({threading.current_thread().name})[{time.asctime()}] recived:", msg_info)
+                print(f"({threading.current_thread().name})[{time.asctime()}] recived:", msg_info, type(msg_info))
 
                 if msg_info["action"] == "REGISTER":
                     register_user(msg_info, self)
@@ -216,9 +216,9 @@ class NodeConnection():
         while True:
             try:
                 msg = self.connection.recv(1024).decode("utf-8")
-                print(".......", type(msg), msg)
+                #print(".......", type(msg), msg)
                 msg = json.loads(msg)
-                print(".......", type(msg), msg)
+                #print(".......", type(msg), msg)
                 if msg == {}:
                     raise socket.error
 
@@ -236,9 +236,9 @@ class NodeConnection():
     def process_queue(self):
         while True:
             if not len(self.queue) == 0:
-                print(self.queue)
+                #print(self.queue)
                 msg_info = self.queue[0]
-                print("wtf", type(msg_info), msg_info)
+                print(f"({threading.current_thread().name})[{time.asctime()}] recived:", msg_info, type(msg_info))
 
                 if msg_info["action"] == "IP":
                     manage_ip(msg_info, self.ip)
