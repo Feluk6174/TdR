@@ -22,9 +22,10 @@ from kivy.clock import Clock
 from kivy.uix.screenmanager import FallOutTransition
 from kivy.uix.screenmanager import SlideTransition
 import kivy.utils
+from kivy.graphics import BorderImage
 
 
-Window.size = (100, 100)
+Window.size = (700, 700)
 
 def hex_color(hex_num):
     if hex_num == "0":
@@ -59,7 +60,6 @@ def hex_color(hex_num):
         col = '#047e7e'
     if hex_num == "F":
         col = '#06ffff'
-    print(col)
     return col
 
 class test(AnchorLayout):
@@ -72,7 +72,7 @@ class test(AnchorLayout):
         for post in self.all_posts_info:
             self.make_post_btn(post["username"], post["userimage"], post["posttext"], post["postlikes"], post["postdate"])
         
-        self.anch_lay = AnchorLayout(size_hint = (0.2, 0.2), anchor_x = "center", anchor_y = "center")
+        self.anch_lay = AnchorLayout(size_hint = (0.7, 0.7), anchor_x = "center", anchor_y = "center")
         self.add_widget(self.anch_lay)
 
         #self.grid = GridLayout(cols = 8, size_hint = (None, None), size = (30, 30))
@@ -109,15 +109,15 @@ class test(AnchorLayout):
 
         self.color_list = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "A", "B", "C", "D", "E", "F", "5", "6", "7", "8", "1", "2", "3", "4", "9", "0", "A", "B", "D", "E", "F", "5", "5", "6", "7", "8", "1", "2", "3", "4", "6", "7", "8", "9", "0", "A", "B", "C", "6", "7", "8", "1", "2", "3", "4", "6", "8", "1", "2", "3", "4", "9", "0", "A"]
         
-        self.BuildImage(self.color_list, self.grid)
+        self.BuildImage()
 
     def BuildImage(self):
         #self.color_list = self.color_list
         self.color_button_list = []
         for x in range (64):
-            self.color_bit = Button(background_normal = '', background_color = kivy.utils.get_color_from_hex(hex_color(self.color_list[x])))
+            self.color_bit = Button(border = (10, 10, 10, 10), background_normal = '', background_color = kivy.utils.get_color_from_hex(hex_color(self.color_list[x])))
             self.color_button_list.append(self.color_bit)
-            self.grid.add_widget(self.color_button_list)
+            self.grid.add_widget(self.color_bit)
             
             """
             if x < 8:
