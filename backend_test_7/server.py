@@ -234,7 +234,7 @@ class NodeConnection():
         while True:
             if not len(self.queue) == 0:
                 print(self.queue)
-                msg_info = self
+                msg_info = self.queue[0]
 
                 if msg_info["action"] == "IP":
                     manage_ip(msg_info, self.ip)
