@@ -235,6 +235,7 @@ class NodeConnection():
             if not len(self.queue) == 0:
                 print(self.queue)
                 msg_info = self.queue[0]
+                print("wtf", msg_info)
 
                 if msg_info["action"] == "IP":
                     manage_ip(msg_info, self.ip)
