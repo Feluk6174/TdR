@@ -139,13 +139,13 @@ class ClientConnection():
                     register_user(msg_info, self)
 
                 elif msg_info["action"] == "POST":
-                    new_post(msg_info, self.connection)
+                    new_post(msg_info, self)
 
                 elif msg_info["action"] == "GET POSTS":
-                    get_posts(msg_info, self.connection)
+                    get_posts(msg_info, self)
 
                 elif msg_info["action"] == "GET USER":
-                    get_user_info(msg_info, self.connection)
+                    get_user_info(msg_info, self)
 
                 elif msg_info["action"] == "SEND":
                     self.connection.send(msg_info["msg"].encode("utf-8"))
@@ -244,10 +244,10 @@ class NodeConnection():
                     manage_ip(msg_info, self.ip)
 
                 if msg_info["action"] == "REGISTER":
-                    register_user(msg_info, self.connection, ip=self.ip)
+                    register_user(msg_info, self, ip=self.ip)
 
                 if msg_info["action"] == "POST":
-                    new_post(msg_info, self.connection, ip=self.ip)
+                    new_post(msg_info, self, ip=self.ip)
 
                 if msg_info["action"] == "SEND":
                     self.connection.send(msg_info["msg"].encode("utf-8"))
