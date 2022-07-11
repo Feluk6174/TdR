@@ -92,6 +92,8 @@ def get_posts(msg_info:dict, connection):
         if not res == "OK":
             print(res)
 
+    connection.send("OK".encode("utf-8"))
+
 def get_user_info(msg_info, connection):
     global db
     # (user_name, public_key, time_created, profile_picture, info)

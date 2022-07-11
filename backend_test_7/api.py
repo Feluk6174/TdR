@@ -39,6 +39,10 @@ def get_posts(user_name:str):
         for _ in range(num):
             posts.append(json.loads(connection.recv(1024).decode("utf-8")))
             connection.send('{"type": "RESPONSE", "response": "OK"}'.encode("utf-8"))
+        response = connection.recv(1024).decode("utf-8")
+        if not response == "OK":
+            print(response)
+
         return posts
     return {}
 
