@@ -37,7 +37,7 @@ def broadcast(msg, ip):
             msg_text = json.dumps(msg)
             formated_msg = msg_text.replace('"', '\\"')
             print("b", ip, connection.ip, json.dumps(formated_msg))
-            connection.queue.append("{"+f'"type": "ACTION", "action": "SEND", "msg": "{formated_msg}"'+"}")
+            connection.queue.append(json.loads("{"+f'"type": "ACTION", "action": "SEND", "msg": "{formated_msg}"'+"}"))
             print(connection.ip, connection.queue)
             
             
