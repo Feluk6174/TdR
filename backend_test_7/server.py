@@ -216,9 +216,9 @@ class NodeConnection():
         while True:
             try:
                 msg = self.connection.recv(1024).decode("utf-8")
-                print(type(msg), msg)
+                print(".......", type(msg), msg)
                 msg = json.loads(msg)
-                print(type(msg), msg)
+                print(".......", type(msg), msg)
                 if msg == {}:
                     raise socket.error
 
