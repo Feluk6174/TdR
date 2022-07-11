@@ -118,7 +118,9 @@ class ClientConnection():
         global clients
         while True:
             try:
-                msg = json.loads(self.connection.recv(1024).decode("utf-8"))
+                msg = self.connection.recv(1024).decode("utf-8")
+                print(msg)
+                msg = json.loads(msg)
                 #print("----", msg)
                 if msg == "":
                     raise socket.error
