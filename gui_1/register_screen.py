@@ -31,6 +31,8 @@ def check_register():
 
 def create_my_info_file(username, password, pub_key, priv_key, image, description, following):
     dictionary = {}
+    dictionary["basic_info"] = {}
+    dictionary["semi_basic_info"] = {}
     dictionary["basic_info"]["user_name"] = username
     dictionary["basic_info"]["password"] = password
     dictionary["basic_info"]["user_pub_key"] = pub_key
@@ -39,7 +41,7 @@ def create_my_info_file(username, password, pub_key, priv_key, image, descriptio
     dictionary["semi_basic_info"]["description"] = description
     dictionary["semi_basic_info"]["user_following"] = following
     my_info_file = open("my_info.json", "w")
-    my_info_file.write(dictionary)
+    my_info_file.write(json.dumps(dictionary))
     my_info_file.close
     
 
@@ -155,7 +157,10 @@ class RegisterScreen (Screen):
             self.register_button.text = "Register. Try again"
         elif self.other_users == {}:
             self.password_check = check_password(self.password_text_box.text)
-            self.color_check = check_image(profile_image_screen.get_my_image())
+            print(1)
+            self.image_str = profile_image_screen.get_my_image()
+            print(self.image_str)
+            self.color_check = check_image(self.image_str)
             if self.password_check == False:
                 self.password_text_box.text = "PASSWORD"
                 self.register_button.text = "Register. Try again"
@@ -163,9 +168,10 @@ class RegisterScreen (Screen):
                 self.image_button.text = "PROFILE IMAGE"
                 self.register_button.text = "Register. Try again"
             if self.password_check == True and self.color_check == True:
+                print(2)
                 rsa_gui.gen_key(self.username_text_box.text, self.password_text_box.text)
                 following = self.following_text_box.text.split(", ")
-                create_my_info_file(self.username_text_box.text, self.password_text_box.text, "pub_my_key_storage.pem", "priv_my_key_storage.pem", self.profile_image_text_box.text, self.description_text_box.text, following)
+                create_my_info_file(self.username_text_box.text, self.password_text_box.text, "pub_my_key_storage.pem", "priv_my_key_storage.pem", self.image_str, self.description_text_box.text, following)
                 Reg_f()
                 self.manager.transition = FallOutTransition()
                 self.manager.current = "main"

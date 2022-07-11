@@ -39,9 +39,11 @@ def Get(num):
     password = my_user_info["basic_info"]["password"]
     profileimage = my_user_info["semi_basic_info"]["profile_image"]
     user_pub_key = my_user_info["basic_info"]["user_pub_key"]
-    public_key = json.loads(open(user_pub_key, "r").read())
+    public_key = open(user_pub_key, "r").read()
+    public_key = public_key.replace("/n", "")
     user_priv_key = my_user_info["basic_info"]["user_priv_key"]
-    private_key = json.loads(open(user_priv_key, "r").read())
+    private_key = open(user_priv_key, "r").read()
+    private_key = private_key.replace("/n", "")
     user_description = my_user_info["semi_basic_info"]["description"]
     user_following = my_user_info["semi_basic_info"]["user_following"]
     if num == 0:

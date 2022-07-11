@@ -102,11 +102,10 @@ class ImageScreen (Screen):
             my_colors_from_screen= col_str
             self.manager.transition = FallOutTransition()
             self.manager.current = "register"
-        
 
     def button_1(self, instance):
         instance.background_color = self.actual_btn2.background_color
-        self.color_list.append(self.all_colors[int(self.actual_btn2.text)][0])
+        self.color_list[int(instance.text)] = self.all_colors[int(self.actual_btn2.text)][0]
         self.actual_btn1 = instance
 
     def button_2(self, instance):
