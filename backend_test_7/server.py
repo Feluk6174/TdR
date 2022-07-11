@@ -78,7 +78,7 @@ def get_posts(msg_info, connection):
 
     posts = db.querry(f"SELECT * FROM posts WHERE user_id = '{msg_info['user_name']}'")
 
-    connection.send(str(len(posts)).encode("utf-8"))
+    connection.connection.send(str(len(posts)).encode("utf-8"))
 
     #if connection.recv() == "OK":
 
