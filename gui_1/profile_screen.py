@@ -23,8 +23,8 @@ from kivy.uix.screenmanager import SlideTransition
 import kivy.utils
 from kivy.uix.dropdown import DropDown
 import json
-import acces_my_info
-import api
+import acces_my_info, register_screen
+
 
 def get_post_text(num):
     return(str(num))
@@ -67,6 +67,9 @@ def hex_color(hex_num):
 class ProfileScreen (Screen):
     def __init__(self, **kwargs):
         super(ProfileScreen, self).__init__(**kwargs)
+
+        self.bind(on_enter = self.check_check)
+
         self.Box0 = BoxLayout()
         self.Box0.orientation = "vertical"
         self.add_widget(self.Box0)
@@ -120,9 +123,6 @@ class ProfileScreen (Screen):
         self.user_foll.add_widget(self.us_followers)
         self.us_followers.bind(on_press = self.UserFollowers)
 
-        self.register_btn = Button(text = "Foto upload", on_press = self.FotoGet)
-        self.user_foll.add_widget(self.register_btn)
-
         self.us_following = Button(text = "Following")
         self.user_foll.add_widget(self.us_following)
         self.us_following.bind(on_press = self.UserFollowing)
@@ -168,6 +168,10 @@ class ProfileScreen (Screen):
         self.btn15 = Label (text = ("User"))
         self.box3.add_widget(self.btn15)
         
+    def checkcheck(self):
+        my_check = register_screen.check_register()
+        if my_check == True: 
+            self.FotoGet(0)
 
     def Search1(instance, value):
         pass
@@ -230,6 +234,10 @@ class ProfileScreen (Screen):
         self.fav = Button(text = "Favourite Posts")
         self.grid.bind(minimum_height=self.grid.setter('height'))
         self.current_posts = 1
+
+    def Image_press(self, instance):
+        self.manager.transition = FallOutTransition()
+        self.manager.current = "image"
 
     def UserFavourites(self, instance):
         if self.current_posts == 1:

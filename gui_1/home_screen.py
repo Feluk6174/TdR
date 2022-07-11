@@ -24,7 +24,7 @@ from kivy.uix.screenmanager import SlideTransition
 import kivy.utils
 from datetime import datetime
 import acces_my_info
-import api
+import api, register_screen
   
 
 def GetNewPosts():
@@ -113,7 +113,7 @@ class MainScreen (Screen):
         self.scroll.add_widget (self.grid)
         self.box2.add_widget (self.scroll)
 
-        self.post_btn_test = Button(size_hint_y = None, height = 100, text = "Load Posts", on_release = self.get_my_posts)
+        self.post_btn_test = Button(size_hint_y = None, height = 100, text = "Refresh Posts", on_release = self.get_my_posts)
         self.grid.add_widget(self.post_btn_test)
         
         #self.get_my_posts(0)
@@ -277,6 +277,11 @@ class MainScreen (Screen):
             self.color_bit = Button(background_normal = '', background_color = kivy.utils.get_color_from_hex(hex_color(self.color_list[x])), on_release = self.Image_press)
             self.color_button_list.append(self.color_bit)
             self.im.add_widget(self.color_bit)
+
+    def checkcheck(self):
+        my_check = register_screen.check_register()
+        if my_check == True: 
+            self.get_my_posts(0)
 
     def Name_press(self, instance):
         pass

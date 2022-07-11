@@ -25,6 +25,7 @@ import kivy.utils
 from datetime import datetime
 import acces_my_info
 import register_screen
+import main
 
 my_colors_from_screen = ""
 

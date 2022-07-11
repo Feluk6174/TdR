@@ -24,9 +24,10 @@ import kivy.utils
 import json
 import register_screen
 
-import chat_screen, home_screen, loading_screen, post_screen, profile_screen, search_screen, acces_my_info, register_screen, profile_image_screen
+import chat_screen, home_screen, loading_screen, post_screen, profile_screen, search_screen, acces_my_info, register_screen, profile_image_screen, api
 
-Window.size = (540*0.7, 880*0.7)
+#Window.size = (540*0.7, 880*0.7)
+
 
 
 class MyApp (App):
