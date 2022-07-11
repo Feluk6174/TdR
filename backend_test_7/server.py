@@ -173,7 +173,7 @@ def manage_new_client(connection, conn_info):
 # Node - Node comunication
 def broadcast_ip(ip, node_ip):
     global connections
-    msg_content = "{"+f'"type": "IP", "ip": "{ip}"'+"}"
+    msg_content = "{"+f'"type": "ACTION", "action": "IP", "ip": "{ip}"'+"}"
     for connection in connections:
         if not connection.ip == node_ip:
             connection.queue.append("{"+f'"type": "ACTION", "action": "SEND", "msg": {json.dumps(msg_content)}'+"}")
