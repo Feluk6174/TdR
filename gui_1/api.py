@@ -9,9 +9,9 @@ msg = '{"type": "CLIENT"}'
 connection.send(msg.encode("utf-8"))
 time.sleep(0.1)
 
-def register_user(user_name:str, public_key:int, profile_picture:str, info:str):
+def register_user(user_name:str, public_key:str, profile_picture:str, info:str):
     global connection
-    msg = "{"+f'"type": "REGISTER", "user_name": "{user_name}", "public_key": {public_key}, "profile_picture": "{profile_picture}", "info": "{info}"'+"}"
+    msg = "{"+f'"type": "REGISTER", "user_name": "{user_name}", "public_key": "{public_key}", "profile_picture": "{profile_picture}", "info": "{info}"'+"}"
     connection.send(msg.encode("utf-8"))
     response = connection.recv(1024).decode("utf-8")
     if not response == "OK":

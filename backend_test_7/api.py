@@ -9,9 +9,9 @@ msg = '{"type": "CLIENT"}'
 connection.send(msg.encode("utf-8"))
 time.sleep(0.1)
 
-def register_user(user_name:str, public_key:int, profile_picture:str, info:str):
+def register_user(user_name:str, public_key:str, profile_picture:str, info:str):
     global connection
-    msg = "{"+f'"type": "REGISTER", "user_name": "{user_name}", "public_key": {public_key}, "profile_picture": "{profile_picture}", "info": "{info}"'+"}"
+    msg = "{"+f'"type": "ACTION", "action": "REGISTER", "user_name": "{user_name}", "public_key": "{public_key}", "profile_picture": "{profile_picture}", "info": "{info}"'+"}"
     connection.send(msg.encode("utf-8"))
     response = connection.recv(1024).decode("utf-8")
     if not response == "OK":
@@ -20,7 +20,7 @@ def register_user(user_name:str, public_key:int, profile_picture:str, info:str):
 
 def post(content:str, post_id:str, user_name:str, flags:str):
     global connection
-    msg = "{"+f'"type": "POST", "post_id": "{post_id}", "user_name": "{user_name}", "content": "{content}", "flags": "{flags}"'+"}"
+    msg = "{"+f'"type": "ACTION", "action": "POST", "post_id": "{post_id}", "user_name": "{user_name}", "content": "{content}", "flags": "{flags}"'+"}"
     connection.send(msg.encode("utf-8"))
     response = connection.recv(1024).decode("utf-8")
     if not response == "OK":
@@ -30,7 +30,7 @@ def get_posts(user_name:str):
     #return format: {'id': 'str(23)', 'user_id': 'str(16)', 'content': 'str(255)', 'flags': 'str(10)', 'time_posted': int}
     global connection
     posts = []
-    msg = "{"+f'"type": "GET POSTS", "user_name": "{user_name}"'+"}"
+    msg = "{"+f'"type": "ACTION", "action": "GET POSTS", "user_name": "{user_name}"'+"}"
     connection.send(msg.encode("utf-8"))
     num = int(connection.recv(1024).decode("utf-8"))
     if not num == 0: 
@@ -41,7 +41,7 @@ def get_posts(user_name:str):
 
 def get_user(user_name:str):
     global connection
-    msg = "{"+f'"type": "GET USER", "user_name": "{user_name}"'+"}"
+    msg = "{"+f'"type": "ACTION", "action": "GET USER", "user_name": "{user_name}"'+"}"
     connection.send(msg.encode("utf-8"))
     response = connection.recv(1024).decode("utf-8")
     return json.loads(response)

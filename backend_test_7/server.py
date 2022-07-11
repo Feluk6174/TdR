@@ -1,3 +1,4 @@
+from urllib import response
 import database
 import threading, time, socket, sys, json, math
 
@@ -36,7 +37,7 @@ def broadcast(msg, ip):
             msg_text = json.dumps(msg)
             formated_msg = msg_text.replace('"', '\\"')
             print("b", ip, connection.ip, json.dumps(msg))
-            connection.queue.append("{"+f'"type": "SEND", "msg": "{formated_msg}"'+"}")
+            connection.queue.append("{"+f'"type": "ACTION", "action": "SEND", "msg": "{formated_msg}"'+"}")
             
             
 
@@ -50,9 +51,9 @@ def new_post(msg_info, connection, ip=None):
         db.querry(sql)
         broadcast(msg_info, ip)
         if ip == None:
-            connection.send("OK".encode("utf-8"))
+            connection.connection.send('OK'.encode("utf-8"))
     elif ip == None:
-        connection.send("ALREADY EXISTS".encode("utf-8"))
+        connection.connection.send("ALREADY EXISTS".encode("utf-8"))
 
 
 def register_user(msg_info, connection, ip=None):
@@ -62,14 +63,14 @@ def register_user(msg_info, connection, ip=None):
     res = db.querry(f"SELECT * FROM users WHERE user_name = '{msg_info['user_name']}'")
 
     if len(res) == 0:
-        sql = f"INSERT INTO users(user_name, public_key, time_created, profile_picture, info) VALUES('{msg_info['user_name']}', {msg_info['public_key']}, {int(time.time())}, '{msg_info['profile_picture']}', '{msg_info['info']}');"
+        sql = f"INSERT INTO users(user_name, public_key, time_created, profile_picture, info) VALUES('{msg_info['user_name']}', '{msg_info['public_key']}', {int(time.time())}, '{msg_info['profile_picture']}', '{msg_info['info']}');"
         print("r",sql)
         db.execute(sql)
         broadcast(msg_info, ip)
         if ip == None:
-            connection.send("OK".encode("utf-8"))
+            connection.connection.send("OK".encode("utf-8"))
     elif ip == None:
-        connection.send("ALREADY EXISTS".encode("utf-8"))
+        connection.connection.send("ALREADY EXISTS".encode("utf-8"))
 
 def get_posts(msg_info, connection):
     global db
@@ -79,7 +80,7 @@ def get_posts(msg_info, connection):
 
     connection.send(str(len(posts)).encode("utf-8"))
 
-    time.sleep(0.1)
+    #if connection.recv() == "OK":
 
     for i, post in enumerate(posts):
         print(i)
@@ -104,6 +105,7 @@ class ClientConnection():
         self.connection = connection
         self.info = conn_info
         self.queue = []
+        self.responses = []
 
         thread = threading.Thread(target=self.process_queue)
         thread.start()
@@ -112,11 +114,15 @@ class ClientConnection():
         global clients
         while True:
             try:
-                msg = self.connection.recv(1024).decode("utf-8")
+                msg = json.loads(self.connection.recv(1024).decode("utf-8"))
                 print("----", msg)
                 if msg == "":
                     raise socket.error
-                self.queue.append(msg)
+
+                if msg["type"] == "ACTION":
+                    self.queue.append(msg)
+                elif msg["type"] == "RESPONSE":
+                    self.responses.append(msg)
 
             except socket.error as e:
                 print("[ERROR]", e)
@@ -126,56 +132,32 @@ class ClientConnection():
     def process_queue(self):
         while True:
             if not len(self.queue) == 0:
-                print(self.queue)
-                msg_info = json.loads(self.queue[0])
                 print(f"({threading.current_thread().name})[{time.asctime()}] recived:", msg_info)
+                msg_info = self.queue[0]
 
-                if msg_info["type"] == "REGISTER":
-                    register_user(msg_info, self.connection)
+                if msg_info["action"] == "REGISTER":
+                    register_user(msg_info, self)
 
-                if msg_info["type"] == "POST":
+                elif msg_info["action"] == "POST":
                     new_post(msg_info, self.connection)
 
-                if msg_info["type"] == "GET POSTS":
+                elif msg_info["action"] == "GET POSTS":
                     get_posts(msg_info, self.connection)
 
-                if msg_info["type"] == "GET USER":
+                elif msg_info["action"] == "GET USER":
                     get_user_info(msg_info, self.connection)
 
-                if msg_info["type"] == "SEND":
+                elif msg_info["action"] == "SEND":
                     self.connection.send(msg_info["msg"].encode("utf-8"))
 
                 self.queue.pop(0)
 
-"""
-def client_main_loop(connection, conn_info):
-    global clients
-    print(f"[{time.asctime()}] client_main_loop")
-    while True:
-        try:
-            msg = connection.recv(1024).decode("utf-8")
-            if msg == "":
-                raise socket.error
-            print("m", msg)
-            msg_info = json.loads(msg)
-            print(f"({threading.current_thread().name})[{time.asctime()}] recived:", msg_info)
-
-            if msg_info["type"] == "REGISTER":
-                register_user(msg_info, connection)
-
-            if msg_info["type"] == "POST":
-                new_post(msg_info, connection)
-
-            if msg_info["type"] == "GET POSTS":
-                get_posts(msg_info, connection)
-            
-            if msg_info["type"] == "GET USER":
-                get_user_info(msg_info, connection)
-
-        except socket.error as e:
-            print("[ERROR]", e)
-            clients.remove((connection, conn_info))
-            break """
+    def recv(self):
+        while True:
+            if not len(self.responses) == 0:
+                res = self.responses[0]["response"]
+                self.responses.pop(0)
+                return res
 
 def manage_new_client(connection, conn_info):
     global clients, max_clients
@@ -194,7 +176,7 @@ def broadcast_ip(ip, node_ip):
     msg_content = "{"+f'"type": "IP", "ip": "{ip}"'+"}"
     for connection in connections:
         if not connection.ip == node_ip:
-            connection.queue.append("{"+f'"type": "SEND", "msg": {json.dumps(msg_content)}'+"}")
+            connection.queue.append("{"+f'"type": "ACTION", "action": "SEND", "msg": {json.dumps(msg_content)}'+"}")
 
 def manage_ip(msg_info, node_ip):
     global IP, db
@@ -222,6 +204,7 @@ class NodeConnection():
         self.connection = connection
         self.info = conn_info
         self.queue = []
+        self.responses = []
         self.ip = self.info["ip"]
         self.real_ip = address
 
@@ -232,10 +215,15 @@ class NodeConnection():
         global connections
         while True:
             try:
-                msg = self.connection.recv(1024).decode("utf-8")
+                msg = json.loads(self.connection.recv(1024).decode("utf-8"))
                 if msg == "":
                     raise socket.error
-                self.queue.append(msg)
+
+                if msg["type"] == "ACTION":
+                    self.queue.append(msg)
+                elif msg["type"] == "RESPONSE":
+                    self.responses.append(msg)
+
 
             except socket.error as e:
                 print("[ERROR]", e)
@@ -246,18 +234,18 @@ class NodeConnection():
         while True:
             if not len(self.queue) == 0:
                 print(self.queue)
-                msg_info = json.loads(self.queue[0])
+                msg_info = self
 
-                if msg_info["type"] == "IP":
+                if msg_info["action"] == "IP":
                     manage_ip(msg_info, self.ip)
 
-                if msg_info["type"] == "REGISTER":
+                if msg_info["action"] == "REGISTER":
                     register_user(msg_info, self.connection, ip=self.ip)
 
-                if msg_info["type"] == "POST":
+                if msg_info["action"] == "POST":
                     new_post(msg_info, self.connection, ip=self.ip)
 
-                if msg_info["type"] == "SEND":
+                if msg_info["action"] == "SEND":
                     self.connection.send(msg_info["msg"].encode("utf-8"))
 
                 n_connected = len(connections)
@@ -269,35 +257,13 @@ class NodeConnection():
 
 
                 self.queue.pop(0)
-"""
-def node_main_loop(connection, ip, real_ip):
-    global db, get_suposed_connected, connections
-    while True:
-        try:
-            res = connection.recv(1024).decode("utf-8")
-            print("n_m", ip, res)
-            msg_info = json.loads(res)
-
-            if msg_info["type"] == "IP":
-                manage_ip(msg_info, ip)
-
-            if msg_info["type"] == "REGISTER":
-                register_user(msg_info, connection, ip=ip)
-
-            if msg_info["type"] == "POST":
-                new_post(msg_info, connection, ip=ip)
-
-            n_connected = len(connections)
-            n_nodes = len(db.querry("SELECT * FROM ips;"))
-            n_suposed_connections = get_suposed_connected(n_nodes)
-            if n_connected < n_suposed_connections:
-                thread = threading.Thread(target=connect_to_new_node)
-                thread.start()
-
-        except socket.error as e:
-            print("[ERROR]", e)
-            connections.remove((ip, connection, real_ip))
-            break"""
+    
+    def recv(self):
+        while True:
+            if not len(self.responses) == 0:
+                res = self.responses[0]
+                self.responses.pop(0)
+                return res
 
 def check_if_connected(ip):
     global connections

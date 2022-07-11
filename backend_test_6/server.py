@@ -62,7 +62,7 @@ def register_user(msg_info, connection, ip=None):
     res = db.querry(f"SELECT * FROM users WHERE user_name = '{msg_info['user_name']}'")
 
     if len(res) == 0:
-        sql = f"INSERT INTO users(user_name, public_key, time_created, profile_picture, info) VALUES('{msg_info['user_name']}', {msg_info['public_key']}, {int(time.time())}, '{msg_info['profile_picture']}', '{msg_info['info']}');"
+        sql = f"INSERT INTO users(user_name, public_key, time_created, profile_picture, info) VALUES('{msg_info['user_name']}', '{msg_info['public_key']}', {int(time.time())}, '{msg_info['profile_picture']}', '{msg_info['info']}');"
         print("r",sql)
         db.execute(sql)
         broadcast(msg_info, ip)
