@@ -140,6 +140,7 @@ class ClientConnection():
     def process_queue(self):
         while True:
             if not len(self.queue) == 0:
+                print(self.queue)
                 msg_info = self.queue[0]
                 print(f"({threading.current_thread().name})[{time.asctime()}] recived:", msg_info, type(msg_info))
 
