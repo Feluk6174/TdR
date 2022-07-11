@@ -78,14 +78,14 @@ def get_posts(msg_info, connection):
 
     posts = db.querry(f"SELECT * FROM posts WHERE user_id = '{msg_info['user_name']}'")
 
-    connection.send(str(len(posts)).encode("utf-8"))
+    connection.connection.send(str(len(posts)).encode("utf-8"))
 
     #if connection.recv() == "OK":
 
     for i, post in enumerate(posts):
         print(i)
         msg = "{"+f'"id": "{post[0]}", "user_id": "{post[1]}", "content": "{post[2]}", "flags": "{post[3]}", "time_posted": {post[4]}'+"}"
-        connection.send(msg.encode("utf-8"))
+        connection.connection.send(msg.encode("utf-8"))
         time.sleep(0.1)
 
 def get_user_info(msg_info, connection):
@@ -98,7 +98,7 @@ def get_user_info(msg_info, connection):
         msg = "{"+f'"user_name": "{user_info[0]}", "public_key": {user_info[1]}, "time_created": {user_info[2]}, "profile_picture": "{user_info[3]}", "info": "{user_info[4]}"'+"}"
     else:
         msg = "{}"
-    connection.send(msg.encode("utf-8"))
+    connection.connection.send(msg.encode("utf-8"))
 
 class ClientConnection():
     def __init__(self, connection, conn_info):
@@ -115,7 +115,7 @@ class ClientConnection():
         while True:
             try:
                 msg = json.loads(self.connection.recv(1024).decode("utf-8"))
-                print("----", msg)
+                #print("----", msg)
                 if msg == "":
                     raise socket.error
 
@@ -132,20 +132,20 @@ class ClientConnection():
     def process_queue(self):
         while True:
             if not len(self.queue) == 0:
-                print(f"({threading.current_thread().name})[{time.asctime()}] recived:", msg_info)
                 msg_info = self.queue[0]
+                print(f"({threading.current_thread().name})[{time.asctime()}] recived:", msg_info, type(msg_info))
 
                 if msg_info["action"] == "REGISTER":
                     register_user(msg_info, self)
 
                 elif msg_info["action"] == "POST":
-                    new_post(msg_info, self.connection)
+                    new_post(msg_info, self)
 
                 elif msg_info["action"] == "GET POSTS":
-                    get_posts(msg_info, self.connection)
+                    get_posts(msg_info, self)
 
                 elif msg_info["action"] == "GET USER":
-                    get_user_info(msg_info, self.connection)
+                    get_user_info(msg_info, self)
 
                 elif msg_info["action"] == "SEND":
                     self.connection.send(msg_info["msg"].encode("utf-8"))
@@ -216,9 +216,9 @@ class NodeConnection():
         while True:
             try:
                 msg = self.connection.recv(1024).decode("utf-8")
-                print(".......", type(msg), msg)
+                #print(".......", type(msg), msg)
                 msg = json.loads(msg)
-                print(".......", type(msg), msg)
+                #print(".......", type(msg), msg)
                 if msg == {}:
                     raise socket.error
 
@@ -236,18 +236,18 @@ class NodeConnection():
     def process_queue(self):
         while True:
             if not len(self.queue) == 0:
-                print(self.queue)
+                #print(self.queue)
                 msg_info = self.queue[0]
-                print("wtf", type(msg_info), msg_info)
+                print(f"({threading.current_thread().name})[{time.asctime()}] recived:", msg_info, type(msg_info))
 
                 if msg_info["action"] == "IP":
                     manage_ip(msg_info, self.ip)
 
                 if msg_info["action"] == "REGISTER":
-                    register_user(msg_info, self.connection, ip=self.ip)
+                    register_user(msg_info, self, ip=self.ip)
 
                 if msg_info["action"] == "POST":
-                    new_post(msg_info, self.connection, ip=self.ip)
+                    new_post(msg_info, self, ip=self.ip)
 
                 if msg_info["action"] == "SEND":
                     self.connection.send(msg_info["msg"].encode("utf-8"))
@@ -318,8 +318,9 @@ def manage_new_node(connection, address, conn_info):
         thread.start()
 
 def clock():
-    global connections, db, IP
+    global connections, clients, db, IP
     while True:
+        print("num of connected clients: ", len(clients))
         print("num of connections:", len(connections))
         for connection in connections:
             print(f"    {connection.ip}")
