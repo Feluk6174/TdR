@@ -98,7 +98,7 @@ def get_user_info(msg_info, connection):
         msg = "{"+f'"user_name": "{user_info[0]}", "public_key": {user_info[1]}, "time_created": {user_info[2]}, "profile_picture": "{user_info[3]}", "info": "{user_info[4]}"'+"}"
     else:
         msg = "{}"
-    connection.send(msg.encode("utf-8"))
+    connection.connection.send(msg.encode("utf-8"))
 
 class ClientConnection():
     def __init__(self, connection, conn_info):
