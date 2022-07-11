@@ -215,8 +215,11 @@ class NodeConnection():
         global connections
         while True:
             try:
-                msg = json.loads(self.connection.recv(1024).decode("utf-8"))
-                if msg == "":
+                msg = self.connection.recv(1024).decode("utf-8")
+                print(type(msg), msg)
+                msg = json.loads(msg)
+                print(type(msg), msg)
+                if msg == {}:
                     raise socket.error
 
                 if msg["type"] == "ACTION":
