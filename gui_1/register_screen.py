@@ -10,6 +10,7 @@ import random
 import rsa_gui
 import acces_my_info
 from kivy.uix.screenmanager import FallOutTransition
+import profile_image_screen
 
 
 def Reg_f():
@@ -26,9 +27,7 @@ def check_register():
         return True
     except FileNotFoundError:
         return False
-    
 
-    
 
 def create_my_info_file(username, password, pub_key, priv_key, image, description, following):
     dictionary = {}
@@ -45,10 +44,6 @@ def create_my_info_file(username, password, pub_key, priv_key, image, descriptio
     
 
 def check_password(word):
-    #min_letters = ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "a", "s", "d", "f", "g", "h", "j", "k", "l", "z", "x", "c", "v", "b", "n", "m"]
-    #max_letters = ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "A", "S", "D", "F", "G", "H", "J", "K", "L", "Z", "X", "C", "V", "B", "N", "M"]
-    #num = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
-    #special_caracters = ["!", "#", "$", "%", "&", "*", "?", "+", "-", "_", "º", "ª", "|", "@", "·", "~", "¬", "(", ")", "¿", "¡", "[", "]", "{", "}", "^", "<", ">"]
     min_letters = "qwertyuiopasdfghjklzxcvbnm"
     max_letters = "QWERTYUIOPASDFGHJKLZXCVBNM"
     num = "01234567889"
@@ -124,8 +119,11 @@ class RegisterScreen (Screen):
         self.profile_image_box = BoxLayout(size_hint = (1, 1))
         self.main_box.add_widget(self.profile_image_box)
         
-        self.profile_image_text_box = TextInput(size_hint = (1, 1), text = "profile image")
-        self.profile_image_box.add_widget(self.profile_image_text_box)
+        self.image_button = Button(text = "make your profile image", on_press = self.to_image)
+        self.profile_image_box.add_widget(self.image_button)
+
+        #self.profile_image_text_box = TextInput(size_hint = (1, 1), text = "profile image")
+        #self.profile_image_box.add_widget(self.profile_image_text_box)
 
         self.description_box = BoxLayout(size_hint = (1, 2))
         self.main_box.add_widget(self.description_box)
@@ -146,6 +144,9 @@ class RegisterScreen (Screen):
         self.register_box.add_widget(self.register_button)
         self.register_button.bind(on_release = self.register)
 
+    def to_image(self, instance):
+        self.manager.transition = FallOutTransition()
+        self.manager.current = "image"
     
     def register(self, instance):
         self.other_users = api.get_user(self.username_text_box.text)
@@ -154,12 +155,12 @@ class RegisterScreen (Screen):
             self.register_button.text = "Register. Try again"
         elif self.other_users == {}:
             self.password_check = check_password(self.password_text_box.text)
-            self.color_check = check_image(self.profile_image_text_box.text)
+            self.color_check = check_image(profile_image_screen.get_my_image())
             if self.password_check == False:
                 self.password_text_box.text = "PASSWORD"
                 self.register_button.text = "Register. Try again"
             if self.color_check == False:
-                self.profile_image_text_box.text = "PROFILE IMAGE"
+                self.image_button.text = "PROFILE IMAGE"
                 self.register_button.text = "Register. Try again"
             if self.password_check == True and self.color_check == True:
                 rsa_gui.gen_key(self.username_text_box.text, self.password_text_box.text)

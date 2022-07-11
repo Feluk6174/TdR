@@ -52,5 +52,5 @@ def encrypt(message, sec_doc, pub_other_key_storage, enc_data_file):
     [ file_out.write(x) for x in (enc_session_key, cipher_aes.nonce, tag, ciphertext) ]
     file_out.close()
 
-#gen_key(Username, Password, priv_my_key_storage, pub_my_key_storage)
-encrypt(message, secure_document, pub_other_key_storage, enc_data_file)
+gen_key("ani", "Password", "priv_my_key_storage.pem", "pub_my_key_storage.pem")
+#encrypt(message, secure_document, pub_other_key_storage, enc_data_file)

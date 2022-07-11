@@ -23,10 +23,7 @@ from kivy.uix.screenmanager import SlideTransition
 import kivy.utils
 import json
 
-def change_my_color(col_list):
-    col_str = ""
-    for a in range (len(col_list)):
-        col_str = col_str + col_list[a]
+def change_my_color(col_str):
     my_user_info = json.loads(open("my_info.json", "r").read())
     my_user_info["semi_basic_info"]["description "] = col_str
     file_my = open("my_info.json", "w").write(my_user_info)

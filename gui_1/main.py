@@ -24,7 +24,7 @@ import kivy.utils
 import json
 import register_screen
 
-import chat_screen, home_screen, loading_screen, post_screen, profile_screen, search_screen, acces_my_info, register_screen
+import chat_screen, home_screen, loading_screen, post_screen, profile_screen, search_screen, acces_my_info, register_screen, profile_image_screen
 
 Window.size = (540*0.7, 880*0.7)
 
@@ -43,6 +43,7 @@ class MyApp (App):
         sm.add_widget(search_screen.SearchScreen(name = "search"))
         sm.add_widget(post_screen.PostUserScreen(name = "last"))
         sm.add_widget(profile_screen.ProfileScreen(name = "profile"))
+        sm.add_widget(profile_image_screen.ImageScreen(name = "image"))
         return sm
 
 if __name__ == "__main__":

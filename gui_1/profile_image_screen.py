@@ -24,7 +24,13 @@ from kivy.uix.screenmanager import SlideTransition
 import kivy.utils
 from datetime import datetime
 import acces_my_info
+import register_screen
 
+my_colors_from_screen = ""
+
+def get_my_image():
+    global my_colors_from_screen
+    return my_colors_from_screen
 
 class ImageScreen (Screen):
     def __init__(self, **kwargs):
@@ -83,9 +89,20 @@ class ImageScreen (Screen):
         self.actual_btn2 = self.btn1
     
     def go_back(self, instance):
-        acces_my_info.change_my_color(self.color_list)
-        self.manager.transition = FallOutTransition()
-        self.manager.current = "main"
+        col_str = ""
+        for a in range (len(self.color_list)):
+            col_str = col_str + self.color_list[a]
+        check = register_screen.check_register()
+        if check == True:
+            acces_my_info.change_my_color(col_str)
+            self.manager.transition = FallOutTransition()
+            self.manager.current = "main"
+        elif check == False:
+            global my_colors_from_screen 
+            my_colors_from_screen= col_str
+            self.manager.transition = FallOutTransition()
+            self.manager.current = "register"
+        
 
     def button_1(self, instance):
         instance.background_color = self.actual_btn2.background_color
