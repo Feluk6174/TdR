@@ -3,6 +3,15 @@ import random
 import threading
 import time
 
+def is_safe(argument:str):
+    invalid_chars = ["\\", "\'", "\"", "\n", "\t", " ", "\r", "\0", "%", "\b", "-", ";", "="]
+
+    for i, char in enumerate(invalid_chars):
+        if char in argument:
+            print(char, i)
+            return False
+    return True
+
 class Database():
     def __init__(self):
         self.connect()
