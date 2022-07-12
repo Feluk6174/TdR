@@ -113,7 +113,7 @@ def get_posts(msg_info:dict, connection):
 
 def get_user_info(msg_info, connection):
     global db
-    if not database.is_safe(msg_info["post_id"]):
+    if not database.is_safe(msg_info["user_name"]):
         connection.connection.send("WRONG CHARS".encode("utf-8"))
         return
     # (user_name, public_key, time_created, profile_picture, info)
