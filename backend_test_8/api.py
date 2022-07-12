@@ -62,14 +62,20 @@ class Connection():
     def close(self):
         self.connection.close()
 
-def check_chars(argument:str):
+def check_chars(*args):
     invalid_chars = ["\\", "\'", "\"", "\n", "\t", " ", "\r", "\0", "%", "\b", "-", ";", "="]
 
+    arguments = ""
+    for argument in args:
+        arguments += argument
+
+
     for i, char in enumerate(invalid_chars):
-        if char in argument:
+        if char in arguments:
             print(char, i)
-            return False, char
-    return True, None
+            return False
+    return True
+
 
 class UserAlreadyExists(Exception):
     def __init__(self, user_name):
