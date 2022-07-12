@@ -10,6 +10,7 @@ def is_safe(*args):
     for argument in args:
         arguments += argument
 
+    print(arguments)
 
     for i, char in enumerate(invalid_chars):
         if char in arguments:
