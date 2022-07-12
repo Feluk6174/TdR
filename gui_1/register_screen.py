@@ -13,8 +13,7 @@ import profile_image_screen
 
 api = None
 
-def Reg_f():
-    global api
+def Reg_f(api):
     user_name = acces_my_info.GetName()
     public_key = acces_my_info.GetPubKey()
     private_key = acces_my_info.GetPubKey()     
@@ -50,7 +49,7 @@ def check_password(word):
     min_letters = "qwertyuiopasdfghjklzxcvbnm"
     max_letters = "QWERTYUIOPASDFGHJKLZXCVBNM"
     num = "01234567889"
-    special_caracters = "!|@·#$~%&/()?^[]+*-_<>"
+    special_caracters = "!|@·#$~%&/()?^[]+*-_<>€"
     word_cheme = []
     for _ in range (len(word)):
         word_cheme.append(0)
@@ -98,6 +97,7 @@ class RegisterScreen (Screen):
         super(RegisterScreen, self).__init__(**kwargs)
         global api
         api = connection
+
         self.main_box = BoxLayout()
         self.main_box.orientation = "vertical"
         self.add_widget(self.main_box)
@@ -173,6 +173,7 @@ class RegisterScreen (Screen):
                 rsa_gui.gen_key(self.username_text_box.text, self.password_text_box.text)
                 following = self.following_text_box.text.split(", ")
                 create_my_info_file(self.username_text_box.text, self.password_text_box.text, "pub_my_key_storage.pem", "priv_my_key_storage.pem", self.image_str, self.description_text_box.text, following)
-                Reg_f()
+                Reg_f(api)
                 self.manager.transition = FallOutTransition()
-                self.manager.current = "main"
+                self.manager.current = "close_register"
+                print(0/0)

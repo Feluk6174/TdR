@@ -150,7 +150,7 @@ class PostUserScreen (Screen):
         self.flag_list = ""
         for y in range (len(self.all_flags) - 1):
             self.flag_list = self.flag_list + str(self.all_flags[y + 1][3])
-        SendPostFinal(self.flag_list, str(self.actp.text) + ". " + str(self.actp2.text) + ". " + str(self.actp3.text), 0, api)
+        SendPostFinal(self.flag_list, str(self.actp.text) + ". " + str(self.actp2.text) + ". " + str(self.actp3.text), 0)
         self.actp.text = ""
         self.actp2.text = ""
         self.actp3.text = ""
