@@ -130,3 +130,7 @@ dmypy.json
 
 .buildoser/
 bin/
+
+gui_1/my_info.json
+gui_1/pub_my_key_storage.pem
+gui_1/priv_my_key_storage.pem
