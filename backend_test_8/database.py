@@ -4,7 +4,7 @@ import threading
 import time
 
 def is_safe(*args):
-    invalid_chars = ["\\", "\'", "\"", "\n", "\t", " ", "\r", "\0", "%", "\b", "-", ";", "="]
+    invalid_chars = ["\\", "\'", "\"", "\n", "\t", "\r", "\0", "%", "\b", "-", ";", "="]
 
     arguments = ""
     for argument in args:
