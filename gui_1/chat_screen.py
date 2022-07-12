@@ -106,17 +106,21 @@ class ChatScreen (Screen):
         pass
 
     def press_btn12(self, instance):
+        self.manager.transition = SlideTransition()
         self.manager.current = "search"
         self.manager.transition.direction = "left"
 
     def press_btn13(self, instance):
+        self.manager.transition = SlideTransition()
         self.manager.current = "main"
         self.manager.transition.direction = "left"
 
     def press_btn14(self, instance):
+        self.manager.transition = SlideTransition()
         self.manager.current = "last"
         self.manager.transition.direction = "left"
 
     def press_btn15(self, instance):
+        self.manager.transition = SlideTransition()
         self.manager.current = "profile"
         self.manager.transition.direction = "left"

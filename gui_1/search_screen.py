@@ -197,6 +197,7 @@ class SearchScreen (Screen):
 
 
     def press_btn11(self, instance):
+        self.manager.transition = SlideTransition()
         self.manager.current = "chat"
         self.manager.transition.direction = "right"
 
@@ -204,14 +205,16 @@ class SearchScreen (Screen):
         pass
 
     def press_btn13(self, instance):
+        self.manager.transition = SlideTransition()
         self.manager.current = "main"
         self.manager.transition.direction = "left"
 
-
     def press_btn14(self, instance):
+        self.manager.transition = SlideTransition()
         self.manager.current = "last"
         self.manager.transition.direction = "left"
 
     def press_btn15(self, instance):
+        self.manager.transition = SlideTransition()
         self.manager.current = "profile"
         self.manager.transition.direction = "left"

@@ -29,7 +29,6 @@ from kivy.clock import Clock
   
 api = None
 
-onenter_global_variable = 0
 
 def GetNewPosts():
     global api
@@ -127,7 +126,8 @@ class MainScreen (Screen):
         self.post_box = BoxLayout()
         self.grid.add_widget(self.post_box)
 
-        #self.get_my_posts(0)
+        self.all_posts_i_get = []
+        self.get_my_posts(0)
 
         """
         #posts prova
@@ -194,13 +194,6 @@ class MainScreen (Screen):
         self.btn15 = Button (text = ("U"))
         self.box3.add_widget(self.btn15)
         self.btn15.bind(on_press = self.press_btn15)
-
-    def on_enter(self):
-        global onenter_global_variable
-        if onenter_global_variable > 0:
-            Clock.schedule_once(self.get_my_posts)
-        elif onenter_global_variable == 0:
-            onenter_global_variable = onenter_global_variable + 1
         
 
     def Search1(instance, value):
@@ -288,6 +281,8 @@ class MainScreen (Screen):
 
         self.num_likes = Label (text = (str(nlikes)), size_hint = (1, 1))
         self.likes.add_widget(self.num_likes)
+
+        self.all_posts_i_get.append(self.post)
     
     def BuildImage(self, user_image):
         self.color_list = user_image

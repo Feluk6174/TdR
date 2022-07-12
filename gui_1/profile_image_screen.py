@@ -25,7 +25,7 @@ import kivy.utils
 from datetime import datetime
 import acces_my_info
 import register_screen
-import main
+import profile_screen
 
 my_colors_from_screen = ""
 
@@ -51,7 +51,7 @@ class ImageScreen (Screen):
 
         self.color_list = []
         for x in range (64):
-            self.color_list.append("0")
+            self.color_list.append("3")
 
         for y in range (64):
             self.btn = Button(background_normal = '', font_size = 1, text = str(y), background_color = (1, 1, 1, 1), on_press = self.button_1)
@@ -96,8 +96,10 @@ class ImageScreen (Screen):
         check = register_screen.check_register()
         if check == True:
             acces_my_info.change_my_color(col_str)
+            #profile_screen.BuildImage(profile_screen, col_str)
             self.manager.transition = FallOutTransition()
-            self.manager.current = "main"
+            self.manager.current = "profile"
+
         elif check == False:
             global my_colors_from_screen 
             my_colors_from_screen= col_str

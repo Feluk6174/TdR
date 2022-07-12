@@ -9,7 +9,8 @@ import random
 import rsa_gui
 import acces_my_info
 from kivy.uix.screenmanager import FallOutTransition
-import profile_image_screen
+import chat_screen, home_screen, loading_screen, post_screen, profile_screen, search_screen, acces_my_info, profile_image_screen
+
 
 api = None
 
@@ -49,7 +50,7 @@ def check_password(word):
     min_letters = "qwertyuiopasdfghjklzxcvbnm"
     max_letters = "QWERTYUIOPASDFGHJKLZXCVBNM"
     num = "01234567889"
-    special_caracters = "!|@·#$~%&/()?^[]+*-_<>€"
+    special_caracters = "!|@·#$~%&/()?^[]+*_<>€"
     word_cheme = []
     for _ in range (len(word)):
         word_cheme.append(0)
@@ -93,10 +94,12 @@ def check_image(image):
 
 
 class RegisterScreen (Screen):
-    def __init__(self, connection, **kwargs):
+    def __init__(self, connection, sm, **kwargs):
         super(RegisterScreen, self).__init__(**kwargs)
         global api
         api = connection
+
+        self.sm = sm
 
         self.main_box = BoxLayout()
         self.main_box.orientation = "vertical"
@@ -106,13 +109,13 @@ class RegisterScreen (Screen):
         self.title_box.orientation = "horizontal"
         self.main_box.add_widget(self.title_box)
 
-        self.logo = Button (border = (0, 0, 0, 0), size_hint = (None, None), size = ((Window.size[1] - Window.size[0] / 5) * 0.2, (Window.size[1] - Window.size[0] / 5) * 0.2), background_normal = 'logo.png', background_down = 'logo.png')
+        self.logo = Button (border = (0, 0, 0, 0), size_hint_x = None, width = Window.size[1] / 8, background_normal = 'logo.png', background_down = 'logo.png')
         self.title_box.add_widget(self.logo)
         
         self.title = Label (text = ("Small brother"))
         self.title_box.add_widget(self.title)
 
-        self.username_password_box = BoxLayout(size_hint = (1, 1), orientation = "vertical")
+        self.username_password_box = BoxLayout(size_hint = (1, 2), orientation = "vertical")
         self.main_box.add_widget(self.username_password_box)
 
         self.username_text_box = TextInput(size_hint = (1, 1), text = "username")
@@ -156,6 +159,7 @@ class RegisterScreen (Screen):
     def register(self, instance):
         global api
         self.other_users = api.get_user(self.username_text_box.text)
+        print(self.other_users)
         if self.other_users != {}:
             self.username_text_box.text = "USERNAME"
             self.register_button.text = "Register. Try again"
@@ -174,6 +178,12 @@ class RegisterScreen (Screen):
                 following = self.following_text_box.text.split(", ")
                 create_my_info_file(self.username_text_box.text, self.password_text_box.text, "pub_my_key_storage.pem", "priv_my_key_storage.pem", self.image_str, self.description_text_box.text, following)
                 Reg_f(api)
+                self.sm.add_widget(home_screen.MainScreen(api, name = "main"))
+                self.sm.add_widget(chat_screen.ChatScreen(name = "chat"))
+                self.sm.add_widget(search_screen.SearchScreen(name = "search"))
+                self.sm.add_widget(post_screen.PostUserScreen(api, name = "last"))
+                self.sm.add_widget(profile_screen.ProfileScreen(name = "profile"))
+                self.sm.add_widget(profile_image_screen.ImageScreen(name = "image"))
                 self.manager.transition = FallOutTransition()
-                self.manager.current = "close_register"
-                print(0/0)
+                self.manager.current = "main"
+                
