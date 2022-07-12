@@ -27,16 +27,16 @@ import acces_my_info
 import register_screen
 from kivy.clock import Clock
   
-api = None
+connection = None
 
 
 def GetNewPosts():
-    global api
+    global connection
     all_my_following = acces_my_info.GetFollowing()
     all_posts = []
     for following in all_my_following:
-        foll_posts = api.get_posts(following)
-        foll_info = api.get_user(following)
+        foll_posts = connection.get_posts(following)
+        foll_info = connection.get_user(following)
         for post in foll_posts:
             all_posts.append((following, foll_info["profile_picture"], post["flags"], post["content"], 0, post["time_posted"]))
     return all_posts
@@ -85,11 +85,11 @@ def get_post_text(num):
     return str(num)
 
 class MainScreen (Screen):
-    def __init__(self, connection, **kwargs):
+    def __init__(self, conn, **kwargs):
         super(MainScreen, self).__init__(**kwargs)
 
-        global api 
-        api = connection
+        global connection 
+        connection = conn
 
         self.Box0 = BoxLayout()
         self.Box0.orientation = "vertical"

@@ -25,23 +25,23 @@ import json
 import random
 import acces_my_info
 
-api = None
+connection = None
 
 def SendPostFinal(postflags, textp, nlikes):
-    global api
+    global connection
     content = textp
     user_name = acces_my_info.GetName()
     post_flags = str(postflags)
     #post_likes = nlikes
     #date = int(time.time())
     post_id = hash(str(content) + str(user_name) + str(post_flags))
-    api.post(content, post_id, user_name, post_flags)
+    connection.post(content, post_id, user_name, post_flags)
 
 class PostUserScreen (Screen):
-    def __init__(self, connection, **kwargs):
+    def __init__(self, conn, **kwargs):
         super(PostUserScreen, self).__init__(**kwargs)
-        global api
-        api = connection
+        global connection
+        connection = conn
         self.Box0 = BoxLayout()
         self.Box0.orientation = "vertical"
         self.add_widget(self.Box0)
@@ -146,7 +146,7 @@ class PostUserScreen (Screen):
             instance.background_normal = self.all_flags[flag][0]
 
     def SendPost(self, instance):
-        global api
+        global connection
         self.flag_list = ""
         for y in range (len(self.all_flags) - 1):
             self.flag_list = self.flag_list + str(self.all_flags[y + 1][3])

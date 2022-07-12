@@ -12,15 +12,15 @@ from kivy.uix.screenmanager import FallOutTransition
 import chat_screen, home_screen, loading_screen, post_screen, profile_screen, search_screen, acces_my_info, profile_image_screen
 
 
-api = None
+connection = None
 
-def Reg_f(api):
+def Reg_f(connection):
     user_name = acces_my_info.GetName()
     public_key = acces_my_info.GetPubKey()
     private_key = acces_my_info.GetPubKey()     
     profile_picture = acces_my_info.GetImage()
     info = acces_my_info.GetDescription()
-    api.register_user(user_name, public_key, profile_picture, info)
+    connection.register_user(user_name, public_key, profile_picture, info)
 
 def check_register():
     try:
@@ -94,10 +94,10 @@ def check_image(image):
 
 
 class RegisterScreen (Screen):
-    def __init__(self, connection, sm, **kwargs):
+    def __init__(self, conn, sm, **kwargs):
         super(RegisterScreen, self).__init__(**kwargs)
-        global api
-        api = connection
+        global connection
+        connection = conn
 
         self.sm = sm
 
@@ -157,8 +157,8 @@ class RegisterScreen (Screen):
         self.manager.current = "image"
     
     def register(self, instance):
-        global api
-        self.other_users = api.get_user(self.username_text_box.text)
+        global connection
+        self.other_users = connection.get_user(self.username_text_box.text)
         print(self.other_users)
         if self.other_users != {}:
             self.username_text_box.text = "USERNAME"
@@ -177,11 +177,11 @@ class RegisterScreen (Screen):
                 rsa_gui.gen_key(self.username_text_box.text, self.password_text_box.text)
                 following = self.following_text_box.text.split(", ")
                 create_my_info_file(self.username_text_box.text, self.password_text_box.text, "pub_my_key_storage.pem", "priv_my_key_storage.pem", self.image_str, self.description_text_box.text, following)
-                Reg_f(api)
-                self.sm.add_widget(home_screen.MainScreen(api, name = "main"))
+                Reg_f(connection)
+                self.sm.add_widget(home_screen.MainScreen(connection, name = "main"))
                 self.sm.add_widget(chat_screen.ChatScreen(name = "chat"))
                 self.sm.add_widget(search_screen.SearchScreen(name = "search"))
-                self.sm.add_widget(post_screen.PostUserScreen(api, name = "last"))
+                self.sm.add_widget(post_screen.PostUserScreen(connection, name = "last"))
                 self.sm.add_widget(profile_screen.ProfileScreen(name = "profile"))
                 self.sm.add_widget(profile_image_screen.ImageScreen(name = "image"))
                 self.manager.transition = FallOutTransition()
