@@ -24,7 +24,9 @@ import kivy.utils
 from kivy.uix.dropdown import DropDown
 import json
 import acces_my_info, register_screen
+from kivy.clock import Clock
 
+onenter_global_variable_profile = 0
 
 def get_post_text(num):
     return(str(num))
@@ -68,8 +70,6 @@ class ProfileScreen (Screen):
     def __init__(self, **kwargs):
         super(ProfileScreen, self).__init__(**kwargs)
 
-        self.bind(on_enter = self.checkcheck)
-
         self.Box0 = BoxLayout()
         self.Box0.orientation = "vertical"
         self.add_widget(self.Box0)
@@ -108,7 +108,7 @@ class ProfileScreen (Screen):
         #self.us_image_list = acces_my_info.GetImage()
         #self.BuildImage(self.us_image_list)        
 
-        self.us_name = Button(text = "")
+        self.us_name = Button()
         self.user_n_f.add_widget(self.us_name)
         self.us_name.bind(on_press = self.UserName)
 
@@ -167,11 +167,14 @@ class ProfileScreen (Screen):
 
         self.btn15 = Label (text = ("User"))
         self.box3.add_widget(self.btn15)
+
+    def on_enter(self):
+        global onenter_global_variable_profile
+        if onenter_global_variable_profile > 0:
+            Clock.schedule_once(self.FotoGet)
+        elif onenter_global_variable_profile == 0:
+            onenter_global_variable_profile = onenter_global_variable_profile + 1
         
-    def checkcheck(self):
-        my_check = register_screen.check_register()
-        if my_check == True: 
-            self.FotoGet(0)
 
     def Search1(instance, value):
         pass
@@ -187,16 +190,13 @@ class ProfileScreen (Screen):
             self.color_button_list.append(self.color_bit)
             self.us_image.add_widget(self.color_bit)
 
-    def FotoGet(self, instance):
+    def FotoGet(self, none):
+        ProfileScreen.us_des.text = acces_my_info.GetDescription()
         self.us_name.text = acces_my_info.GetName()
-        self.us_des.text = acces_my_info.GetDescription()
         self.us_image_list = acces_my_info.GetImage()
         self.BuildImage(self.us_image_list)   
 
     def UserName(self, instance):
-        pass
-
-    def Image_press(self, instance):
         pass
 
     def UserDescription(self, instance):

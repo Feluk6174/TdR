@@ -25,8 +25,11 @@ import kivy.utils
 from datetime import datetime
 import acces_my_info
 import register_screen
+from kivy.clock import Clock
   
 api = None
+
+onenter_global_variable = 0
 
 def GetNewPosts():
     global api
@@ -89,8 +92,6 @@ class MainScreen (Screen):
         global api 
         api = connection
 
-        self.bind(on_enter = self.checkcheck())
-
         self.Box0 = BoxLayout()
         self.Box0.orientation = "vertical"
         self.add_widget(self.Box0)
@@ -122,7 +123,10 @@ class MainScreen (Screen):
 
         self.post_btn_test = Button(size_hint_y = None, height = 100, text = "Refresh Posts", on_release = self.get_my_posts)
         self.grid.add_widget(self.post_btn_test)
-        
+
+        self.post_box = BoxLayout()
+        self.grid.add_widget(self.post_box)
+
         #self.get_my_posts(0)
 
         """
@@ -190,6 +194,13 @@ class MainScreen (Screen):
         self.btn15 = Button (text = ("U"))
         self.box3.add_widget(self.btn15)
         self.btn15.bind(on_press = self.press_btn15)
+
+    def on_enter(self):
+        global onenter_global_variable
+        if onenter_global_variable > 0:
+            Clock.schedule_once(self.get_my_posts)
+        elif onenter_global_variable == 0:
+            onenter_global_variable = onenter_global_variable + 1
         
 
     def Search1(instance, value):
@@ -222,6 +233,7 @@ class MainScreen (Screen):
         self.manager.transition.direction = "left"
     
     def get_my_posts(self, instance):
+        self.post_box.clear_widgets()
         self.all_posts_info = GetNewPosts()
         for post in self.all_posts_info:
             self.make_post_btn(post[0], post[1], post[2], post[3], post[4], post[5])
@@ -230,7 +242,7 @@ class MainScreen (Screen):
     def make_post_btn(self, user_name, user_image, post_flags, textp, nlikes, date):
     
         self.post = BoxLayout(size_hint_y = None, height = Window.size[0] / 1.61, orientation = "vertical")
-        self.grid.add_widget(self.post)
+        self.post_box.add_widget(self.post)
         self.post_like = 0
         
         self.first_box = BoxLayout(orientation = "horizontal", size_hint = (1, 0.5))
@@ -284,11 +296,6 @@ class MainScreen (Screen):
             self.color_bit = Button(background_normal = '', background_color = kivy.utils.get_color_from_hex(hex_color(self.color_list[x])), on_release = self.Image_press)
             self.color_button_list.append(self.color_bit)
             self.im.add_widget(self.color_bit)
-
-    def checkcheck(self):
-        my_check = register_screen.check_register()
-        if my_check == True: 
-            self.get_my_posts(0)
 
     def Name_press(self, instance):
         pass

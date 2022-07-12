@@ -56,7 +56,7 @@ class MyApp (App):
         return sm
 
 if __name__ == "__main__":
-    MyApp().run()
-    
-
-
+    try:
+        MyApp().run()
+    except ZeroDivisionError:
+        MyApp().run()

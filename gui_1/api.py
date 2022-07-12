@@ -42,6 +42,7 @@ class Connection():
                 print(response)
 
             return posts
+        response = self.connection.recv(1024).decode("utf-8")
         if not response == "OK":
             print(response)
         return {}
