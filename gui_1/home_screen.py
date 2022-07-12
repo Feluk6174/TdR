@@ -24,10 +24,12 @@ from kivy.uix.screenmanager import SlideTransition
 import kivy.utils
 from datetime import datetime
 import acces_my_info
-import api, register_screen
+import register_screen
   
+api = None
 
 def GetNewPosts():
+    global api
     all_my_following = acces_my_info.GetFollowing()
     all_posts = []
     for following in all_my_following:
@@ -81,9 +83,12 @@ def get_post_text(num):
     return str(num)
 
 class MainScreen (Screen):
-    def __init__(self, **kwargs):
+    def __init__(self, connection, **kwargs):
         super(MainScreen, self).__init__(**kwargs)
-        
+
+        global api 
+        api = connection
+
         self.bind(on_enter = self.checkcheck())
 
         self.Box0 = BoxLayout()

@@ -24,9 +24,11 @@ import kivy.utils
 import json
 import random
 import acces_my_info
-import api
+
+api = None
 
 def SendPostFinal(postflags, textp, nlikes):
+    global api
     content = textp
     user_name = acces_my_info.GetName()
     post_flags = str(postflags)
@@ -36,8 +38,10 @@ def SendPostFinal(postflags, textp, nlikes):
     api.post(content, post_id, user_name, post_flags)
 
 class PostUserScreen (Screen):
-    def __init__(self, **kwargs):
+    def __init__(self, connection, **kwargs):
         super(PostUserScreen, self).__init__(**kwargs)
+        global api
+        api = connection
         self.Box0 = BoxLayout()
         self.Box0.orientation = "vertical"
         self.add_widget(self.Box0)
@@ -142,10 +146,11 @@ class PostUserScreen (Screen):
             instance.background_normal = self.all_flags[flag][0]
 
     def SendPost(self, instance):
+        global api
         self.flag_list = ""
         for y in range (len(self.all_flags) - 1):
             self.flag_list = self.flag_list + str(self.all_flags[y + 1][3])
-        SendPostFinal(self.flag_list, str(self.actp.text) + ". " + str(self.actp2.text) + ". " + str(self.actp3.text), 0)
+        SendPostFinal(self.flag_list, str(self.actp.text) + ". " + str(self.actp2.text) + ". " + str(self.actp3.text), 0, api)
         self.actp.text = ""
         self.actp2.text = ""
         self.actp3.text = ""

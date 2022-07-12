@@ -5,21 +5,22 @@ from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 import json
-import api
 import random
 import rsa_gui
 import acces_my_info
 from kivy.uix.screenmanager import FallOutTransition
 import profile_image_screen
 
+api = None
 
 def Reg_f():
-        user_name = acces_my_info.GetName()
-        public_key = acces_my_info.GetPubKey()
-        private_key = acces_my_info.GetPubKey()     
-        profile_picture = acces_my_info.GetImage()
-        info = acces_my_info.GetDescription()
-        api.register_user(user_name, public_key, profile_picture, info)
+    global api
+    user_name = acces_my_info.GetName()
+    public_key = acces_my_info.GetPubKey()
+    private_key = acces_my_info.GetPubKey()     
+    profile_picture = acces_my_info.GetImage()
+    info = acces_my_info.GetDescription()
+    api.register_user(user_name, public_key, profile_picture, info)
 
 def check_register():
     try:
@@ -93,8 +94,10 @@ def check_image(image):
 
 
 class RegisterScreen (Screen):
-    def __init__(self, **kwargs):
+    def __init__(self, connection, **kwargs):
         super(RegisterScreen, self).__init__(**kwargs)
+        global api
+        api = connection
         self.main_box = BoxLayout()
         self.main_box.orientation = "vertical"
         self.add_widget(self.main_box)
@@ -151,6 +154,7 @@ class RegisterScreen (Screen):
         self.manager.current = "image"
     
     def register(self, instance):
+        global api
         self.other_users = api.get_user(self.username_text_box.text)
         if self.other_users != {}:
             self.username_text_box.text = "USERNAME"
