@@ -63,7 +63,7 @@ class Connection():
         self.connection.close()
 
 def check_chars(*args):
-    invalid_chars = ["\\", "\'", "\"", "\n", "\t", " ", "\r", "\0", "%", "\b", "-", ";", "="]
+    invalid_chars = ["\\", "\'", "\"", "\n", "\t", "\r", "\0", "%", "\b", "-", ";", "="]
 
     arguments = ""
     for argument in args:
@@ -73,8 +73,8 @@ def check_chars(*args):
     for i, char in enumerate(invalid_chars):
         if char in arguments:
             print(char, i)
-            return False
-    return True
+            return False, char
+    return True, None
 
 
 class UserAlreadyExists(Exception):
@@ -84,9 +84,10 @@ class UserAlreadyExists(Exception):
 
 class WrongCaracters(Exception):
     def __init__(self, **kwargs):
+        self.message = "wtf"
         for key, value in kwargs.items():
             check, char = check_chars(value)
             if not check:
                 self.message = f"{key}(value = {value}) contains the character {char}"
-        self.message = "wtf"
+                
         super().__init__(self.message)
