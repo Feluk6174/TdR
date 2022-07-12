@@ -159,14 +159,17 @@ class PostUserScreen (Screen):
                 self.all_flags[y + 1][2].trigger_action(duration = 0)
         
     def press_btn11(self, instance):
+        self.manager.transition = SlideTransition()
         self.manager.current = "chat"
         self.manager.transition.direction = "right"
 
     def press_btn12(self, instance):
+        self.manager.transition = SlideTransition()
         self.manager.current = "search"
         self.manager.transition.direction = "right"
 
     def press_btn13(self, instance):
+        self.manager.transition = SlideTransition()
         self.manager.current = "main"
         self.manager.transition.direction = "right"
 
@@ -174,5 +177,6 @@ class PostUserScreen (Screen):
         pass
 
     def press_btn15(self, instance):
+        self.manager.transition = SlideTransition()
         self.manager.current = "profile"
         self.manager.transition.direction = "left"

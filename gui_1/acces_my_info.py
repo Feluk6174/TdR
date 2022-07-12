@@ -26,7 +26,8 @@ import json
 def change_my_color(col_str):
     my_user_info = json.loads(open("my_info.json", "r").read())
     my_user_info["semi_basic_info"]["description "] = col_str
-    file_my = open("my_info.json", "w").write(my_user_info)
+    file_my = open("my_info.json", "w")
+    file_my.write(json.dumps(my_user_info))
     file_my.close()
 
 def Get(num):

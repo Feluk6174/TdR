@@ -26,7 +26,6 @@ import json
 import acces_my_info, register_screen
 from kivy.clock import Clock
 
-onenter_global_variable_profile = 0
 
 def get_post_text(num):
     return(str(num))
@@ -105,14 +104,14 @@ class ProfileScreen (Screen):
 
         self.us_image = GridLayout(cols = 8, size_hint_x = None, width =  (Window.size[1] - Window.size[0] / 5) * 0.9 / 5)
         self.user_n_f.add_widget(self.us_image)
-        #self.us_image_list = acces_my_info.GetImage()
-        #self.BuildImage(self.us_image_list)        
+        self.us_image_list = acces_my_info.GetImage()
+        self.BuildImage(self.us_image_list)        
 
-        self.us_name = Button()
+        self.us_name = Button(text = acces_my_info.GetName())
         self.user_n_f.add_widget(self.us_name)
         self.us_name.bind(on_press = self.UserName)
 
-        self.us_des = Button(text = "", size_hint_y = None, height = (Window.size[1] - Window.size[0] / 5) * 2 * 0.9 / 5)
+        self.us_des = Button(text = acces_my_info.GetDescription(), size_hint_y = None, height = (Window.size[1] - Window.size[0] / 5) * 2 * 0.9 / 5)
         self.grid.add_widget(self.us_des)
         self.us_des.bind(on_press = self.UserDescription)
 
@@ -168,13 +167,6 @@ class ProfileScreen (Screen):
         self.btn15 = Label (text = ("User"))
         self.box3.add_widget(self.btn15)
 
-    def on_enter(self):
-        global onenter_global_variable_profile
-        if onenter_global_variable_profile > 0:
-            Clock.schedule_once(self.FotoGet)
-        elif onenter_global_variable_profile == 0:
-            onenter_global_variable_profile = onenter_global_variable_profile + 1
-        
 
     def Search1(instance, value):
         pass
@@ -183,24 +175,24 @@ class ProfileScreen (Screen):
         pass
 
     def BuildImage(self, user_image):
+        self.us_image.clear_widgets()
         self.color_list = user_image
         self.color_button_list = []
         for x in range (64):
             self.color_bit = Button(background_normal = '', background_color = kivy.utils.get_color_from_hex(hex_color(self.color_list[x])), on_release = self.Image_press)
             self.color_button_list.append(self.color_bit)
-            self.us_image.add_widget(self.color_bit)
-
-    def FotoGet(self, none):
-        ProfileScreen.us_des.text = acces_my_info.GetDescription()
-        self.us_name.text = acces_my_info.GetName()
-        self.us_image_list = acces_my_info.GetImage()
-        self.BuildImage(self.us_image_list)   
+            self.us_image.add_widget(self.color_bit)  
 
     def UserName(self, instance):
         pass
 
     def UserDescription(self, instance):
-        pass
+        self.text_des = self.us_des.text
+        #self.us_des = TextInput(text = self.text_des, multiline = False, on_text_validate = self.change_description_2)
+
+    #def change_description_2(self, instance, value):
+        #self.text_des = self.us_des.text
+        #self.us_des = Button(text = self.text_des, on_press = self.UserDescription)
 
     def UserFollowers(self, instance):
         pass
@@ -265,17 +257,24 @@ class ProfileScreen (Screen):
         self.current_posts = 2
 
     def press_btn11(self, instance):
+        self.manager.transition = SlideTransition()
         self.manager.current = "chat"
         self.manager.transition.direction = "right"
 
     def press_btn12(self, instance):
+        self.manager.transition = SlideTransition()
         self.manager.current = "search"
         self.manager.transition.direction = "right"
 
     def press_btn13(self, instance):
+        self.manager.transition = SlideTransition()
         self.manager.current = "main"
         self.manager.transition.direction = "right"
 
     def press_btn14(self, instance):
+        self.manager.transition = SlideTransition()
         self.manager.current = "last"
         self.manager.transition.direction = "right"
+    
+    def press_btn15(self, instance):
+        pass

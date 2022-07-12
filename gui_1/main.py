@@ -50,9 +50,8 @@ class MyApp (App):
             sm.add_widget(profile_screen.ProfileScreen(name = "profile"))
             sm.add_widget(profile_image_screen.ImageScreen(name = "image"))
         elif check == False:
-            sm.add_widget(register_screen.RegisterScreen(connection, name = "register"))
+            sm.add_widget(register_screen.RegisterScreen(connection, sm, name = "register"))
             sm.add_widget(profile_image_screen.ImageScreen(name = "image"))
-            sm.add_widget(BlackScreen(name = "close_register"))
         return sm
 
 if __name__ == "__main__":
