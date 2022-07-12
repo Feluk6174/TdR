@@ -16,7 +16,10 @@ class Connection():
         self.connection.send(msg.encode("utf-8"))
         response = self.connection.recv(1024).decode("utf-8")
         if not response == "OK":
-            print(response)
+            if response == "ALREADY EXISTS":
+                raise UserAlreadyExists(user_name)
+            elif response == "WRONG CHARS":
+                raise WrongCaracters(user_name=user_name, public_key=public_key, profile_picture=profile_picture, info=info)
 
 
     def post(self, content:str, post_id:str, user_name:str, flags:str):
@@ -50,10 +53,40 @@ class Connection():
         msg = "{"+f'"type": "ACTION", "action": "GET USER", "user_name": "{user_name}"'+"}"
         self.connection.send(msg.encode("utf-8"))
         response = self.connection.recv(1024).decode("utf-8")
-        return json.loads(response)
+        try:
+            return json.loads(response)
+        except json.decoder.JSONDecodeError:
+            print(response)
+            return {}
 
     def close(self):
         self.connection.close()
 
+def check_chars(*args):
+    invalid_chars = ["\\", "\'", "\"", "\n", "\t", " ", "\r", "\0", "%", "\b", "-", ";", "="]
+
+    arguments = ""
+    for argument in args:
+        arguments += argument
 
 
+    for i, char in enumerate(invalid_chars):
+        if char in arguments:
+            print(char, i)
+            return False
+    return True
+
+
+class UserAlreadyExists(Exception):
+    def __init__(self, user_name):
+        self.message = f"User {user_name} already exists"
+        super().__init__(self.message)
+
+class WrongCaracters(Exception):
+    def __init__(self, **kwargs):
+        for key, value in kwargs.items():
+            check, char = check_chars(value)
+            if not check:
+                self.message = f"{key}(value = {value}) contains the character {char}"
+        self.message = "wtf"
+        super().__init__(self.message)

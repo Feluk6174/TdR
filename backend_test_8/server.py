@@ -45,6 +45,9 @@ def broadcast(msg, ip):
 def new_post(msg_info, connection, ip=None):
     print(f"({threading.current_thread().name})[{time.asctime()}] posting:", msg_info, ip)
     global db
+    if not database.is_safe(msg_info["post_id"]):
+        connection.connection.send("WRONG CHARS".encode("utf-8"))
+        return
     #CREATE TABLE posts(id INT NOT NULL PRIMARY KEY, user_id VARCHAR(16) NOT NULL, post VARCHAR(255) NOT NULL, time_posted INT NOT NULL, FOREIGN KEY (user_id) REFERENCES users (user_name));")
     res = db.querry(f"SELECT * FROM posts WHERE id = '{msg_info['post_id']}';")
     if len(res) == 0:
@@ -60,6 +63,11 @@ def new_post(msg_info, connection, ip=None):
 def register_user(msg_info, connection, ip=None):
     print(f"({threading.current_thread().name})[{time.asctime()}] regitering user:", msg_info, ip)
     global db
+
+    if not database.is_safe(msg_info["user_name"], msg_info['public_key'], msg_info['public_key'], msg_info['profile_picture'], msg_info['info']):
+        connection.connection.send("WRONG CHARS".encode("utf-8"))
+        return
+
     #"CREATE TABLE users(user_name VARCHAR(16) NOT NULL UNIQUE PRIMARY KEY, public_key INT NOT NULL UNIQUE, time_created INT NOT NULL, profile_picture VARCHAR(64) NOT NULL, info VARCHAR(255));")
     res = db.querry(f"SELECT * FROM users WHERE user_name = '{msg_info['user_name']}'")
 
@@ -76,6 +84,14 @@ def register_user(msg_info, connection, ip=None):
 def get_posts(msg_info:dict, connection):
     global db
     print(f"({threading.current_thread().name})[{time.asctime()}] geting posts:", msg_info)
+
+    if not database.is_safe(msg_info['user_name']):
+        connection.connection.send("0".encode("utf-8"))
+        res = connection.recv()
+        if not res == "OK":
+            print(res)
+        connection.connection.send("WRONG CHARS".encode("utf-8"))
+        return
 
     posts = db.querry(f"SELECT * FROM posts WHERE user_id = '{msg_info['user_name']}'")
 
@@ -97,6 +113,9 @@ def get_posts(msg_info:dict, connection):
 
 def get_user_info(msg_info, connection):
     global db
+    if not database.is_safe(msg_info["post_id"]):
+        connection.connection.send("WRONG CHARS".encode("utf-8"))
+        return
     # (user_name, public_key, time_created, profile_picture, info)
     user_info = db.querry(f"SELECT * FROM users WHERE user_name = '{msg_info['user_name']}';")
     print(user_info)
