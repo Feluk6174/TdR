@@ -1,4 +1,5 @@
 #import kivy 
+from multiprocessing import connection
 from kivy.app import App
 from functools import partial
 from kivy.uix.widget import Widget
@@ -21,9 +22,12 @@ from kivy.clock import Clock
 from kivy.uix.screenmanager import FallOutTransition
 from kivy.uix.screenmanager import SlideTransition
 import kivy.utils
+from datetime import datetime
 from kivy.uix.dropdown import DropDown
 import json
-import acces_my_info, register_screen
+
+from matplotlib.pyplot import connect
+import acces_my_info, register_screen, api
 from kivy.clock import Clock
 
 
@@ -65,9 +69,16 @@ def hex_color(hex_num):
         col = '#06ffff'
     return col
 
+def ChangeTime(date):
+    date_post = int(date)
+    dt_obj = datetime.fromtimestamp(date_post).strftime('%d-%m-%y')
+    return dt_obj
+
 class ProfileScreen (Screen):
-    def __init__(self, **kwargs):
+    def __init__(self, connection, **kwargs):
         super(ProfileScreen, self).__init__(**kwargs)
+
+        self.connection = connection
 
         self.Box0 = BoxLayout()
         self.Box0.orientation = "vertical"
@@ -76,7 +87,7 @@ class ProfileScreen (Screen):
         self.box1 = BoxLayout (size_hint = (1, 0.1))
         self.Box0.add_widget(self.box1)
 
-        self.lab1 = Button (border = (0, 0, 0, 0), size_hint = (None, None), size = ((Window.size[1] - Window.size[0] / 5) * 0.1, (Window.size[1] - Window.size[0] / 5) * 0.1), background_normal = 'logo.png', background_down = 'logo.png')
+        self.lab1 = Button (border = (0, 0, 0, 0), size_hint = (None, None), size = ((Window.size[1] - Window.size[0] / 5) * 0.1, (Window.size[1] - Window.size[0] / 5) * 0.1), background_normal = 'images/logo.png', background_down = 'images/logo.png')
         self.box1.add_widget(self.lab1)
         self.lab1.bind(on_release = self.press_btn13)
         
@@ -84,7 +95,7 @@ class ProfileScreen (Screen):
         self.box1.add_widget(self.text1)
         self.text1.bind(on_text_validate = self.Search1)
         
-        self.btn1 = Button(border = (0, 0, 0, 0), size_hint = (None, None), size = ((Window.size[1] - Window.size[0] / 5) * 0.1, (Window.size[1] - Window.size[0] / 5) * 0.1), background_normal = 'settings1.png', background_down = 'settings2.png')
+        self.btn1 = Button(border = (0, 0, 0, 0), size_hint = (None, None), size = ((Window.size[1] - Window.size[0] / 5) * 0.1, (Window.size[1] - Window.size[0] / 5) * 0.1), background_normal = 'images/settings1.png', background_down = 'images/settings2.png')
         self.box1.add_widget(self.btn1)
         self.btn1.bind(on_press = self.Settings)
         
@@ -144,7 +155,6 @@ class ProfileScreen (Screen):
         #firstposts
         #current: 1 = my, 2 = fav
         self.current_posts = 0
-        self.quant_m_p = 10
         self.quant_f_p = 11
         self.us_posts.trigger_action(duration = 0)
 
@@ -213,6 +223,13 @@ class ProfileScreen (Screen):
         pass
 
     def UserPosts(self, instance):
+        self.username = acces_my_info.GetName()
+        conn = self.connection
+        self.my_posts_list = conn.get_posts(self.username)
+        self.all_my_posts = []
+
+        self.quant_m_p = len(self.my_posts_list)
+
         if self.current_posts == 2:
             self.favourite_posts.clear_widgets()
             self.grid.remove_widget(self.favourite_posts)
@@ -230,18 +247,92 @@ class ProfileScreen (Screen):
         self.grid.add_widget(self.my_posts)
 
         #my posts
-        for a in range (self.quant_m_p): 
-            self.btn_p = Button (size_hint_y = None, height = Window.size[0] / 1.61, text = "M" + (get_post_text(a)))
-            self.my_posts.add_widget(self.btn_p)
+        self.create_my_posts()
 
-        self.us_posts = Label(text = "My Posts")
-        self.fav = Button(text = "Favourite Posts")
         self.grid.bind(minimum_height=self.grid.setter('height'))
         self.current_posts = 1
+
+    def BuildImagePost(self, user_image):
+        self.color_list = user_image
+        self.color_button_list = []
+        for x in range (64):
+            self.color_bit = Button(background_normal = '', background_color = kivy.utils.get_color_from_hex(hex_color(self.color_list[x])), on_release = self.Image_press)
+            self.color_button_list.append(self.color_bit)
+            self.im.add_widget(self.color_bit)
+
+    def create_my_posts(self):
+        for post in self.my_posts_list:
+            self.all_my_posts.append((self.username, acces_my_info.GetImage(), post["flags"], post["content"], 0, post["time_posted"]))
+            self.make_post_btn(self.username, acces_my_info.GetImage(), post["flags"], post["content"], 0, post["time_posted"])
+        
+    #def crear botó. Estructura "correcta"
+    def make_post_btn(self, user_name, user_image, post_flags, textp, nlikes, date):
+        self.post = BoxLayout(size_hint_y = None, height = Window.size[0] / 1.61, orientation = "vertical")
+        self.my_posts.add_widget(self.post)
+        self.post_like = 0
+        
+        self.first_box = BoxLayout(orientation = "horizontal", size_hint = (1, 0.5))
+        self.post.add_widget(self.first_box)
+            
+        self.im = GridLayout(cols = 8, size_hint_x = None, width = Window.size[0] / 1.61 / 6)
+        self.first_box.add_widget(self.im)
+        self.BuildImagePost(user_image)
+        
+        self.pname = Button(text = user_name)
+        self.first_box.add_widget(self.pname)
+        self.pname.bind(on_press = self.Name_press)
+
+        self.date = Label(size_hint_x = None, width = Window.size[0] / 1.61 / 3, text = str(ChangeTime(date)))
+        self.first_box.add_widget(self.date)
+
+        self.second_box = BoxLayout(size_hint = (1, 2))
+        self.post.add_widget(self.second_box)
+
+        self.txt = Button (text = textp)
+        self.second_box.add_widget(self.txt)
+
+        self.third_box = BoxLayout(size_hint = (1, 0.5))
+        self.post.add_widget(self.third_box)
+
+        self.flags = BoxLayout(size_hint = (1, 1))
+        self.third_box.add_widget(self.flags)
+
+        self.all_flags = [['images/check_verd.png'], ['images/age18.png'], ['images/blood.png'], ['images/fist.png'], ['images/soga.png'], ['images/white.png'], ['images/white.png'], ['images/white.png'], ['images/white.png'], ['images/white.png'], ['images/white.png']]
+        for x in range (len(self.all_flags) - 1):
+            if post_flags[x] == "1":
+                self.f_btn = Button(border = (0, 0, 0, 0), size_hint_x = None, width = (Window.size[1] - Window.size[0] / 5) * 0.9 / 12, background_normal = self.all_flags[x + 1][0])
+                #self.all_flags[x + 1].append(self.f_btn)
+                #self.all_flags[x + 1].append(0)
+                self.flags.add_widget(self.f_btn)
+
+        self.likes = BoxLayout(size_hint = (None, 1), width = Window.size[0] / 1.61 / 3)
+        self.third_box.add_widget(self.likes)
+
+        self.like_heart = Button(border = (0, 0, 0, 0),font_size = 1, text = "0", background_normal = 'images/heart.png')
+        self.likes.add_widget(self.like_heart)
+        self.like_heart.bind(on_press = self.Like_press)
+
+        self.num_likes = Label (text = (str(nlikes)), size_hint = (1, 1))
+        self.likes.add_widget(self.num_likes)
+
+        self.all_my_posts.append(self.post)
+        self.grid.bind(minimum_height=self.grid.setter('height'))
 
     def Image_press(self, instance):
         self.manager.transition = FallOutTransition()
         self.manager.current = "image"
+
+    def Like_press(self, instance):
+        num = int(instance.text)
+        num = (num + 1) % 2
+        if num == 1:
+            instance.background_normal = 'images/heart2.png'
+        if num == 0:
+            instance.background_normal = 'images/heart.png'
+        instance.text = str(num)
+
+    def Name_press(self):
+        pass
 
     def UserFavourites(self, instance):
         if self.current_posts == 1:

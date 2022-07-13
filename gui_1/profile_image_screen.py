@@ -85,10 +85,8 @@ class ImageScreen (Screen):
 
         self.actual_btn1 = self.btn
         self.actual_btn2 = self.btn1
-        print(5)
     
     def go_back(self, profile_screen_to_go, instance):
-        print(6)
         col_str = ""
         for a in range (len(self.color_list)):
             col_str = col_str + self.color_list[a]
@@ -96,21 +94,15 @@ class ImageScreen (Screen):
         profile_screen_to_go.BuildImage(col_str)
         self.manager.transition = FallOutTransition()
         self.manager.current = "profile"
-        print(7)
 
         
     def button_1(self, instance):
-        print(8)
         instance.background_color = self.actual_btn2.background_color
-        print(instance.text)
 
         self.color_list[int(instance.text)] = self.all_colors[int(self.actual_btn2.text)][0]
         self.actual_btn1 = instance
-        print(9)
 
     def button_2(self, instance):
-        print(1)
         self.actual_btn2.background_normal = ""
-        instance.background_normal = "check_verd.png"
+        instance.background_normal = "images/check_verd.png"
         self.actual_btn2 = instance
-        print(2)

@@ -77,7 +77,6 @@ def check_chars(*args):
 
     for i, char in enumerate(invalid_chars):
         if char in arguments:
-            print(char, i)
             return False, char
     return True, None
 

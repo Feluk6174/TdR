@@ -123,7 +123,7 @@ class test(BoxLayout):
 
     def button_2(self, instance):
         self.actual_btn2.background_normal = ""
-        instance.background_normal = "check_verd.png"
+        instance.background_normal = "images/check_verd.png"
         self.actual_btn2 = instance
         """
         self.orientation = "vertical"
@@ -240,7 +240,7 @@ class test(BoxLayout):
         self.likes = BoxLayout(size_hint = (None, 1), width = Window.size[0] / 1.61 / 3)
         self.third_box.add_widget(self.likes)
 
-        self.like_heart = Button(background_normal = 'heart.png')
+        self.like_heart = Button(background_normal = 'images/heart.png')
         self.likes.add_widget(self.like_heart)
         self.like_heart.bind(on_press = self.Like_press)
 
@@ -260,9 +260,9 @@ class test(BoxLayout):
     def Like_press(self, instance):
         self.post_like = (self.post_like + 1) % 2
         if self.post_like == 1:
-            self.like_heart.background_normal = 'heart2.PNG'
+            self.like_heart.background_normal = 'images/heart2.PNG'
         if self.post_like == 0:
-            self.like_heart.background_normal = 'heart.PNG' 
+            self.like_heart.background_normal = 'images/heart.PNG' 
         
 
 

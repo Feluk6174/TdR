@@ -113,5 +113,5 @@ class ImageScreen (Screen):
 
     def button_2(self, instance):
         self.actual_btn2.background_normal = ""
-        instance.background_normal = "check_verd.png"
+        instance.background_normal = "images/check_verd.png"
         self.actual_btn2 = instance
