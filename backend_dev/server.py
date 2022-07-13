@@ -145,7 +145,7 @@ class ClientConnection():
         global clients
         while True:
             try:
-                msg = self.connection.recv(1024).decode("utf-8")
+                msg = self.connection.recv(4096).decode("utf-8")
                 print(msg)
                 #print("----", msg)
                 if msg == "":
@@ -249,7 +249,7 @@ class NodeConnection():
         global connections
         while True:
             try:
-                msg = self.connection.recv(1024).decode("utf-8")
+                msg = self.connection.recv(4096).decode("utf-8")
                 print(msg)
                 #print(".......", type(msg), msg)
                 #print(".......", type(msg), msg)
@@ -329,7 +329,7 @@ def connect_to_new_node():
 
             connection.send(json.dumps(server_info).encode("utf-8"))
 
-            if connection.recv(1024).decode("utf-8") == "OK":
+            if connection.recv(4096).decode("utf-8") == "OK":
                 #(ip[0][0], connection, ip[0][0])
                 conn_class = NodeConnection(connection, {"ip": ip[0][0]}, ip[0][0])
                 connections.append(conn_class)
@@ -371,7 +371,7 @@ def main():
     global server
     while True:
         connection, address = server.accept()
-        temp = connection.recv(1024).decode("utf-8")
+        temp = connection.recv(4096).decode("utf-8")
         print(temp)
         conn_info = json.loads(temp)
         print(f"[{time.asctime()}]", conn_info)

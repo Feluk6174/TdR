@@ -3,9 +3,6 @@ from Crypto.Random import get_random_bytes
 import base64
 from Crypto.Signature import pss
 from Crypto.Hash import SHA256
-import zlib, sys
-
-from yaml import load
 
 def gen_key(passphrase):
     key = RSA.generate(2048)
