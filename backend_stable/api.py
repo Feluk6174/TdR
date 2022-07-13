@@ -1,5 +1,6 @@
 import socket
 import json
+#todo func to change pp and info
 
 class Connection():
     def __init__(self):
