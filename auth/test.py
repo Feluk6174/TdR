@@ -3,6 +3,8 @@ from Crypto.Random import get_random_bytes
 from Crypto.Cipher import AES, PKCS1_OAEP
 import Crypto.Hash.MD5 as MD5
 import base64
+from Crypto.Signature import pss
+from Crypto.Hash import SHA256
 
 text = "Hello world"
 
@@ -15,27 +17,25 @@ with open("rsa_key.bin", "w") as file_out:
     file_out.write(encrypted_key.decode("utf-8"))
 
 
-def encrypt_private_key(a_message, private_key):
-    encryptor = PKCS1_OAEP.new(private_key)
-    encrypted_msg = encryptor.encrypt(a_message)
-    print(encrypted_msg)
-    encoded_encrypted_msg = base64.b64encode(encrypted_msg)
-    print(encoded_encrypted_msg)
-    return encoded_encrypted_msg
+message = 'Hello world'
 
-def decrypt_public_key(encoded_encrypted_msg, public_key):
-    encryptor = PKCS1_OAEP.new(public_key)
-    decoded_encrypted_msg = base64.b64decode(encoded_encrypted_msg)
-    print(decoded_encrypted_msg)
-    decoded_decrypted_msg = encryptor.decrypt(decoded_encrypted_msg)
-    print(decoded_decrypted_msg)
-    #return decoded_decrypted_msg
+#key = RSA.import_key(open('rsa_key.bin').read())
+key = RSA.import_key(open('rsa_key.bin').read(), passphrase=secret_code)
+
+h = SHA256.new(message.encode("utf-8"))
+
+print(h.digest())
+
+signature = pss.new(key).sign(h)
+
+print(signature)
+
+verifier = pss.new(key)
 
 
-msg = encrypt_private_key(b"Hello world", key)
+try:
+    verifier.verify(h, signature)
+    print("The signature is authentic.")
 
-decrypt_public_key(msg, key.public_key())
-
-encryptor = PKCS1_OAEP.new(key)
-encryptor.sign()
-PKCS1_OAEP.sign()
+except (ValueError, TypeError):
+    print("The signature is not authentic.")
