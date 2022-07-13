@@ -231,10 +231,10 @@ class MainScreen (Screen):
         self.post_box.clear_widgets()
         self.grid.remove_widget(self.post_box)
         self.all_posts_info = GetNewPosts()
-        R = 0
+        r = 0
         for _ in range (len(self.all_posts_info)):
-            R = R + 1
-        self.post_box = BoxLayout(orientation = "vertical", size_hint_y = None, height = Window.size[0] / 1.61 * R)
+            r = r + 1
+        self.post_box = BoxLayout(orientation = "vertical", size_hint_y = None, height = Window.size[0] / 1.61 * r)
         self.grid.add_widget(self.post_box)
         print(self.all_posts_info)
         for post in self.all_posts_info:
@@ -293,7 +293,7 @@ class MainScreen (Screen):
 
         self.all_posts_i_get.append(self.post)
         self.grid.bind(minimum_height=self.grid.setter('height'))
-        print(2)
+        
     
     def BuildImage(self, user_image):
         self.color_list = user_image
@@ -313,8 +313,8 @@ class MainScreen (Screen):
         num = int(instance.text)
         num = (num + 1) % 2
         if num == 1:
-            instance.background_normal = 'heart2.PNG'
+            instance.background_normal = 'heart2.png'
         if num == 0:
-            instance.background_normal = 'heart.PNG'
+            instance.background_normal = 'heart.png'
         instance.text = str(num)
         

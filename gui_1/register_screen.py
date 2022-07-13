@@ -9,7 +9,7 @@ import random
 import rsa_gui
 import acces_my_info
 from kivy.uix.screenmanager import FallOutTransition
-import chat_screen, home_screen, loading_screen, post_screen, profile_screen, search_screen, acces_my_info, profile_image_screen
+import chat_screen, home_screen, loading_screen, post_screen, profile_screen, search_screen, acces_my_info, profile_image_screen, profile_image_register_screen
 
 
 connection = None
@@ -165,7 +165,7 @@ class RegisterScreen (Screen):
             self.register_button.text = "Register. Try again"
         elif self.other_users == {}:
             self.password_check = check_password(self.password_text_box.text)
-            self.image_str = profile_image_screen.get_my_image()
+            self.image_str = profile_image_register_screen.get_my_image()
             self.color_check = check_image(self.image_str)
             if self.password_check == False:
                 self.password_text_box.text = "PASSWORD"
@@ -180,12 +180,13 @@ class RegisterScreen (Screen):
                 print(following)
                 create_my_info_file(self.username_text_box.text, self.password_text_box.text, "pub_my_key_storage.pem", "priv_my_key_storage.pem", self.image_str, self.description_text_box.text, following)
                 Reg_f(connection)
+                my_profile_screen = profile_screen.ProfileScreen(name = "profile")
                 self.sm.add_widget(home_screen.MainScreen(connection, name = "main"))
                 self.sm.add_widget(chat_screen.ChatScreen(name = "chat"))
                 self.sm.add_widget(search_screen.SearchScreen(name = "search"))
                 self.sm.add_widget(post_screen.PostUserScreen(connection, name = "last"))
-                self.sm.add_widget(profile_screen.ProfileScreen(name = "profile"))
-                self.sm.add_widget(profile_image_screen.ImageScreen(name = "image"))
+                self.sm.add_widget(profile_screen.ProfileScreen(my_profile_screen))
+                self.sm.add_widget(profile_image_screen.ImageScreen(my_profile_screen, name = "image"))
                 self.manager.transition = FallOutTransition()
                 self.manager.current = "main"
                 

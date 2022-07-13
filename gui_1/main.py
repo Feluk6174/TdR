@@ -24,15 +24,11 @@ import kivy.utils
 import json
 import register_screen
 
-import chat_screen, home_screen, loading_screen, post_screen, profile_screen, search_screen, acces_my_info, register_screen, profile_image_screen, api
+import chat_screen, home_screen, loading_screen, post_screen, profile_screen, search_screen, acces_my_info, register_screen, profile_image_screen, api, profile_image_register_screen
 
 Window.size = (540*0.7, 880*0.7)
 connection = api.Connection()
 
-class BlackScreen (Screen):
-    def __init__(self, **kwargs):
-        super(BlackScreen, self).__init__(**kwargs)
-        pass
 
 class MyApp (App):
     def build(self):
@@ -42,16 +38,17 @@ class MyApp (App):
         if check == True:
             #pass
             register_screen.Reg_f(connection)
+            my_profile_screen = profile_screen.ProfileScreen(name = "profile")
             #sm.add_widget(loading_screen.LoadScreen(name = "load"))
             sm.add_widget(home_screen.MainScreen(connection, name = "main"))
             sm.add_widget(chat_screen.ChatScreen(name = "chat"))
             sm.add_widget(search_screen.SearchScreen(name = "search"))
             sm.add_widget(post_screen.PostUserScreen(connection, name = "last"))
-            sm.add_widget(profile_screen.ProfileScreen(name = "profile"))
-            sm.add_widget(profile_image_screen.ImageScreen(name = "image"))
+            sm.add_widget(my_profile_screen)
+            sm.add_widget(profile_image_screen.ImageScreen(my_profile_screen, name = "image"))
         elif check == False:
             sm.add_widget(register_screen.RegisterScreen(connection, sm, name = "register"))
-            sm.add_widget(profile_image_screen.ImageScreen(name = "image"))
+            sm.add_widget(profile_image_register_screen.ImageScreen(name = "image"))
         return sm
 
 if __name__ == "__main__":
