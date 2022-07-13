@@ -52,6 +52,10 @@ def new_post(msg_info, connection, ip=None):
     if not database.is_safe(msg_info["post_id"]):
         connection.connection.send("WRONG CHARS".encode("utf-8"))
         return
+
+    pub_key = db.querry(f"SELECT public_key FROM users WHERE user_name = '{msg_info['user_name']}'")
+    print(pub_key)
+
     #CREATE TABLE posts(id INT NOT NULL PRIMARY KEY, user_id VARCHAR(16) NOT NULL, post VARCHAR(255) NOT NULL, time_posted INT NOT NULL, FOREIGN KEY (user_id) REFERENCES users (user_name));")
     res = db.querry(f"SELECT * FROM posts WHERE id = '{msg_info['post_id']}';")
     if len(res) == 0:

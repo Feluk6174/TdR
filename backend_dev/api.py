@@ -11,7 +11,7 @@ class Connection():
 
         msg = '{"type": "CLIENT"}'
         self.connection.send(msg.encode("utf-8"))
-        if self.connection.recv(1024).decode("utf-8") == "OK":
+        if self.connection.recv(4096).decode("utf-8") == "OK":
             print("[ESTABLISHED CONNECTION]")
 
     def register_user(self, user_name:str, public_key:str, private_key:str, profile_picture:str, info:str):
@@ -19,7 +19,7 @@ class Connection():
         msg = "{"+f'"type": "ACTION", "action": "REGISTER", "user_name": "{user_name}", "public_key": "{public_key}", "private_key": "{private_key}", "profile_picture": "{profile_picture}", "info": "{info}", "time": {time_registered}'+"}"
         print(msg)
         self.connection.send(msg.encode("utf-8"))
-        response = self.connection.recv(1024).decode("utf-8")
+        response = self.connection.recv(4096).decode("utf-8")
         if not response == "OK":
             if response == "ALREADY EXISTS":
                 raise UserAlreadyExists(user_name)
@@ -32,7 +32,7 @@ class Connection():
         signature = auth.sign(priv_key, content, post_id, user_name, flags, time_posted)
         msg = "{"+f'"type": "ACTION", "action": "POST", "post_id": "{post_id}", "user_name": "{user_name}", "content": "{content}", "flags": "{flags}", "time": {time_posted}, "signature": "{signature}"'+"}"
         self.connection.send(msg.encode("utf-8"))
-        response = self.connection.recv(1024).decode("utf-8")
+        response = self.connection.recv(4096).decode("utf-8")
         if not response == "OK":
             if response == "WRONG CHARS":
                 raise WrongCaracters(user_name=user_name, public_key=content, profile_picture=post_id, info=flags)
@@ -42,19 +42,19 @@ class Connection():
         posts = []
         msg = "{"+f'"type": "ACTION", "action": "GET POSTS", "user_name": "{user_name}"'+"}"
         self.connection.send(msg.encode("utf-8"))
-        num = int(self.connection.recv(1024).decode("utf-8"))
+        num = int(self.connection.recv(4096).decode("utf-8"))
         self.connection.send('{"type": "RESPONSE", "response": "OK"}'.encode("utf-8"))
         if not num == 0: 
             for _ in range(num):
-                posts.append(json.loads(self.connection.recv(1024).decode("utf-8")))
+                posts.append(json.loads(self.connection.recv(4096).decode("utf-8")))
                 self.connection.send('{"type": "RESPONSE", "response": "OK"}'.encode("utf-8"))
-            response = self.connection.recv(1024).decode("utf-8")
+            response = self.connection.recv(4096).decode("utf-8")
             if not response == "OK":
                 if response == "WRONG CHARS":
                     raise WrongCaracters(user_name=user_name)
 
             return posts
-        response = self.connection.recv(1024).decode("utf-8")
+        response = self.connection.recv(4096).decode("utf-8")
         if not response == "OK":
             if response == "WRONG CHARS":
                 raise WrongCaracters(user_name=user_name)
@@ -63,7 +63,7 @@ class Connection():
     def get_user(self, user_name:str):
         msg = "{"+f'"type": "ACTION", "action": "GET USER", "user_name": "{user_name}"'+"}"
         self.connection.send(msg.encode("utf-8"))
-        response = self.connection.recv(1024).decode("utf-8")
+        response = self.connection.recv(4096).decode("utf-8")
         try:
             return json.loads(response)
         except json.decoder.JSONDecodeError:
