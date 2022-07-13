@@ -4,7 +4,10 @@ import threading, time, socket, sys, json, math
 
 #todo fix
 
-HOST = "127.0.0.1"
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+s.connect(("8.8.8.8", 80))
+HOST = s.getsockname()[0]
+s.close()
 try:
     PORT = int(sys.argv[1])
 except IndexError:
