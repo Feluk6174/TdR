@@ -21,7 +21,7 @@ clients = []
 db = database.Database()
 
 get_suposed_connected = lambda n: int(5*math.log2(n))
-get_suposed_connected = lambda n: 2
+get_suposed_connected = lambda n: 3
 
 server_info = json.loads("{"+f'"type": "NODE", "host": "{HOST}", "port": {PORT}, "ip": "{IP}"'+"}")
 
