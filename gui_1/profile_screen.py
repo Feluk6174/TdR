@@ -116,8 +116,8 @@ class ProfileScreen (Screen):
         self.grid.add_widget(self.description_box)
 
         self.us_des_btn = Button(text = acces_my_info.GetDescription())
-        self.description_box.add_widget(self.us_des)
-        self.us_des.bind(on_press = self.UserDescription)
+        self.description_box.add_widget(self.us_des_btn)
+        self.us_des_btn.bind(on_press = self.UserDescription)
 
         self.user_foll = BoxLayout(size_hint_y = None, height = (Window.size[1] - Window.size[0] / 5) * 0.9 / 5)
         self.grid.add_widget(self.user_foll)
@@ -191,20 +191,20 @@ class ProfileScreen (Screen):
         pass
 
     def UserDescription(self, instance):
-        self.text_des = self.us_des.text
+        self.text_des = self.us_des_btn.text
         self.description_box.clear_widgets()
 
         self.us_des_text = TextInput(text = self.text_des, multiline = False, on_text_validate = self.change_description_2)
         self.description_box.add_widget(self.us_des_text)
 
-    def change_description_2(self, instance, value):
+    def change_description_2(self, instance):
         self.text_des = self.us_des_text.text
         self.description_box.clear_widgets()
 
         acces_my_info.change_my_description(self.text_des)
 
         self.us_des_btn = Button(text = self.text_des, on_press = self.UserDescription)
-        self.description_box.add_widget(self.us_des)
+        self.description_box.add_widget(self.us_des_btn)
 
     def UserFollowers(self, instance):
         pass
@@ -290,4 +290,3 @@ class ProfileScreen (Screen):
     
     def press_btn15(self, instance):
         pass
-    

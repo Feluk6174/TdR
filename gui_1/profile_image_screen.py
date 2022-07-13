@@ -32,7 +32,7 @@ class ImageScreen (Screen):
     def __init__(self, profile_screen_screen, **kwargs):
         super(ImageScreen, self).__init__(**kwargs)
 
-        #profile_screen_to_go = profile_screen_screen
+        
         self.box0 = BoxLayout(orientation = "vertical")
         self.add_widget(self.box0)
 
@@ -45,7 +45,10 @@ class ImageScreen (Screen):
         self.box1 = GridLayout(spacing = 5, cols = 8, size_hint = (None, None), size = (Window.size[0] * 0.7, Window.size[0] * 0.7))
         self.box01.add_widget(self.box1)
 
-        self.color_list = acces_my_info.GetImage()
+        self.my_color_list = acces_my_info.GetImage()
+        self.color_list = []
+        for color in self.my_color_list:
+            self.color_list.append(color)
 
         for y in range (64):
             self.btn = Button(background_normal = '', font_size = 1, text = str(y), background_color = kivy.utils.get_color_from_hex(profile_screen.hex_color(self.color_list[y])), on_press = self.button_1)
@@ -58,7 +61,7 @@ class ImageScreen (Screen):
         self.box02 = BoxLayout()
         self.box0.add_widget(self.box02)
 
-        self.return_to_back = Button(text = "Done", on_release = self.go_back)
+        self.return_to_back = Button(text = "Done", on_release = partial(self.go_back, profile_screen_screen))
         self.box02.add_widget(self.return_to_back)
 
 
@@ -82,23 +85,32 @@ class ImageScreen (Screen):
 
         self.actual_btn1 = self.btn
         self.actual_btn2 = self.btn1
+        print(5)
     
-    def go_back(self, instance):
+    def go_back(self, profile_screen_to_go, instance):
+        print(6)
         col_str = ""
         for a in range (len(self.color_list)):
             col_str = col_str + self.color_list[a]
         acces_my_info.change_my_color(col_str)
-        profile_screen_screen.BuildImage(profile_screen_screen, col_str)
+        profile_screen_to_go.BuildImage(col_str)
         self.manager.transition = FallOutTransition()
         self.manager.current = "profile"
+        print(7)
 
         
     def button_1(self, instance):
+        print(8)
         instance.background_color = self.actual_btn2.background_color
+        print(instance.text)
+
         self.color_list[int(instance.text)] = self.all_colors[int(self.actual_btn2.text)][0]
         self.actual_btn1 = instance
+        print(9)
 
     def button_2(self, instance):
+        print(1)
         self.actual_btn2.background_normal = ""
         instance.background_normal = "check_verd.png"
         self.actual_btn2 = instance
+        print(2)
