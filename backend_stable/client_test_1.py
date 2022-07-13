@@ -1,6 +1,3 @@
-import socket
-import json
-import time
 import api
 
 conn = api.Connection()
