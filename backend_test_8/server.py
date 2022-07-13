@@ -4,7 +4,7 @@ import threading, time, socket, sys, json, math
 
 #todo fix
 
-HOST = "192.168.178.138"
+HOST = "127.0.0.1"
 try:
     PORT = int(sys.argv[1])
 except IndexError:
