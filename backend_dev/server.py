@@ -1,6 +1,7 @@
-from urllib import response
 import database
 import threading, time, socket, sys, json, math
+from Crypto.PublicKey import RSA
+import auth
 
 #todo fix
 
@@ -54,7 +55,7 @@ def new_post(msg_info, connection, ip=None):
     #CREATE TABLE posts(id INT NOT NULL PRIMARY KEY, user_id VARCHAR(16) NOT NULL, post VARCHAR(255) NOT NULL, time_posted INT NOT NULL, FOREIGN KEY (user_id) REFERENCES users (user_name));")
     res = db.querry(f"SELECT * FROM posts WHERE id = '{msg_info['post_id']}';")
     if len(res) == 0:
-        sql = f"INSERT INTO posts(id, user_id, post, flags, time_posted) VALUES('{msg_info['post_id']}', '{msg_info['user_name']}', '{msg_info['content']}', '{msg_info['flags']}', {int(time.time())});"
+        sql = f"INSERT INTO posts(id, user_id, post, flags, time_posted) VALUES('{msg_info['post_id']}', '{msg_info['user_name']}', '{msg_info['content']}', '{msg_info['flags']}', {int(msg_info['time'])});"
         db.querry(sql)
         broadcast(msg_info, ip)
         if ip == None:
@@ -144,7 +145,7 @@ class ClientConnection():
         global clients
         while True:
             try:
-                msg = self.connection.recv(1024).decode("utf-8")
+                msg = self.connection.recv(4096).decode("utf-8")
                 print(msg)
                 #print("----", msg)
                 if msg == "":
@@ -248,7 +249,7 @@ class NodeConnection():
         global connections
         while True:
             try:
-                msg = self.connection.recv(1024).decode("utf-8")
+                msg = self.connection.recv(4096).decode("utf-8")
                 print(msg)
                 #print(".......", type(msg), msg)
                 #print(".......", type(msg), msg)
@@ -328,7 +329,7 @@ def connect_to_new_node():
 
             connection.send(json.dumps(server_info).encode("utf-8"))
 
-            if connection.recv(1024).decode("utf-8") == "OK":
+            if connection.recv(4096).decode("utf-8") == "OK":
                 #(ip[0][0], connection, ip[0][0])
                 conn_class = NodeConnection(connection, {"ip": ip[0][0]}, ip[0][0])
                 connections.append(conn_class)
@@ -370,7 +371,7 @@ def main():
     global server
     while True:
         connection, address = server.accept()
-        temp = connection.recv(1024).decode("utf-8")
+        temp = connection.recv(4096).decode("utf-8")
         print(temp)
         conn_info = json.loads(temp)
         print(f"[{time.asctime()}]", conn_info)
