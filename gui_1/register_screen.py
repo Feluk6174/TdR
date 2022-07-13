@@ -175,7 +175,9 @@ class RegisterScreen (Screen):
                 self.register_button.text = "Register. Try again"
             if self.password_check == True and self.color_check == True:
                 rsa_gui.gen_key(self.username_text_box.text, self.password_text_box.text)
-                following = self.following_text_box.text.split(", ")
+                following = self.following_text_box.text
+                following = following.split(", ")
+                print(following)
                 create_my_info_file(self.username_text_box.text, self.password_text_box.text, "pub_my_key_storage.pem", "priv_my_key_storage.pem", self.image_str, self.description_text_box.text, following)
                 Reg_f(connection)
                 self.sm.add_widget(home_screen.MainScreen(connection, name = "main"))
