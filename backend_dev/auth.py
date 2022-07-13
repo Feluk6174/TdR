@@ -14,7 +14,7 @@ def gen_key(passphrase):
     file_out.write(encrypted_key)
     file_out.close()
 
-print(key.publickey().export_key())
+    print(key.publickey().export_key())
 
 def gen_hash(*args):
     message = ""
