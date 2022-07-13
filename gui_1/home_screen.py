@@ -33,12 +33,14 @@ connection = None
 def GetNewPosts():
     global connection
     all_my_following = acces_my_info.GetFollowing()
+    print(all_my_following)
     all_posts = []
     for following in all_my_following:
         foll_posts = connection.get_posts(following)
         foll_info = connection.get_user(following)
         for post in foll_posts:
             all_posts.append((following, foll_info["profile_picture"], post["flags"], post["content"], 0, post["time_posted"]))
+    print(all_posts)
     return all_posts
 
 def ChangeTime(date):
@@ -123,7 +125,7 @@ class MainScreen (Screen):
         self.post_btn_test = Button(size_hint_y = None, height = 100, text = "Refresh Posts", on_release = self.get_my_posts)
         self.grid.add_widget(self.post_btn_test)
 
-        self.post_box = BoxLayout()
+        self.post_box = BoxLayout(orientation = "vertical", size_hint_y = None, height = 100)
         self.grid.add_widget(self.post_box)
 
         self.all_posts_i_get = []
@@ -227,13 +229,20 @@ class MainScreen (Screen):
     
     def get_my_posts(self, instance):
         self.post_box.clear_widgets()
+        self.grid.remove_widget(self.post_box)
         self.all_posts_info = GetNewPosts()
+        R = 0
+        for _ in range (len(self.all_posts_info)):
+            R = R + 1
+        self.post_box = BoxLayout(orientation = "vertical", size_hint_y = None, height = Window.size[0] / 1.61 * R)
+        self.grid.add_widget(self.post_box)
+        print(self.all_posts_info)
         for post in self.all_posts_info:
             self.make_post_btn(post[0], post[1], post[2], post[3], post[4], post[5])
 
     #def crear botó. Estructura "correcta"
     def make_post_btn(self, user_name, user_image, post_flags, textp, nlikes, date):
-    
+        print(1)
         self.post = BoxLayout(size_hint_y = None, height = Window.size[0] / 1.61, orientation = "vertical")
         self.post_box.add_widget(self.post)
         self.post_like = 0
@@ -283,6 +292,8 @@ class MainScreen (Screen):
         self.likes.add_widget(self.num_likes)
 
         self.all_posts_i_get.append(self.post)
+        self.grid.bind(minimum_height=self.grid.setter('height'))
+        print(2)
     
     def BuildImage(self, user_image):
         self.color_list = user_image
