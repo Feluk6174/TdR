@@ -31,11 +31,11 @@ class LoadScreen (Screen):
         self.black_box_1 = BoxLayout(size_hint_y = None, height = (Window.size[0] * 0.2))
         self.box0.add_widget(self.black_box_1)
 
-        self.Lab1 = Button(border = (0, 0, 0, 0), size_hint = (None, None), background_normal = 'logo.png', background_down = 'logo.png', size = (Window.size[0] * 0.7, Window.size[0] * 0.7), pos_hint = {"center_x":0.5})   
+        self.Lab1 = Button(border = (0, 0, 0, 0), size_hint = (None, None), background_normal = 'images/logo.png', background_down = 'images/logo.png', size = (Window.size[0] * 0.7, Window.size[0] * 0.7), pos_hint = {"center_x":0.5})   
         self.box0.add_widget(self.Lab1)
         self.Lab1.bind(on_press = self.change)
 
-        self.lab2 = Label(text = "Small Brother", size_hint = (1, 0.12))
+        self.lab2 = Label(text = "Creating user...", size_hint = (1, 0.12))
         self.box0.add_widget(self.lab2)
 
         Clock.schedule_once(self.change, 3)

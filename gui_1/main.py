@@ -37,9 +37,9 @@ class MyApp (App):
         check = register_screen.check_register()
         if check == True:
             #pass
-            #register_screen.Reg_f(connection)
-            my_profile_screen = profile_screen.ProfileScreen(name = "profile")
-            #sm.add_widget(loading_screen.LoadScreen(name = "load"))
+            register_screen.Reg_f(connection)
+            my_profile_screen = profile_screen.ProfileScreen(connection, name = "profile")
+            
             sm.add_widget(home_screen.MainScreen(connection, name = "main"))
             sm.add_widget(chat_screen.ChatScreen(name = "chat"))
             sm.add_widget(search_screen.SearchScreen(name = "search"))
@@ -49,6 +49,7 @@ class MyApp (App):
         elif check == False:
             sm.add_widget(register_screen.RegisterScreen(connection, sm, name = "register"))
             sm.add_widget(profile_image_register_screen.ImageScreen(name = "image"))
+            sm.add_widget(loading_screen.LoadScreen(name = "load"))
         return sm
 
 if __name__ == "__main__":
@@ -56,3 +57,21 @@ if __name__ == "__main__":
     
 
 
+
+#post_screen + structure
+#likes
+#flags
+#chat subjects
+
+#search screen improve
+#textbox with background text
+#writing box
+#string into different lines 
+
+#password x2 + *****
+#small brother label
+
+#my_posts
+#following, followers
+#best + new
+#reload up + button

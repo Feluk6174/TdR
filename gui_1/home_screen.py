@@ -33,14 +33,12 @@ connection = None
 def GetNewPosts():
     global connection
     all_my_following = acces_my_info.GetFollowing()
-    print(all_my_following)
     all_posts = []
     for following in all_my_following:
         foll_posts = connection.get_posts(following)
         foll_info = connection.get_user(following)
         for post in foll_posts:
             all_posts.append((following, foll_info["profile_picture"], post["flags"], post["content"], 0, post["time_posted"]))
-    print(all_posts)
     return all_posts
 
 def ChangeTime(date):
@@ -100,14 +98,14 @@ class MainScreen (Screen):
         self.box1 = BoxLayout (size_hint = (1, 0.1))
         self.Box0.add_widget(self.box1)
 
-        self.lab1 = Button (border = (0, 0, 0, 0), size_hint = (None, None), size = ((Window.size[1] - Window.size[0] / 5) * 0.1, (Window.size[1] - Window.size[0] / 5) * 0.1), background_normal = 'logo.png', background_down = 'logo.png')
+        self.lab1 = Button (border = (0, 0, 0, 0), size_hint = (None, None), size = ((Window.size[1] - Window.size[0] / 5) * 0.1, (Window.size[1] - Window.size[0] / 5) * 0.1), background_normal = 'images/logo.png', background_down = 'images/logo.png')
         self.box1.add_widget(self.lab1)
         
         self.text1 = TextInput(multiline = False, size_hint = (2, 1))
         self.box1.add_widget(self.text1)
         self.text1.bind(on_text_validate = self.Search1)
         
-        self.btn1 = Button(border = (0, 0, 0, 0), size_hint = (None, None), size = ((Window.size[1] - Window.size[0] / 5) * 0.1, (Window.size[1] - Window.size[0] / 5) * 0.1), background_normal = 'settings1.png', background_down = 'settings2.png')
+        self.btn1 = Button(border = (0, 0, 0, 0), size_hint = (None, None), size = ((Window.size[1] - Window.size[0] / 5) * 0.1, (Window.size[1] - Window.size[0] / 5) * 0.1), background_normal = 'images/settings1.png', background_down = 'images/settings2.png')
         self.box1.add_widget(self.btn1)
         self.btn1.bind(on_press = self.Settings)
         
@@ -236,13 +234,11 @@ class MainScreen (Screen):
             r = r + 1
         self.post_box = BoxLayout(orientation = "vertical", size_hint_y = None, height = Window.size[0] / 1.61 * r)
         self.grid.add_widget(self.post_box)
-        print(self.all_posts_info)
         for post in self.all_posts_info:
             self.make_post_btn(post[0], post[1], post[2], post[3], post[4], post[5])
 
     #def crear botó. Estructura "correcta"
     def make_post_btn(self, user_name, user_image, post_flags, textp, nlikes, date):
-        print(1)
         self.post = BoxLayout(size_hint_y = None, height = Window.size[0] / 1.61, orientation = "vertical")
         self.post_box.add_widget(self.post)
         self.post_like = 0
@@ -273,9 +269,9 @@ class MainScreen (Screen):
         self.flags = BoxLayout(size_hint = (1, 1))
         self.third_box.add_widget(self.flags)
 
-        self.all_flags = [['check_verd.png'], ['age18.png'], ['blood.png'], ['fist.png'], ['soga.png'], ['white.png'], ['white.png'], ['white.png'], ['white.png'], ['white.png'], ['white.png']]
+        self.all_flags = [['images/check_verd.png'], ['images/age18.png'], ['images/blood.png'], ['images/fist.png'], ['images/soga.png'], ['images/white.png'], ['images/white.png'], ['images/white.png'], ['images/white.png'], ['images/white.png'], ['images/white.png']]
         for x in range (len(self.all_flags) - 1):
-            if post_flags[x] == 1:
+            if post_flags[x] == "1":
                 self.f_btn = Button(border = (0, 0, 0, 0), size_hint_x = None, width = (Window.size[1] - Window.size[0] / 5) * 0.9 / 12, background_normal = self.all_flags[x + 1][0])
                 #self.all_flags[x + 1].append(self.f_btn)
                 #self.all_flags[x + 1].append(0)
@@ -284,7 +280,7 @@ class MainScreen (Screen):
         self.likes = BoxLayout(size_hint = (None, 1), width = Window.size[0] / 1.61 / 3)
         self.third_box.add_widget(self.likes)
 
-        self.like_heart = Button(border = (0, 0, 0, 0),font_size = 1, text = "0", background_normal = 'heart.png')
+        self.like_heart = Button(border = (0, 0, 0, 0),font_size = 1, text = "0", background_normal = 'images/heart.png')
         self.likes.add_widget(self.like_heart)
         self.like_heart.bind(on_press = self.Like_press)
 
@@ -313,8 +309,8 @@ class MainScreen (Screen):
         num = int(instance.text)
         num = (num + 1) % 2
         if num == 1:
-            instance.background_normal = 'heart2.png'
+            instance.background_normal = 'images/heart2.png'
         if num == 0:
-            instance.background_normal = 'heart.png'
+            instance.background_normal = 'images/heart.png'
         instance.text = str(num)
         

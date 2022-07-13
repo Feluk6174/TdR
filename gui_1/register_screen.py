@@ -109,7 +109,7 @@ class RegisterScreen (Screen):
         self.title_box.orientation = "horizontal"
         self.main_box.add_widget(self.title_box)
 
-        self.logo = Button (border = (0, 0, 0, 0), size_hint_x = None, width = Window.size[1] / 8, background_normal = 'logo.png', background_down = 'logo.png')
+        self.logo = Button (border = (0, 0, 0, 0), size_hint_x = None, width = Window.size[1] / 8, background_normal = 'images/logo.png', background_down = 'images/logo.png')
         self.title_box.add_widget(self.logo)
         
         self.title = Label (text = ("Small brother"))
@@ -159,7 +159,6 @@ class RegisterScreen (Screen):
     def register(self, instance):
         global connection
         self.other_users = connection.get_user(self.username_text_box.text)
-        print(self.other_users)
         if self.other_users != {}:
             self.username_text_box.text = "USERNAME"
             self.register_button.text = "Register. Try again"
@@ -174,10 +173,11 @@ class RegisterScreen (Screen):
                 self.image_button.text = "PROFILE IMAGE"
                 self.register_button.text = "Register. Try again"
             if self.password_check == True and self.color_check == True:
+                self.manager.transition = FallOutTransition()
+                self.manager.current = "load"
                 rsa_gui.gen_key(self.username_text_box.text, self.password_text_box.text)
                 following = self.following_text_box.text
                 following = following.split(", ")
-                print(following)
                 create_my_info_file(self.username_text_box.text, self.password_text_box.text, "pub_my_key_storage.pem", "priv_my_key_storage.pem", self.image_str, self.description_text_box.text, following)
                 Reg_f(connection)
                 my_profile_screen = profile_screen.ProfileScreen(name = "profile")
@@ -185,7 +185,7 @@ class RegisterScreen (Screen):
                 self.sm.add_widget(chat_screen.ChatScreen(name = "chat"))
                 self.sm.add_widget(search_screen.SearchScreen(name = "search"))
                 self.sm.add_widget(post_screen.PostUserScreen(connection, name = "last"))
-                self.sm.add_widget(profile_screen.ProfileScreen(my_profile_screen))
+                self.sm.add_widget(profile_screen.ProfileScreen(connection, my_profile_screen))
                 self.sm.add_widget(profile_image_screen.ImageScreen(my_profile_screen, name = "image"))
                 self.manager.transition = FallOutTransition()
                 self.manager.current = "main"
