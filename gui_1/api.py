@@ -47,6 +47,7 @@ class Connection():
                     raise WrongCaracters(user_name=user_name)
 
             return posts
+        response = self.connection.recv(1024).decode("utf-8")
         if not response == "OK":
             if response == "WRONG CHARS":
                 raise WrongCaracters(user_name=user_name)
