@@ -27,12 +27,16 @@ import acces_my_info
 import register_screen
 import profile_screen
 
+my_colors_from_screen = ""
+
+def get_my_image():
+    global my_colors_from_screen
+    return my_colors_from_screen
 
 class ImageScreen (Screen):
-    def __init__(self, profile_screen_screen, **kwargs):
+    def __init__(self, **kwargs):
         super(ImageScreen, self).__init__(**kwargs)
 
-        profile_screen_screen = profile_screen_screen
         self.box0 = BoxLayout(orientation = "vertical")
         self.add_widget(self.box0)
 
@@ -45,10 +49,12 @@ class ImageScreen (Screen):
         self.box1 = GridLayout(spacing = 5, cols = 8, size_hint = (None, None), size = (Window.size[0] * 0.7, Window.size[0] * 0.7))
         self.box01.add_widget(self.box1)
 
-        self.color_list = acces_my_info.GetImage()
+        self.color_list = []
+        for x in range (64):
+            self.color_list.append("3")
 
         for y in range (64):
-            self.btn = Button(background_normal = '', font_size = 1, text = str(y), background_color = kivy.utils.get_color_from_hex(profile_screen.hex_color(self.color_list[y])), on_press = self.button_1)
+            self.btn = Button(background_normal = '', font_size = 1, text = str(y), background_color = (1, 1, 1, 1), on_press = self.button_1)
             self.box1.add_widget(self.btn)
 
         self.box3 = BoxLayout()
@@ -87,12 +93,19 @@ class ImageScreen (Screen):
         col_str = ""
         for a in range (len(self.color_list)):
             col_str = col_str + self.color_list[a]
-        acces_my_info.change_my_color(col_str)
-        profile_screen_screen.BuildImage(profile_screen_screen, col_str)
-        self.manager.transition = FallOutTransition()
-        self.manager.current = "profile"
+        check = register_screen.check_register()
+        if check == True:
+            acces_my_info.change_my_color(col_str)
+            #profile_screen.BuildImage(profile_screen, col_str)
+            self.manager.transition = FallOutTransition()
+            self.manager.current = "profile"
 
-        
+        elif check == False:
+            global my_colors_from_screen 
+            my_colors_from_screen= col_str
+            self.manager.transition = FallOutTransition()
+            self.manager.current = "register"
+
     def button_1(self, instance):
         instance.background_color = self.actual_btn2.background_color
         self.color_list[int(instance.text)] = self.all_colors[int(self.actual_btn2.text)][0]
