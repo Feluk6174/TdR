@@ -32,7 +32,7 @@ class ImageScreen (Screen):
     def __init__(self, profile_screen_screen, **kwargs):
         super(ImageScreen, self).__init__(**kwargs)
 
-        profile_screen_screen = profile_screen_screen
+        #profile_screen_to_go = profile_screen_screen
         self.box0 = BoxLayout(orientation = "vertical")
         self.add_widget(self.box0)
 
