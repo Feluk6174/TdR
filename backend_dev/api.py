@@ -16,7 +16,7 @@ class Connection():
 
     def register_user(self, user_name:str, public_key:str, private_key:str, profile_picture:str, info:str):
         time_registered = int(time.time())
-        msg = "{"+f'"type": "ACTION", "action": "REGISTER", "user_name": "{user_name}", "public_key": "{public_key}", "private_key": "{private_key}", "profile_picture": "{profile_picture}", "info": "{info}", "time": {time_registered}"'+"}"
+        msg = "{"+f'"type": "ACTION", "action": "REGISTER", "user_name": "{user_name}", "public_key": "{public_key}", "private_key": "{private_key}", "profile_picture": "{profile_picture}", "info": "{info}", "time": {time_registered}'+"}"
         print(msg)
         self.connection.send(msg.encode("utf-8"))
         response = self.connection.recv(1024).decode("utf-8")

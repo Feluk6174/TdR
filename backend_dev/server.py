@@ -67,7 +67,7 @@ def new_post(msg_info, connection, ip=None):
 def register_user(msg_info, connection, ip=None):
     print(f"({threading.current_thread().name})[{time.asctime()}] regitering user:", msg_info, ip)
     global db
-
+    print(database.is_safe(msg_info["user_name"], msg_info['public_key'], msg_info['public_key'], msg_info['profile_picture'], msg_info['info']))
     if not database.is_safe(msg_info["user_name"], msg_info['public_key'], msg_info['public_key'], msg_info['profile_picture'], msg_info['info']):
         connection.connection.send("WRONG CHARS".encode("utf-8"))
         return
