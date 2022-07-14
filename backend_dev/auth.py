@@ -71,10 +71,11 @@ def verify(pub_key, signature, *args):
     h = gen_hash(*args)
     print(h.hexdigest())
     verifier = pss.new(pub_key)
-
+    verifier.verify(h, signature)    
     try:
         verifier.verify(h, signature)
         return True
+
 
     except (ValueError, TypeError) as e:
         print("[ERROR]", e)
