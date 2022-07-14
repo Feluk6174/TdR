@@ -62,7 +62,7 @@ def new_post(msg_info, connection, ip=None):
     #CREATE TABLE posts(id INT NOT NULL PRIMARY KEY, user_id VARCHAR(16) NOT NULL, post VARCHAR(255) NOT NULL, time_posted INT NOT NULL, FOREIGN KEY (user_id) REFERENCES users (user_name));")
     res = db.querry(f"SELECT * FROM posts WHERE id = '{msg_info['post_id']}';")
     if len(res) == 0:
-        sql = f"INSERT INTO posts(id, user_id, post, flags, time_posted) VALUES('{msg_info['post_id']}', '{msg_info['user_name']}', '{msg_info['content']}', '{msg_info['flags']}', {int(msg_info['time'])});"
+        sql = f"INSERT INTO posts(id, user_id, post, flags, time_posted, signature) VALUES('{msg_info['post_id']}', '{msg_info['user_name']}', '{msg_info['content']}', '{msg_info['flags']}', {int(msg_info['time'], {msg_info['signature']})});"
         db.querry(sql)
         broadcast(msg_info, ip)
         if ip == None:
@@ -112,7 +112,7 @@ def get_posts(msg_info:dict, connection):
         print(res)
 
     for i, post in enumerate(posts):
-        msg = "{"+f'"id": "{post[0]}", "user_id": "{post[1]}", "content": "{post[2]}", "flags": "{post[3]}", "time_posted": {post[4]}'+"}"
+        msg = "{"+f'"id": "{post[0]}", "user_id": "{post[1]}", "content": "{post[2]}", "flags": "{post[3]}", "time_posted": {post[4]}, "signature": "{post[5]}"'+"}"
         connection.connection.send(msg.encode("utf-8"))
         res = connection.recv()
         if not res == "OK":
@@ -125,12 +125,27 @@ def get_user_info(msg_info, connection):
     if not database.is_safe(msg_info["user_name"]):
         connection.connection.send("WRONG CHARS".encode("utf-8"))
         return
-    # (user_name, public_key, time_created, profile_picture, info)
+    # (user_name, public_key, key_file, time_created, profile_picture, info)
     user_info = db.querry(f"SELECT * FROM users WHERE user_name = '{msg_info['user_name']}';")
     print(user_info)
     if not len(user_info) == 0:
         user_info = user_info[0]
         msg = "{"+f'"user_name": "{user_info[0]}", "public_key": "{user_info[1]}", "time_created": {user_info[2]}, "profile_picture": "{user_info[3]}", "info": "{user_info[4]}"'+"}"
+    else:
+        msg = "{}"
+    connection.connection.send(msg.encode("utf-8"))
+
+def get_post(msg_info, connection):
+    global db
+    if not database.is_safe(msg_info["post_id"]):
+        connection.connection.send("WRONG CHARS".encode("utf-8"))
+        return
+    # (id, user_id, post, flags, time_posted, signature)
+    post = db.querry(f"SELECT * FROM users WHERE id = '{msg_info['post_id']}';")
+    print(post)
+    if not len(post) == 0:
+        post = post[0]
+        msg = "{"+f'"id": "{post[0]}", "user_id": "{post[1]}", "content": "{post[2]}", "flags": "{post[3]}", "time_posted": {post[4]}, "signature": "{post[5]}"'+"}"
     else:
         msg = "{}"
     connection.connection.send(msg.encode("utf-8"))

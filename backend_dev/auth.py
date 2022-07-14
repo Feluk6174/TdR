@@ -75,11 +75,3 @@ def verify(pub_key, signature, *args):
     except (ValueError, TypeError) as e:
         print("[ERROR]", e)
         return False
-
-if __name__ == "__main__":
-    gen_key("heyy")
-    rkey, pub = get_keys("heyy")
-    
-    key = pub.export_key()
-
-    print(verify(RSA.import_key(key), "skdfjhsd", "skdfjhsd"))
