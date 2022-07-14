@@ -25,14 +25,12 @@ def gen_hash(*args):
     message = ""
     for arg in args:
         message += str(arg)
-    print(message)
     return SHA256.new(message.encode("utf-8"))
 
 def sanitize_key(key:str):
     clean_str = ""
     
     for i, line in enumerate(key.split("\n")):
-        #print(i)
         if not i == 0 and not i == len(key.split("\n"))-1:
             clean_str += line
 
@@ -49,7 +47,6 @@ def reconstruct_key(sanitized_key, key_type="priv"):
     num = int(len(sanitized_key)/64)
     for i in range(num):
         key += sanitized_key[i*64:i*64+64]+"\n"
-        #print(key)
     key += sanitized_key[(i+1)*64::]+"\n"
     
     if key_type == "priv":
@@ -62,15 +59,12 @@ def reconstruct_key(sanitized_key, key_type="priv"):
 
 def sign(key, *args):
     h = gen_hash(*args)
-    print(h.hexdigest())
     signature = pss.new(key).sign(h)
     return base64.urlsafe_b64encode(signature)
 
 def verify(pub_key, signature, *args):
     signature = base64.urlsafe_b64decode(signature)
     h = gen_hash(*args)
-    print(h.hexdigest())
-    print(type(signature), type(h))
     verifier = pss.new(pub_key)
     verifier.verify(h, signature)    
     try:
