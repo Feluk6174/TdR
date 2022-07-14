@@ -130,7 +130,7 @@ def get_user_info(msg_info, connection):
     print(user_info)
     if not len(user_info) == 0:
         user_info = user_info[0]
-        msg = "{"+f'"user_name": "{user_info[0]}", "public_key": "{user_info[1]}", "time_created": {user_info[2]}, "profile_picture": "{user_info[3]}", "info": "{user_info[4]}"'+"}"
+        msg = "{"+f'"user_name": "{user_info[0]}", "public_key": "{user_info[1]}", "private_key": "{user_info[2]}",  "time_created": {user_info[3]}, "profile_picture": "{user_info[4]}", "info": "{user_info[5]}"'+"}"
     else:
         msg = "{}"
     connection.connection.send(msg.encode("utf-8"))
