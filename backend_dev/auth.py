@@ -76,7 +76,8 @@ def verify(pub_key, signature, *args):
         verifier.verify(h, signature)
         return True
 
-    except (ValueError, TypeError):
+    except (ValueError, TypeError) as e:
+        print("[ERROR]", e)
         return False
 
 if __name__ == "__main__":
