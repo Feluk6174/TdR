@@ -63,9 +63,9 @@ def Get(num):
     user_following = my_user_info["semi_basic_info"]["user_following"]
     user_liked_id = my_user_info["semi_basic_info"]["liked_posts"]
     user_liked = []
-    #for post in user_liked_id:
-        #actual_liked = api.get_post_from_id(post)
-        #user_liked.append(actual_liked)
+    for post in user_liked_id:
+        actual_liked = api.get_post(post)
+        user_liked.append(actual_liked)
 
 
     if num == 0:

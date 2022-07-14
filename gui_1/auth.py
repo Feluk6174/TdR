@@ -27,7 +27,7 @@ def gen_hash(*args):
         message += str(arg)
     return SHA256.new(message.encode("utf-8"))
 
-def sanitize_key(key:str):
+def sanitize_key(key):
     clean_str = ""
     
     for i, line in enumerate(key.split("\n")):

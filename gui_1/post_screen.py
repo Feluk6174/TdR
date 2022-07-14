@@ -45,6 +45,7 @@ class PostUserScreen (Screen):
         super(PostUserScreen, self).__init__(**kwargs)
         global connection
         connection = conn
+
         self.Box0 = BoxLayout()
         self.Box0.orientation = "vertical"
         self.add_widget(self.Box0)
@@ -56,7 +57,7 @@ class PostUserScreen (Screen):
         self.box1.add_widget(self.lab1)
         self.lab1.bind(on_release = self.press_btn13)
         
-        self.text1 = TextInput(multiline = False, size_hint = (2, 1))
+        self.text1 = Label(text = "Small brother", size_hint = (2, 1))
         self.box1.add_widget(self.text1)
         self.text1.bind(on_text_validate = self.Search1)
         

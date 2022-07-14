@@ -37,7 +37,7 @@ class MyApp (App):
         check = register_screen.check_register()
         if check == True:
             #pass
-            #register_screen.Reg_f(connection)
+            register_screen.Reg_f(connection)
             my_profile_screen = profile_screen.ProfileScreen(connection, name = "profile")
             
             sm.add_widget(home_screen.MainScreen(connection, name = "main"))

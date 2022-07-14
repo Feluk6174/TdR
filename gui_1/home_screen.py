@@ -111,7 +111,7 @@ class MainScreen (Screen):
         self.lab1 = Button (border = (0, 0, 0, 0), size_hint = (None, None), size = ((Window.size[1] - Window.size[0] / 5) * 0.1, (Window.size[1] - Window.size[0] / 5) * 0.1), background_normal = 'images/logo.png', background_down = 'images/logo.png', on_release = self.get_my_posts)
         self.box1.add_widget(self.lab1)
         
-        self.text1 = TextInput(multiline = False, size_hint = (2, 1))
+        self.text1 = Label(text = "Small brother", size_hint = (2, 1))
         self.box1.add_widget(self.text1)
         self.text1.bind(on_text_validate = self.Search1)
         

@@ -43,4 +43,4 @@ class LoadScreen (Screen):
         
     def change(self, instance):
         self.manager.transition = FallOutTransition()
-        self.manager.current = "main"
+        self.manager.current = "register"

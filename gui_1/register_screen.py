@@ -17,10 +17,10 @@ connection = None
 def Reg_f(connection):
     user_name = acces_my_info.GetName()
     public_key = acces_my_info.GetPubKey()
-    private_key = acces_my_info.GetPubKey()     
+    private_key = acces_my_info.GetPrivKey()     
     profile_picture = acces_my_info.GetImage()
     info = acces_my_info.GetDescription()
-    connection.register_user(user_name, public_key, profile_picture, info)
+    connection.register_user(user_name, public_key, private_key, profile_picture, info)
 
 def check_register():
     try:
@@ -36,8 +36,8 @@ def create_my_info_file(username, password, pub_key, priv_key, image, descriptio
     dictionary["semi_basic_info"] = {}
     dictionary["basic_info"]["user_name"] = username
     dictionary["basic_info"]["password"] = password
-    dictionary["basic_info"]["user_pub_key"] = pub_key
-    dictionary["basic_info"]["user_priv_key"] = priv_key
+    #dictionary["basic_info"]["user_pub_key"] = pub_key
+    #dictionary["basic_info"]["user_priv_key"] = priv_key
     dictionary["semi_basic_info"]["profile_image"] = image
     dictionary["semi_basic_info"]["description"] = description
     dictionary["semi_basic_info"]["user_following"] = following
