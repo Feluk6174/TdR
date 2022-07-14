@@ -8,6 +8,7 @@
     "semi_basic_info" : {
         "profile_image" : "13388273892FA83BCADE910D082AB6619403DACAAA789020DC73F61839AC7390",
         "description" : "Sometimes people think I'm an alien. But actualy I'm just a person. It's the truth of the matter... Exactly what an alien would say",
-        "user_following" : ["Feluk6174"]
+        "user_following" : ["Feluk6174"],
+        "liked_posts" : []
     }
 }
