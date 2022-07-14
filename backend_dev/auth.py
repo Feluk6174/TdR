@@ -70,6 +70,7 @@ def verify(pub_key, signature, *args):
     signature = base64.urlsafe_b64decode(signature)
     h = gen_hash(*args)
     print(h.hexdigest())
+    print(type(signature), type(h))
     verifier = pss.new(pub_key)
     verifier.verify(h, signature)    
     try:
