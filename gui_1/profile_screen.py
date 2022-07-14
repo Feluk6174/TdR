@@ -223,7 +223,7 @@ class ProfileScreen (Screen):
     def UserPosts(self, instance):
         self.username = acces_my_info.GetName()
         conn = self.connection
-        self.my_posts_list = conn.get_posts(self.username)
+        self.my_posts_list = conn.get_user_posts(self.username)
         self.all_my_posts = []
 
         self.quant_m_p = len(self.my_posts_list)

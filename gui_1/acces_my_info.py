@@ -22,6 +22,7 @@ from kivy.uix.screenmanager import FallOutTransition
 from kivy.uix.screenmanager import SlideTransition
 import kivy.utils
 import json
+import auth, api
 
 def change_my_color(col_str):
     my_user_info = json.loads(open("my_info.json", "r").read())
@@ -39,6 +40,14 @@ def change_my_description(description):
     file_my.close()
     #cal enviar-ho
 
+def add_liked_post(post_id):
+    my_user_info = json.loads(open("my_info.json", "r").read())
+    my_user_info["semi_basic_info"]["liked_posts"].append(post_id)
+    file_my = open("my_info.json", "w")
+    file_my.write(json.dumps(my_user_info))
+    file_my.close()
+    #cal enviar-ho
+
 def Get(num):
     try:
         my_user_info = json.loads(open("my_info.json", "r").read())
@@ -48,16 +57,16 @@ def Get(num):
     username = my_user_info["basic_info"]["user_name"]
     password = my_user_info["basic_info"]["password"]
     profileimage = my_user_info["semi_basic_info"]["profile_image"]
-    user_pub_key = my_user_info["basic_info"]["user_pub_key"]
-    public_key = open(user_pub_key, "r").read()
-    public_key = public_key.replace("\n", "")
-    user_priv_key = my_user_info["basic_info"]["user_priv_key"]
-    private_key = open(user_priv_key, "r").read()
-    private_key = private_key.replace("\n", "")
+    public_key, private_key = auth.get_keys(username + password)
     user_description = my_user_info["semi_basic_info"]["description"]
     user_following = my_user_info["semi_basic_info"]["user_following"]
-    liked = []
-    #improve required
+    user_following = my_user_info["semi_basic_info"]["user_following"]
+    user_liked_id = my_user_info["semi_basic_info"]["liked_posts"]
+    user_liked = []
+    #for post in user_liked_id:
+        #actual_liked = api.get_post_from_id(post)
+        #user_liked.append(actual_liked)
+
 
     if num == 0:
         return username
@@ -74,7 +83,7 @@ def Get(num):
     if num == 6:
         return password
     if num == 7:
-        return liked
+        return user_liked
 
 def GetName():
     return Get(0)
