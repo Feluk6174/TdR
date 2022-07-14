@@ -61,7 +61,9 @@ if __name__ == "__main__":
 #post_screen + structure
 #likes
 #flags
-#chat subjects
+#chat subjects: art, programation, videogames, philosophy, politic, sport, books, 
+
+#actualitzar pàgina al clicar el botó de desplaçament cap a allà
 
 #search screen improve
 #textbox with background text
@@ -74,4 +76,4 @@ if __name__ == "__main__":
 #my_posts
 #following, followers
 #best + new
-#reload up + button
+#reload up 

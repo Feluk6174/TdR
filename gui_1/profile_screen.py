@@ -25,9 +25,8 @@ import kivy.utils
 from datetime import datetime
 from kivy.uix.dropdown import DropDown
 import json
-
 from matplotlib.pyplot import connect
-import acces_my_info, register_screen, api
+import acces_my_info, register_screen, api, home_screen
 from kivy.clock import Clock
 
 
@@ -155,7 +154,6 @@ class ProfileScreen (Screen):
         #firstposts
         #current: 1 = my, 2 = fav
         self.current_posts = 0
-        self.quant_f_p = 11
         self.us_posts.trigger_action(duration = 0)
 
 
@@ -261,15 +259,21 @@ class ProfileScreen (Screen):
             self.im.add_widget(self.color_bit)
 
     def create_my_posts(self):
+        my_liked_posts = acces_my_info.GetLiked()
         for post in self.my_posts_list:
-            self.all_my_posts.append((self.username, acces_my_info.GetImage(), post["flags"], post["content"], 0, post["time_posted"]))
-            self.make_post_btn(self.username, acces_my_info.GetImage(), post["flags"], post["content"], 0, post["time_posted"])
+            actual_maybe_like = 0
+            for liked in my_liked_posts:
+                if liked["id"] == post["id"]:
+                    actual_maybe_like = 1
+            self.all_my_posts.append((self.username, acces_my_info.GetImage(), post["flags"], post["content"], 0, post["time_posted"], post["id"], actual_maybe_like))
+            self.make_post_btn(self.username, acces_my_info.GetImage(), post["flags"], post["content"], 0, post["time_posted"], post["id"], actual_maybe_like)
         
     #def crear botó. Estructura "correcta"
-    def make_post_btn(self, user_name, user_image, post_flags, textp, nlikes, date):
+    def make_post_btn(self, user_name, user_image, post_flags, textp, nlikes, date, moment_id, like_self):
         self.post = BoxLayout(size_hint_y = None, height = Window.size[0] / 1.61, orientation = "vertical")
         self.my_posts.add_widget(self.post)
-        self.post_like = 0
+
+        self.post_like = like_self
         
         self.first_box = BoxLayout(orientation = "horizontal", size_hint = (1, 0.5))
         self.post.add_widget(self.first_box)
@@ -308,7 +312,11 @@ class ProfileScreen (Screen):
         self.likes = BoxLayout(size_hint = (None, 1), width = Window.size[0] / 1.61 / 3)
         self.third_box.add_widget(self.likes)
 
-        self.like_heart = Button(border = (0, 0, 0, 0),font_size = 1, text = "0", background_normal = 'images/heart.png')
+        self.like_heart = Button(border = (0, 0, 0, 0),font_size = 0.01, text = moment_id)
+        if self.post_like == 0:
+            self.like_heart.background_normal = 'images/heart.png'
+        if self.post_like == 1:
+            self.like_heart.background_normal = 'images/heart2.png'
         self.likes.add_widget(self.like_heart)
         self.like_heart.bind(on_press = self.Like_press)
 
@@ -327,6 +335,7 @@ class ProfileScreen (Screen):
         num = (num + 1) % 2
         if num == 1:
             instance.background_normal = 'images/heart2.png'
+            home_screen.add_liked_post(instance.text)
         if num == 0:
             instance.background_normal = 'images/heart.png'
         instance.text = str(num)
@@ -335,6 +344,14 @@ class ProfileScreen (Screen):
         pass
 
     def UserFavourites(self, instance):
+        self.username = acces_my_info.GetName()
+        #conn = self.connection
+        self.my_liked_list = acces_my_info.GetLiked()
+        #self.my_liked_list = conn.get_posts_with_id()
+        self.all_liked_posts = []
+
+        self.quant_f_p = len(self.my_liked_list)
+
         if self.current_posts == 1:
             self.my_posts.clear_widgets()
             self.grid.remove_widget(self.my_posts)
@@ -352,12 +369,18 @@ class ProfileScreen (Screen):
         self.grid.add_widget(self.favourite_posts)
 
         #favourite posts
-        for a in range (self.quant_f_p):
-            self.btn_f = Button (size_hint_y = None, height = Window.size[0] / 1.61, text = "F" + (get_post_text(a)))
-            self.favourite_posts.add_widget(self.btn_f)
+        self.create_liked()
         
         self.grid.bind(minimum_height=self.grid.setter('height'))
         self.current_posts = 2
+    
+    def create_liked(self):
+        actual_maybe_like = 1
+        for liked in self.my_liked_list:
+            user_liked_info = self.connection.get_user(liked["user_name"])        
+            self.all_liked_posts.append((liked["user_name"], user_liked_info["profile_image"], liked["flags"], liked["content"], 0, liked["time_posted"], liked["id"], actual_maybe_like))
+            self.make_post_btn(liked["user_name"], user_liked_info["profile_image"], liked["flags"], liked["content"], 0, liked["time_posted"], liked["id"], actual_maybe_like)
+        
 
     def press_btn11(self, instance):
         self.manager.transition = SlideTransition()

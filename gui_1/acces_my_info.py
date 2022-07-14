@@ -56,6 +56,9 @@ def Get(num):
     private_key = private_key.replace("\n", "")
     user_description = my_user_info["semi_basic_info"]["description"]
     user_following = my_user_info["semi_basic_info"]["user_following"]
+    liked = []
+    #improve required
+    
     if num == 0:
         return username
     if num == 1:
@@ -70,6 +73,8 @@ def Get(num):
         return user_following
     if num == 6:
         return password
+    if num == 7:
+        return liked
 
 def GetName():
     return Get(0)
@@ -84,4 +89,6 @@ def GetDescription():
 def GetFollowing():
     return Get(5)
 def GetPassword():
-    return Get(6) 
+    return Get(6)
+def GetLiked():
+    return Get(7) 

@@ -33,18 +33,28 @@ connection = None
 def GetNewPosts():
     global connection
     all_my_following = acces_my_info.GetFollowing()
+    my_liked_posts = acces_my_info.GetLiked()
     all_posts = []
     for following in all_my_following:
         foll_posts = connection.get_posts(following)
         foll_info = connection.get_user(following)
+        #0 none, 1 yes, 
         for post in foll_posts:
-            all_posts.append((following, foll_info["profile_picture"], post["flags"], post["content"], 0, post["time_posted"]))
+            actual_maybe_like = 0
+            for liked in my_liked_posts:
+                if liked["id"] == post["id"]:
+                    actual_maybe_like = 1
+            all_posts.append((following, foll_info["profile_picture"], post["flags"], post["content"], 0, post["time_posted"],post["id"], actual_maybe_like))
     return all_posts
 
 def ChangeTime(date):
     date_post = int(date)
     dt_obj = datetime.fromtimestamp(date_post).strftime('%d-%m-%y')
     return dt_obj
+
+def add_liked_post(post_id):
+    #send to my_info and api
+    pass
 
 def hex_color(hex_num):
     if hex_num == "0":
@@ -98,7 +108,7 @@ class MainScreen (Screen):
         self.box1 = BoxLayout (size_hint = (1, 0.1))
         self.Box0.add_widget(self.box1)
 
-        self.lab1 = Button (border = (0, 0, 0, 0), size_hint = (None, None), size = ((Window.size[1] - Window.size[0] / 5) * 0.1, (Window.size[1] - Window.size[0] / 5) * 0.1), background_normal = 'images/logo.png', background_down = 'images/logo.png')
+        self.lab1 = Button (border = (0, 0, 0, 0), size_hint = (None, None), size = ((Window.size[1] - Window.size[0] / 5) * 0.1, (Window.size[1] - Window.size[0] / 5) * 0.1), background_normal = 'images/logo.png', background_down = 'images/logo.png', on_release = self.get_my_posts)
         self.box1.add_widget(self.lab1)
         
         self.text1 = TextInput(multiline = False, size_hint = (2, 1))
@@ -120,8 +130,8 @@ class MainScreen (Screen):
         self.scroll.add_widget (self.grid)
         self.box2.add_widget (self.scroll)
 
-        self.post_btn_test = Button(size_hint_y = None, height = 100, text = "Refresh Posts", on_release = self.get_my_posts)
-        self.grid.add_widget(self.post_btn_test)
+        #self.post_btn_test = Button(size_hint_y = None, height = 100, text = "Refresh Posts", on_release = self.get_my_posts)
+        #self.grid.add_widget(self.post_btn_test)
 
         self.post_box = BoxLayout(orientation = "vertical", size_hint_y = None, height = 100)
         self.grid.add_widget(self.post_box)
@@ -229,19 +239,17 @@ class MainScreen (Screen):
         self.post_box.clear_widgets()
         self.grid.remove_widget(self.post_box)
         self.all_posts_info = GetNewPosts()
-        r = 0
-        for _ in range (len(self.all_posts_info)):
-            r = r + 1
-        self.post_box = BoxLayout(orientation = "vertical", size_hint_y = None, height = Window.size[0] / 1.61 * r)
+        self.post_box = BoxLayout(orientation = "vertical", size_hint_y = None, height = Window.size[0] / 1.61 * (len(self.all_posts_info)))
         self.grid.add_widget(self.post_box)
         for post in self.all_posts_info:
-            self.make_post_btn(post[0], post[1], post[2], post[3], post[4], post[5])
+            self.make_post_btn(post[0], post[1], post[2], post[3], post[4], post[5], post[6], post[7])
 
     #def crear botó. Estructura "correcta"
-    def make_post_btn(self, user_name, user_image, post_flags, textp, nlikes, date):
+    def make_post_btn(self, user_name, user_image, post_flags, textp, nlikes, date, moment_id, like_self):
         self.post = BoxLayout(size_hint_y = None, height = Window.size[0] / 1.61, orientation = "vertical")
         self.post_box.add_widget(self.post)
-        self.post_like = 0
+        
+        self.post_like = int(like_self)
         
         self.first_box = BoxLayout(orientation = "horizontal", size_hint = (1, 0.5))
         self.post.add_widget(self.first_box)
@@ -280,7 +288,11 @@ class MainScreen (Screen):
         self.likes = BoxLayout(size_hint = (None, 1), width = Window.size[0] / 1.61 / 3)
         self.third_box.add_widget(self.likes)
 
-        self.like_heart = Button(border = (0, 0, 0, 0),font_size = 1, text = "0", background_normal = 'images/heart.png')
+        self.like_heart = Button(border = (0, 0, 0, 0),font_size = 0.01, text = str(moment_id))
+        if self.post_like == 0:
+            self.like_heart.background_normal = 'images/heart.png'
+        if self.post_like == 1:
+            self.like_heart.background_normal = 'images/heart2.png'
         self.likes.add_widget(self.like_heart)
         self.like_heart.bind(on_press = self.Like_press)
 
@@ -310,6 +322,7 @@ class MainScreen (Screen):
         num = (num + 1) % 2
         if num == 1:
             instance.background_normal = 'images/heart2.png'
+            add_liked_post(instance.text)
         if num == 0:
             instance.background_normal = 'images/heart.png'
         instance.text = str(num)
