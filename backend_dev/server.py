@@ -41,9 +41,7 @@ def broadcast(msg, ip):
         if not connection.ip == ip:
             msg_text = json.dumps(msg)
             formated_msg = msg_text.replace('"', '\\"')
-            print("b", ip, connection.ip, json.dumps(formated_msg))
             connection.queue.append(json.loads("{"+f'"type": "ACTION", "action": "SEND", "msg": "{formated_msg}"'+"}"))
-            print(connection.ip, connection.queue)
             
             
 
@@ -120,7 +118,6 @@ def get_posts(msg_info:dict, connection):
         print(res)
 
     for i, post in enumerate(posts):
-        print(i)
         msg = "{"+f'"id": "{post[0]}", "user_id": "{post[1]}", "content": "{post[2]}", "flags": "{post[3]}", "time_posted": {post[4]}'+"}"
         connection.connection.send(msg.encode("utf-8"))
         res = connection.recv()
@@ -160,8 +157,6 @@ class ClientConnection():
         while True:
             try:
                 msg = self.connection.recv(4096).decode("utf-8")
-                print(msg)
-                #print("----", msg)
                 if msg == "":
                     raise socket.error
                 msg = json.loads(msg)
@@ -179,7 +174,6 @@ class ClientConnection():
     def process_queue(self):
         while True:
             if not len(self.queue) == 0:
-                print(self.queue)
                 msg_info = self.queue[0]
                 print(f"({threading.current_thread().name})[{time.asctime()}] recived:", msg_info, type(msg_info))
 
@@ -264,9 +258,6 @@ class NodeConnection():
         while True:
             try:
                 msg = self.connection.recv(4096).decode("utf-8")
-                print(msg)
-                #print(".......", type(msg), msg)
-                #print(".......", type(msg), msg)
                 if msg == "":
                     raise socket.error
                 
@@ -286,7 +277,6 @@ class NodeConnection():
     def process_queue(self):
         while True:
             if not len(self.queue) == 0:
-                print(self.queue)
                 msg_info = self.queue[0]
                 print(f"({threading.current_thread().name})[{time.asctime()}] recived:", msg_info, type(msg_info))
 
