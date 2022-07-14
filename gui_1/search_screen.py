@@ -195,11 +195,11 @@ class SearchScreen (Screen):
         #self.all_popular_posts_info = connection.get_popular_posts()
         self.all_popular_posts_info = []
 
-        if self.current_posts == 2:
+        if self.current_posts == 3:
             self.favourite_posts.clear_widgets()
             self.grid.remove_widget(self.favourite_posts)
 
-        if self.current_posts == 3:
+        if self.current_posts == 2:
             self.newest_posts.clear_widgets()
             self.grid.remove_widget(self.newest_posts)
         
@@ -236,7 +236,7 @@ class SearchScreen (Screen):
 
         if self.current_posts == 1:
             self.pop_posts.clear_widgets()
-            self.grid.remove_widget(self.my_posts)
+            self.grid.remove_widget(self.pop_posts)
         
         if self.current_posts == 2:
             self.newest_posts.clear_widgets()
@@ -292,7 +292,7 @@ class SearchScreen (Screen):
         self.fav.bind(on_press = self.UserFavourites)
 
         self.newest_posts = BoxLayout(size_hint_y = None, height = self.quant_n_p * Window.size[0] / 1.61, orientation = "vertical")
-        self.grid.add_widget(self.favourite_posts)
+        self.grid.add_widget(self.newest_posts)
 
         #new posts
         self.create_new()

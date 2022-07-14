@@ -58,7 +58,7 @@ def Get(num):
     user_following = my_user_info["semi_basic_info"]["user_following"]
     liked = []
     #improve required
-    
+
     if num == 0:
         return username
     if num == 1:
