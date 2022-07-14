@@ -1,6 +1,7 @@
 import database
 import threading, time, socket, sys, json, math
 from Crypto.PublicKey import RSA
+from Crypto.Hash import SHA256
 import auth
 
 #todo fix
@@ -57,7 +58,7 @@ def new_post(msg_info, connection, ip=None):
     pub_key = RSA.import_key(auth.reconstruct_key(pub_key[0][0], key_type="pub"))
     
     print(pub_key.export_key().decode("utf-8"))
-    print(hash(pub_key))
+    print(SHA256.new(pub_key.export_key()).hexdigest())
 
     #signature = auth.sign(priv_key, content, post_id, user_name, flags, time_posted)
     #msg = "{"+f'"type": "ACTION", "action": "POST", "post_id": "{post_id}", "user_name": "{user_name}", "content": "{content}", "flags": "{flags}", "time": {time_posted}, "signature": "{signature}"'+"}"
