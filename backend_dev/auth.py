@@ -55,7 +55,7 @@ def reconstruct_key(sanitized_key, key_type="priv"):
     if key_type == "priv":
         key += "-----END ENCRYPTED PRIVATE KEY-----"
     elif key_type == "pub":
-        key += "-----END PUBLIC KEY-----\n"
+        key += "-----END PUBLIC KEY-----"
     
     return key
 
