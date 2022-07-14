@@ -7,6 +7,7 @@ auth.gen_key("Hola")
 priv_key, pub_key = auth.get_keys("Hola")
 
 print(pub_key.export_key().decode("utf-8"))
+print(hash(pub_key))
 
 with open("rsa_key.bin", "r") as f:
     keys_file = f.read()

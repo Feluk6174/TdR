@@ -63,7 +63,7 @@ def reconstruct_key(sanitized_key, key_type="priv"):
 def sign(key, *args):
     h = gen_hash(*args)
     print(h.hexdigest())
-    signature =pss.new(key).sign(h)
+    signature = pss.new(key).sign(h)
     return base64.urlsafe_b64encode(signature)
 
 def verify(pub_key, signature, *args):
