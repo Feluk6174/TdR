@@ -131,6 +131,16 @@ dmypy.json
 .buildoser/
 bin/
 
+backend_dev/rsa_key.bin
+backend_stable/rsa_key.bin
+
 gui_1/my_info.json
 gui_1/pub_my_key_storage.pem
 gui_1/priv_my_key_storage.pem
+gui_1/rsa_key.bin
+
+my_info.json
+pub_my_key_storage.pem
+priv_my_key_storage.pem
+
+rsa_key.bin
