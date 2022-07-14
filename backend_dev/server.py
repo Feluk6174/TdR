@@ -54,7 +54,14 @@ def new_post(msg_info, connection, ip=None):
         return
 
     pub_key = db.querry(f"SELECT public_key FROM users WHERE user_name = '{msg_info['user_name']}'")
-    print(pub_key)
+    pub_key = RSA.import_key(auth.reconstruct_key(pub_key[0][0], key_type="pub"))
+    
+    #signature = auth.sign(priv_key, content, post_id, user_name, flags, time_posted)
+    #msg = "{"+f'"type": "ACTION", "action": "POST", "post_id": "{post_id}", "user_name": "{user_name}", "content": "{content}", "flags": "{flags}", "time": {time_posted}, "signature": "{signature}"'+"}"
+
+    if not auth.verify(pub_key, msg_info["signature"], msg_info["content"], msg_info["post_id"], msg_info["user_name"], msg_info["flags"], msg_info["time"]):
+        connection.connection.send("WRONG SIGNATURE".encode("utf-8"))
+        return
 
     #CREATE TABLE posts(id INT NOT NULL PRIMARY KEY, user_id VARCHAR(16) NOT NULL, post VARCHAR(255) NOT NULL, time_posted INT NOT NULL, FOREIGN KEY (user_id) REFERENCES users (user_name));")
     res = db.querry(f"SELECT * FROM posts WHERE id = '{msg_info['post_id']}';")

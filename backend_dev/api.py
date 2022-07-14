@@ -36,6 +36,8 @@ class Connection():
         if not response == "OK":
             if response == "WRONG CHARS":
                 raise WrongCaracters(user_name=user_name, public_key=content, profile_picture=post_id, info=flags)
+            elif response == "WRONG SIGNATURE":
+                raise WrongSignature()
 
     def get_posts(self, user_name:str):
         #return format: {'id': 'str(23)', 'user_id': 'str(16)', 'content': 'str(255)', 'flags': 'str(10)', 'time_posted': int}
@@ -103,3 +105,7 @@ class WrongCaracters(Exception):
                 self.message = f"{key}(value = {value}) contains the character {char}"
                 
         super().__init__(self.message)
+
+class WrongSignature(Exception):
+    def __init__(self, **kwargs: object):
+        super().__init__("key verification failed")

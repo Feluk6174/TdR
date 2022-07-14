@@ -44,6 +44,8 @@ def reconstruct_key(sanitized_key, key_type="priv"):
     i = 0
     if key_type == "priv":
         key += "-----BEGIN ENCRYPTED PRIVATE KEY-----\n"
+    elif key_type == "pub":
+        key += "-----BEGIN PUBLIC KEY-----\n"
     num = int(len(sanitized_key)/64)
     for i in range(num):
         key += sanitized_key[i*64:i*64+64]+"\n"
@@ -52,6 +54,8 @@ def reconstruct_key(sanitized_key, key_type="priv"):
     
     if key_type == "priv":
         key += "-----END ENCRYPTED PRIVATE KEY-----"
+    elif key_type == "pub":
+        key += "-----END PUBLIC KEY-----\n"
     
     return key
 
