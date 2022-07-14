@@ -41,9 +41,7 @@ def broadcast(msg, ip):
         if not connection.ip == ip:
             msg_text = json.dumps(msg)
             formated_msg = msg_text.replace('"', '\\"')
-            print("b", ip, connection.ip, json.dumps(formated_msg))
             connection.queue.append(json.loads("{"+f'"type": "ACTION", "action": "SEND", "msg": "{formated_msg}"'+"}"))
-            print(connection.ip, connection.queue)
             
             
 
@@ -56,12 +54,6 @@ def new_post(msg_info, connection, ip=None):
 
     pub_key = db.querry(f"SELECT public_key FROM users WHERE user_name = '{msg_info['user_name']}'")
     pub_key = RSA.import_key(auth.reconstruct_key(pub_key[0][0], key_type="pub"))
-    
-    print(pub_key.export_key().decode("utf-8"))
-    print(SHA256.new(pub_key.export_key()).hexdigest())
-
-    #signature = auth.sign(priv_key, content, post_id, user_name, flags, time_posted)
-    #msg = "{"+f'"type": "ACTION", "action": "POST", "post_id": "{post_id}", "user_name": "{user_name}", "content": "{content}", "flags": "{flags}", "time": {time_posted}, "signature": "{signature}"'+"}"
 
     if not auth.verify(pub_key, msg_info["signature"], msg_info["content"], msg_info["post_id"], msg_info["user_name"], msg_info["flags"], msg_info["time"]):
         connection.connection.send("WRONG SIGNATURE".encode("utf-8"))
@@ -120,7 +112,6 @@ def get_posts(msg_info:dict, connection):
         print(res)
 
     for i, post in enumerate(posts):
-        print(i)
         msg = "{"+f'"id": "{post[0]}", "user_id": "{post[1]}", "content": "{post[2]}", "flags": "{post[3]}", "time_posted": {post[4]}'+"}"
         connection.connection.send(msg.encode("utf-8"))
         res = connection.recv()
@@ -160,8 +151,6 @@ class ClientConnection():
         while True:
             try:
                 msg = self.connection.recv(4096).decode("utf-8")
-                print(msg)
-                #print("----", msg)
                 if msg == "":
                     raise socket.error
                 msg = json.loads(msg)
@@ -179,7 +168,6 @@ class ClientConnection():
     def process_queue(self):
         while True:
             if not len(self.queue) == 0:
-                print(self.queue)
                 msg_info = self.queue[0]
                 print(f"({threading.current_thread().name})[{time.asctime()}] recived:", msg_info, type(msg_info))
 
@@ -264,9 +252,6 @@ class NodeConnection():
         while True:
             try:
                 msg = self.connection.recv(4096).decode("utf-8")
-                print(msg)
-                #print(".......", type(msg), msg)
-                #print(".......", type(msg), msg)
                 if msg == "":
                     raise socket.error
                 
@@ -286,7 +271,6 @@ class NodeConnection():
     def process_queue(self):
         while True:
             if not len(self.queue) == 0:
-                print(self.queue)
                 msg_info = self.queue[0]
                 print(f"({threading.current_thread().name})[{time.asctime()}] recived:", msg_info, type(msg_info))
 

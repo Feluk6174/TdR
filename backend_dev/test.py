@@ -1,4 +1,31 @@
-a = b'-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArxw4jr4UdsuAsKZmh0jp\nn+DAQmz3dKO7et7FuWscYZNIXHSK/H1h9WQlqqqrtpVVKeYm7aGbHQ+DI1aBvZn4\nvXnf1d4Z6dYRZzZ6vcJEf5XZ3QsvZYNo36Y1aUXfZ+rbPsH2S3zGyYj/Plqi8F64\njO11lWu4+YTFA7C/DmFO8jVigyFKRsPiKsYYf2MMhQFZcv/hjYPOqfMjHhnp2lG8\niuRgaBtPAmUwSTjad8tVF9w2T/j+fz/MGNbhFz7rkYbfBy5Z/DjItw5/lSiQcnKg\nS0cck60ZR46N4YTE4Tp2OXcP0+O73q5BwgJbmkQc3oHNRPohEkqsADxJN3wK76G/\nTwIDAQAB\n-----END PUBLIC KEY-----'
-b = b'-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArxw4jr4UdsuAsKZmh0jp\nn+DAQmz3dKO7et7FuWscYZNIXHSK/H1h9WQlqqqrtpVVKeYm7aGbHQ+DI1aBvZn4\nvXnf1d4Z6dYRZzZ6vcJEf5XZ3QsvZYNo36Y1aUXfZ+rbPsH2S3zGyYj/Plqi8F64\njO11lWu4+YTFA7C/DmFO8jVigyFKRsPiKsYYf2MMhQFZcv/hjYPOqfMjHhnp2lG8\niuRgaBtPAmUwSTjad8tVF9w2T/j+fz/MGNbhFz7rkYbfBy5Z/DjItw5/lSiQcnKg\nS0cck60ZR46N4YTE4Tp2OXcP0+O73q5BwgJbmkQc3oHNRPohEkqsADxJN3wK76G/\nTwIDAQAB\n-----END PUBLIC KEY-----'
+import auth
+import sys
+import socket
+from Crypto.PublicKey import RSA
 
-print(hash(a))
+HOST = "127.0.0.1"
+try:
+    PORT = int(sys.argv[1])
+except IndexError:
+    PORT = int(input("Input port: "))
+IP = HOST+":"+str(PORT)
+
+server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server.bind((HOST, PORT))
+server.listen()
+
+connection, addr = server.accept()
+pub_key = connection.recv(4096).decode("utf-8")
+pub_key = RSA.import_key(auth.reconstruct_key(pub_key))
+
+data = connection.recv(4096).decode("utf-8")
+
+signature = connection.recv(4096).decode("utf-8")
+
+print(pub_key)
+print(data)
+print(signature)
+
+print(auth.verify(pub_key, signature, data))
+
+print(pub_key)

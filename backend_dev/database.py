@@ -10,11 +10,9 @@ def is_safe(*args):
     for argument in args:
         arguments += argument
 
-    print(arguments)
-
-    for i, char in enumerate(invalid_chars):
+    for char in invalid_chars:
         if char in arguments:
-            print(char, i)
+            print("[ERROR] Invalid char ", char)
             return False
     return True
 
@@ -62,7 +60,6 @@ class Database():
         print("[STARTED QUEUE PROCESOR]")
         while True:
             if len(self.queue) > 0:
-                #print(self.queue)
                 if self.queue[0][0] == "q":
                     try:
                         cursor = self.connection.cursor()
