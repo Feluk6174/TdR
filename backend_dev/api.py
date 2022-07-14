@@ -14,8 +14,12 @@ class Connection():
         if self.connection.recv(4096).decode("utf-8") == "OK":
             print("[ESTABLISHED CONNECTION]")
 
-    def register_user(self, user_name:str, public_key:str, private_key:str, profile_picture:str, info:str):
+    def register_user(self, user_name:str, public_key, key_path:str, profile_picture:str, info:str):
         time_registered = int(time.time())
+        public_key = auth.sanitize_key(public_key.export_key().decode("utf-8"))
+        with open(key_path, "r") as f:
+            keys_file = f.read()
+        private_key = auth.sanitize_key(keys_file)
         msg = "{"+f'"type": "ACTION", "action": "REGISTER", "user_name": "{user_name}", "public_key": "{public_key}", "private_key": "{private_key}", "profile_picture": "{profile_picture}", "info": "{info}", "time": {time_registered}'+"}"
         print(msg)
         self.connection.send(msg.encode("utf-8"))
