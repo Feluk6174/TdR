@@ -1,6 +1,7 @@
 import database
 import threading, time, socket, sys, json, math
 from Crypto.PublicKey import RSA
+from Crypto.Hash import SHA256
 import auth
 
 #todo fix
@@ -52,6 +53,20 @@ def new_post(msg_info, connection, ip=None):
     if not database.is_safe(msg_info["post_id"]):
         connection.connection.send("WRONG CHARS".encode("utf-8"))
         return
+
+    pub_key = db.querry(f"SELECT public_key FROM users WHERE user_name = '{msg_info['user_name']}'")
+    pub_key = RSA.import_key(auth.reconstruct_key(pub_key[0][0], key_type="pub"))
+    
+    print(pub_key.export_key().decode("utf-8"))
+    print(SHA256.new(pub_key.export_key()).hexdigest())
+
+    #signature = auth.sign(priv_key, content, post_id, user_name, flags, time_posted)
+    #msg = "{"+f'"type": "ACTION", "action": "POST", "post_id": "{post_id}", "user_name": "{user_name}", "content": "{content}", "flags": "{flags}", "time": {time_posted}, "signature": "{signature}"'+"}"
+
+    if not auth.verify(pub_key, msg_info["signature"], msg_info["content"], msg_info["post_id"], msg_info["user_name"], msg_info["flags"], msg_info["time"]):
+        connection.connection.send("WRONG SIGNATURE".encode("utf-8"))
+        return
+
     #CREATE TABLE posts(id INT NOT NULL PRIMARY KEY, user_id VARCHAR(16) NOT NULL, post VARCHAR(255) NOT NULL, time_posted INT NOT NULL, FOREIGN KEY (user_id) REFERENCES users (user_name));")
     res = db.querry(f"SELECT * FROM posts WHERE id = '{msg_info['post_id']}';")
     if len(res) == 0:
@@ -67,7 +82,6 @@ def new_post(msg_info, connection, ip=None):
 def register_user(msg_info, connection, ip=None):
     print(f"({threading.current_thread().name})[{time.asctime()}] regitering user:", msg_info, ip)
     global db
-
     if not database.is_safe(msg_info["user_name"], msg_info['public_key'], msg_info['public_key'], msg_info['profile_picture'], msg_info['info']):
         connection.connection.send("WRONG CHARS".encode("utf-8"))
         return
@@ -76,7 +90,7 @@ def register_user(msg_info, connection, ip=None):
     res = db.querry(f"SELECT * FROM users WHERE user_name = '{msg_info['user_name']}'")
 
     if len(res) == 0:
-        sql = f"INSERT INTO users(user_name, public_key, time_created, profile_picture, info) VALUES('{msg_info['user_name']}', '{msg_info['public_key']}', {int(time.time())}, '{msg_info['profile_picture']}', '{msg_info['info']}');"
+        sql = f"INSERT INTO users(user_name, public_key, key_file, time_created, profile_picture, info) VALUES('{msg_info['user_name']}', '{msg_info['public_key']}', '{msg_info['private_key']}', {int(time.time())}, '{msg_info['profile_picture']}', '{msg_info['info']}');"
         print("r",sql)
         db.execute(sql)
         broadcast(msg_info, ip)

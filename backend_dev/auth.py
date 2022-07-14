@@ -44,6 +44,8 @@ def reconstruct_key(sanitized_key, key_type="priv"):
     i = 0
     if key_type == "priv":
         key += "-----BEGIN ENCRYPTED PRIVATE KEY-----\n"
+    elif key_type == "pub":
+        key += "-----BEGIN PUBLIC KEY-----\n"
     num = int(len(sanitized_key)/64)
     for i in range(num):
         key += sanitized_key[i*64:i*64+64]+"\n"
@@ -52,26 +54,32 @@ def reconstruct_key(sanitized_key, key_type="priv"):
     
     if key_type == "priv":
         key += "-----END ENCRYPTED PRIVATE KEY-----"
+    elif key_type == "pub":
+        key += "-----END PUBLIC KEY-----"
     
     return key
 
 
 def sign(key, *args):
     h = gen_hash(*args)
-    
-    signature =pss.new(key).sign(h)
+    print(h.hexdigest())
+    signature = pss.new(key).sign(h)
     return base64.urlsafe_b64encode(signature)
 
 def verify(pub_key, signature, *args):
     signature = base64.urlsafe_b64decode(signature)
     h = gen_hash(*args)
+    print(h.hexdigest())
+    print(type(signature), type(h))
     verifier = pss.new(pub_key)
-
+    verifier.verify(h, signature)    
     try:
         verifier.verify(h, signature)
         return True
 
-    except (ValueError, TypeError):
+
+    except (ValueError, TypeError) as e:
+        print("[ERROR]", e)
         return False
 
 if __name__ == "__main__":
