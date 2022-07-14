@@ -9,7 +9,7 @@ import random
 import rsa_gui
 import acces_my_info
 from kivy.uix.screenmanager import FallOutTransition
-import chat_screen, home_screen, loading_screen, post_screen, profile_screen, search_screen, acces_my_info, profile_image_screen, profile_image_register_screen
+import chat_screen, home_screen, loading_screen, post_screen, profile_screen, search_screen, acces_my_info, profile_image_screen, profile_image_register_screen, auth
 
 
 connection = None
@@ -41,6 +41,7 @@ def create_my_info_file(username, password, pub_key, priv_key, image, descriptio
     dictionary["semi_basic_info"]["profile_image"] = image
     dictionary["semi_basic_info"]["description"] = description
     dictionary["semi_basic_info"]["user_following"] = following
+    dictionary["semi_basic_info"]["liked_posts"] = []
     my_info_file = open("my_info.json", "w")
     my_info_file.write(json.dumps(dictionary))
     my_info_file.close
@@ -175,7 +176,7 @@ class RegisterScreen (Screen):
             if self.password_check == True and self.color_check == True:
                 self.manager.transition = FallOutTransition()
                 self.manager.current = "load"
-                rsa_gui.gen_key(self.username_text_box.text, self.password_text_box.text)
+                auth.gen_key(self.username_text_box.text + self.password_text_box.text)
                 following = self.following_text_box.text
                 following = following.split(", ")
                 create_my_info_file(self.username_text_box.text, self.password_text_box.text, "pub_my_key_storage.pem", "priv_my_key_storage.pem", self.image_str, self.description_text_box.text, following)

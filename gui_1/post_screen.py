@@ -31,13 +31,14 @@ def SendPostFinal(postflags, textp, nlikes):
     global connection
     content = textp
     user_name = acces_my_info.GetName()
+    private_key = acces_my_info.GetPrivKey()
     post_flags = str(postflags)
     #post_likes = nlikes
     #date = int(time.time())
     post_id = hash(str(content) + str(user_name) + str(post_flags))
     if post_id < 0:
         post_id = post_id * (-1)
-    connection.post(content, post_id, user_name, post_flags)
+    connection.post(content, post_id, user_name, post_flags, private_key)
 
 class PostUserScreen (Screen):
     def __init__(self, conn, **kwargs):

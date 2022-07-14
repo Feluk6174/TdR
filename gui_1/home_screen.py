@@ -36,7 +36,7 @@ def GetNewPosts():
     my_liked_posts = acces_my_info.GetLiked()
     all_posts = []
     for following in all_my_following:
-        foll_posts = connection.get_posts(following)
+        foll_posts = connection.get_user_posts(following)
         foll_info = connection.get_user(following)
         #0 none, 1 yes, 
         for post in foll_posts:
@@ -322,7 +322,7 @@ class MainScreen (Screen):
         num = (num + 1) % 2
         if num == 1:
             instance.background_normal = 'images/heart2.png'
-            add_liked_post(instance.text)
+            acces_my_info.add_liked_post(instance.text)
         if num == 0:
             instance.background_normal = 'images/heart.png'
         instance.text = str(num)
