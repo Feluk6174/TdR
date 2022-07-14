@@ -66,8 +66,6 @@ class Connection():
         msg = "{"+f'"type": "ACTION", "action": "GET USER", "user_name": "{user_name}"'+"}"
         self.connection.send(msg.encode("utf-8"))
         response = self.connection.recv(4096).decode("utf-8")
-        print(response)
-        return json.loads(response)
         try:
             return json.loads(response)
         except json.decoder.JSONDecodeError:

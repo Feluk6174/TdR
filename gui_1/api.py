@@ -39,7 +39,7 @@ class Connection():
             elif response == "WRONG SIGNATURE":
                 raise WrongSignature()
 
-    def get_posts(self, user_name:str):
+    def get_user_posts(self, user_name:str):
         #return format: {'id': 'str(23)', 'user_id': 'str(16)', 'content': 'str(255)', 'flags': 'str(10)', 'time_posted': int}
         posts = []
         msg = "{"+f'"type": "ACTION", "action": "GET POSTS", "user_name": "{user_name}"'+"}"
@@ -75,6 +75,17 @@ class Connection():
 
     def close(self):
         self.connection.close()
+
+    def get_post(self, post_id:str):
+        msg = "{"+f'"type": "ACTION", "action": "GET POST", "post_id": "{post_id}"'+"}"
+        self.connection.send(msg.encode("utf-8"))
+        response = self.connection.recv(4096).decode("utf-8")
+        try:
+            return json.loads(response)
+        except json.decoder.JSONDecodeError:
+            if response == "WRONG CHARS":
+                raise WrongCaracters(post_id=post_id)
+            return {}
 
 def check_chars(*args):
     invalid_chars = ["\\", "\'", "\"", "\n", "\t", "\r", "\0", "%", "\b", ";", "="]
