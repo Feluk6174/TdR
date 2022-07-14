@@ -6,7 +6,7 @@ conn = api.Connection()
 auth.gen_key("Hola")
 priv_key, pub_key = auth.get_keys("Hola")
 
-print(pub_key)
+print(pub_key.decode("utf-8"))
 
 with open("rsa_key.bin", "r") as f:
     keys_file = f.read()
