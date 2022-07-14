@@ -227,8 +227,7 @@ class SearchScreen (Screen):
 
     def UserFavourites(self, instance):
         self.username = acces_my_info.GetName()
-        #conn = self.connection
-        self.my_liked_list = acces_my_info.GetLiked()
+        self.my_liked_list = acces_my_info.GetLiked(self.connection)
         #self.my_liked_list = conn.get_posts_with_id()
         self.all_liked_posts = []
 
@@ -309,26 +308,33 @@ class SearchScreen (Screen):
             self.make_post_btn(liked["user_name"], user_liked_info["profile_image"], liked["flags"], liked["content"], 0, liked["time_posted"], liked["id"], actual_maybe_like)
 
     def create_popular(self):
-        my_liked_posts = acces_my_info.GetLiked()
-        self.connection = connection
+        conn = self.connection
+        my_liked_posts = acces_my_info.GetLiked(conn)
         for post in self.all_popular_posts_info:
-            user_info = connection.get_user(post["user_name"])
+            user_info = conn.get_user(post["user_name"])
             #0 none, 1 yes, 
             actual_maybe_like = 0
-            for liked in my_liked_posts:
-                if liked["id"] == post["id"]:
-                    actual_maybe_like = 1
+            try:
+                for liked in my_liked_posts:
+                    if liked["id"] == post["id"]:
+                        actual_maybe_like = 1
+            except KeyError:
+                pass
             self.make_post_btn(post["user_name"], user_info["profile_image"], post["flags"], post["content"], 0, post["time_posted"], post["id"], actual_maybe_like)
 
     def create_new(self):
-        my_liked_posts = acces_my_info.GetLiked()
+        conn = self.connection
+        my_liked_posts = acces_my_info.GetLiked(conn)
         self.connection = connection
         for post in self.all_new_posts_info:
             user_info = connection.get_user(post["user_name"])
             actual_maybe_like = 2
-            for liked in my_liked_posts:
-                if liked["id"] == post["id"]:
-                    actual_maybe_like = 3
+            try:
+                for liked in my_liked_posts:
+                    if liked["id"] == post["id"]:
+                        actual_maybe_like = 3
+            except KeyError:
+                pass
             self.make_post_btn(post["user_name"], user_info["profile_image"], post["flags"], post["content"], 0, post["time_posted"], post["id"], actual_maybe_like)
     
 
