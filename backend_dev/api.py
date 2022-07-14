@@ -27,9 +27,10 @@ class Connection():
                 raise WrongCaracters(user_name=user_name, public_key=public_key, profile_picture=profile_picture, info=info)
 
 
-    def post(self, content:str, post_id:str, user_name:str, flags:str, priv_key):
+    def post(self, content:str, post_id:str, user_name:str, flags:str, priv_key, pub_key):
         time_posted = int(time.time())
         signature = auth.sign(priv_key, content, post_id, user_name, flags, time_posted)
+        auth.verify(pub_key, signature, content, post_id, user_name, flags, time_posted)
         msg = "{"+f'"type": "ACTION", "action": "POST", "post_id": "{post_id}", "user_name": "{user_name}", "content": "{content}", "flags": "{flags}", "time": {time_posted}, "signature": "{signature}"'+"}"
         self.connection.send(msg.encode("utf-8"))
         response = self.connection.recv(4096).decode("utf-8")
