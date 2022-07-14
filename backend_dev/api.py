@@ -77,7 +77,7 @@ class Connection():
         self.connection.close()
 
     def get_post(self, post_id:str):
-        msg = "{"+f'"type": "ACTION", "action": "GET USER", "user_name": "{post_id}"'+"}"
+        msg = "{"+f'"type": "ACTION", "action": "GET POST", "post_id": "{post_id}"'+"}"
         self.connection.send(msg.encode("utf-8"))
         response = self.connection.recv(4096).decode("utf-8")
         try:

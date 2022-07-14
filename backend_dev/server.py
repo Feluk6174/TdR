@@ -198,6 +198,9 @@ class ClientConnection():
                 elif msg_info["action"] == "GET USER":
                     get_user_info(msg_info, self)
 
+                elif msg_info["action"] == "GET POST":
+                    get_post(msg_info, self)
+
                 elif msg_info["action"] == "SEND":
                     self.connection.send(msg_info["msg"].encode("utf-8"))
 
