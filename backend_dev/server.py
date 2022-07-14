@@ -141,7 +141,7 @@ def get_post(msg_info, connection):
         connection.connection.send("WRONG CHARS".encode("utf-8"))
         return
     # (id, user_id, post, flags, time_posted, signature)
-    post = db.querry(f"SELECT * FROM users WHERE id = '{msg_info['post_id']}';")
+    post = db.querry(f"SELECT * FROM posts WHERE id = '{msg_info['post_id']}';")
     print(post)
     if not len(post) == 0:
         post = post[0]
