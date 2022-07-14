@@ -37,12 +37,12 @@ class MyApp (App):
         check = register_screen.check_register()
         if check == True:
             #pass
-            register_screen.Reg_f(connection)
+            #register_screen.Reg_f(connection)
             my_profile_screen = profile_screen.ProfileScreen(connection, name = "profile")
             
             sm.add_widget(home_screen.MainScreen(connection, name = "main"))
             sm.add_widget(chat_screen.ChatScreen(name = "chat"))
-            sm.add_widget(search_screen.SearchScreen(name = "search"))
+            sm.add_widget(search_screen.SearchScreen(connection, name = "search"))
             sm.add_widget(post_screen.PostUserScreen(connection, name = "last"))
             sm.add_widget(my_profile_screen)
             sm.add_widget(profile_image_screen.ImageScreen(my_profile_screen, name = "image"))
