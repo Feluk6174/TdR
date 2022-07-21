@@ -392,12 +392,12 @@ def manage_new_node(connection, address, conn_info):
 def clock():
     global connections, clients, db, IP, logger
     while True:
-        logger.log("num of connected clients: " + len(clients))
-        logger.log("num of connections: " + len(connections))
+        logger.log("num of connected clients: " + str(len(clients)))
+        logger.log("num of connections: " + str(len(connections)))
         for connection in connections:
             logger.log(f"    {connection.ip}")
         res = db.querry("SELECT * FROM ips;")
-        logger.log("num of known nodes:" + len(res))
+        logger.log("num of known nodes:" + str(len(res)))
         for ip in res:
             logger.log(f"    {ip[0]}")
         broadcast_ip(IP, IP)
