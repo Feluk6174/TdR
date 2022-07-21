@@ -18,6 +18,6 @@ class Logger():
         while True:
             if not len(self.queue) == 0:
                 self.log_file.write(str(self.queue[0]))
-                if verbose:
+                if self.vervose:
                     print(self.queue[0])
                 self.queue.pop(0)
