@@ -16,6 +16,7 @@ class Logger():
     def proces_queue(self):
         self.queue.append("[STARTED LOGGER]")
         while True:
+            print(self.queue)
             if not len(self.queue) == 0:
                 self.log_file.write(str(self.queue[0]))
                 if verbose:
