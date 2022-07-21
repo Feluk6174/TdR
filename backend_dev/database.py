@@ -3,7 +3,13 @@ import random
 import threading
 import time
 
-def is_safe(*args):
+def log(logger, message):
+    if not logger == None:
+        logger.log(message)
+    else:
+        print(message)
+
+def is_safe(*args, logger = None):
     invalid_chars = ["\\", "\'", "\"", "\n", "\t", "\r", "\0", "%", "\b", ";", "="]
 
     arguments = ""
@@ -12,18 +18,19 @@ def is_safe(*args):
 
     for char in invalid_chars:
         if char in arguments:
-            print("[ERROR] Invalid char ", char)
+            log(logger, f"[ERROR] Invalid char {char}")
             return False
     return True
 
 
 class Database():
-    def __init__(self):
+    def __init__(self, logger=None):
         self.connect()
         self.queue = []
         self.return_response = []
         thread = threading.Thread(target=self.proces_queue)
         thread.start()
+        self.logger = logger
 
     def connect(self):
         self.connection = mysql.connector.connect(
@@ -57,7 +64,7 @@ class Database():
                     return response[1]
 
     def proces_queue(self):
-        print("[STARTED QUEUE PROCESOR]")
+        log("[STARTED QUEUE PROCESOR]", logger=self.logger)
         while True:
             if len(self.queue) > 0:
                 if self.queue[0][0] == "q":
@@ -67,7 +74,7 @@ class Database():
                         self.return_response.append((self.queue[0][2], cursor.fetchall()))
 
                     except mysql.connector.Error as e:
-                        print(f"[ERROR]({threading.current_thread().name})", e)
+                        log(e, logger = self.logger)
                         self.connect()
                         self.return_response.append((self.queue[0][2], "ERROR"))
 
@@ -79,7 +86,7 @@ class Database():
                         self.return_response.append((self.queue[0][2], None))
                         
                     except mysql.connector.Error as e:
-                        print(f"[ERROR]{threading.current_thread().name}", e)
+                        log(e, logger = self.logger)
                         self.connect()
                         self.return_response.append((self.queue[0][2], "ERROR"))
                 
