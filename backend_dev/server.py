@@ -35,10 +35,13 @@ max_clients = 10
 
 try:
     if sys.argv[2] == "-v":
+        print("verv")
         logger = log.Logger("main_log", vervose = True)
     else:
+        print(sys.argv[2])
         logger = log.Logger("main_log")
 except IndexError:
+    print("not verv")
     logger = log.Logger("main_log")
 
 #Client Node comunication
@@ -110,7 +113,7 @@ def register_user(msg_info, connection, ip=None):
 
 def get_posts(msg_info:dict, connection):
     global db, logger
-    logger.log("geting posts:" + msg_info)
+    logger.log(f"geting posts: {msg_info}")
 
     if not database.is_safe(msg_info['user_name']):
         connection.connection.send("0".encode("utf-8"))
@@ -202,7 +205,7 @@ class ClientConnection():
         while True:
             if not len(self.queue) == 0:
                 msg_info = self.queue[0]
-                logger.log(f"recived: " + msg_info +" " + type(msg_info))
+                logger.log(f"recived: {msg_info} {type(msg_info)}")
 
                 if msg_info["action"] == "REGISTER":
                     register_user(msg_info, self)
@@ -310,7 +313,7 @@ class NodeConnection():
         while True:
             if not len(self.queue) == 0:
                 msg_info = self.queue[0]
-                logger.log("recived: " + msg_info + " " + type(msg_info))
+                logger.log(f"recived: {msg_info} {type(msg_info)}")
 
                 if msg_info["action"] == "IP":
                     manage_ip(msg_info, self.ip)
