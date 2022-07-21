@@ -26,13 +26,10 @@ clients = []
 
 try:
     if sys.argv[2] == "-v":
-        print("verv")
         logger = log.Logger("main_log", vervose = True)
     else:
-        print(sys.argv[2])
         logger = log.Logger("main_log")
 except IndexError:
-    print("not verv")
     logger = log.Logger("main_log")
 
 db = database.Database(logger = logger)
