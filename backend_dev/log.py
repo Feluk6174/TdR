@@ -14,6 +14,7 @@ class Logger():
         self.queue.append(f"[{threading.current_thread().name}]({time.asctime}) {message}")
 
     def proces_queue(self):
+        print("STARTED LOGGER")
         if not len(self.queue) == 0:
             self.log_file.write(str(self.queue[0]))
             if verbose:

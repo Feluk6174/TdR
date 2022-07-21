@@ -24,15 +24,6 @@ server.listen()
 connections = []
 clients = []
 
-db = database.Database()
-
-get_suposed_connected = lambda n: int(5*math.log2(n))
-get_suposed_connected = lambda n: 3
-
-server_info = json.loads("{"+f'"type": "NODE", "host": "{HOST}", "port": {PORT}, "ip": "{IP}"'+"}")
-
-max_clients = 10
-
 try:
     if sys.argv[2] == "-v":
         print("verv")
@@ -43,6 +34,17 @@ try:
 except IndexError:
     print("not verv")
     logger = log.Logger("main_log")
+
+db = database.Database(logger = logger)
+
+get_suposed_connected = lambda n: int(5*math.log2(n))
+get_suposed_connected = lambda n: 3
+
+server_info = json.loads("{"+f'"type": "NODE", "host": "{HOST}", "port": {PORT}, "ip": "{IP}"'+"}")
+
+max_clients = 10
+
+
 
 #Client Node comunication
 
