@@ -174,6 +174,7 @@ class ClientConnection():
                 msg = self.connection.recv(4096).decode("utf-8")
                 if msg == "":
                     raise socket.error
+                print(f"({threading.current_thread().name})[{time.asctime()}] recieved:"msg)
                 msg = json.loads(msg)
 
                 if msg["type"] == "ACTION":
