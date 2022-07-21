@@ -17,8 +17,8 @@ class Logger():
         self.queue.append("[STARTED LOGGER]")
         while True:
             if not len(self.queue) == 0:
-                with open(self.log_file_name, "w") as f:
-                    f.write(str(self.queue[0]))
+                with open(self.log_file_name, "a") as f:
+                    f.write(str(self.queue[0])+"\n")
                 if self.vervose:
                     print(self.queue[0])
                 self.queue.pop(0)
