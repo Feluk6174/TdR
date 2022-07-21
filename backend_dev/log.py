@@ -4,7 +4,7 @@ import threading
 
 class Logger():
     def __init__(self, log_file, vervose = False):
-        self.log_file = open(log_file+str(int(time.time()))+".log", "w")
+        self.log_file_name = log_file+str(int(time.time()))+".log"
         self.queue = []
         self.vervose = vervose
         thread = threading.Thread(target=self.proces_queue)
@@ -17,7 +17,8 @@ class Logger():
         self.queue.append("[STARTED LOGGER]")
         while True:
             if not len(self.queue) == 0:
-                self.log_file.write(str(self.queue[0]))
+                with open(self.log_file_name, "w") as f:
+                    f.write(str(self.queue[0]))
                 if self.vervose:
                     print(self.queue[0])
                 self.queue.pop(0)
