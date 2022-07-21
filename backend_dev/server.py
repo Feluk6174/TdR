@@ -26,7 +26,7 @@ clients = []
 
 try:
     if sys.argv[2] == "-v":
-        logger = log.Logger("main_log", vervose = True)
+        logger = log.Logger("main_log", verbose = True)
     else:
         logger = log.Logger("main_log")
 except IndexError:
