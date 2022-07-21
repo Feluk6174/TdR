@@ -10,11 +10,9 @@ def is_safe(*args):
     for argument in args:
         arguments += argument
 
-    print(arguments)
-
-    for i, char in enumerate(invalid_chars):
+    for char in invalid_chars:
         if char in arguments:
-            print(char, i)
+            print("[ERROR] Invalid char ", char)
             return False
     return True
 
@@ -62,7 +60,6 @@ class Database():
         print("[STARTED QUEUE PROCESOR]")
         while True:
             if len(self.queue) > 0:
-                #print(self.queue)
                 if self.queue[0][0] == "q":
                     try:
                         cursor = self.connection.cursor()
@@ -101,9 +98,9 @@ class Database():
         cursor.execute("DROP TABLE IF EXISTS posts;")
         cursor.execute("DROP TABLE IF EXISTS users;")
 
-        cursor.execute("CREATE TABLE users(user_name VARCHAR(16) NOT NULL UNIQUE PRIMARY KEY, public_key VARCHAR(442) NOT NULL UNIQUE, time_created INT NOT NULL, profile_picture VARCHAR(64) NOT NULL, info VARCHAR(255));")
-        cursor.execute("CREATE TABLE posts(id VARCHAR(23) NOT NULL PRIMARY KEY, user_id VARCHAR(16) NOT NULL, post VARCHAR(255) NOT NULL, flags VARCHAR(10) NOT NULL, time_posted INT NOT NULL, FOREIGN KEY (user_id) REFERENCES users (user_name));")
-        cursor.execute("CREATE TABLE comments(id INT NOT NULL PRIMARY KEY, user_id VARCHAR(16) NOT NULL, post_id VARCHAR(23) NOT NULL, comment VARCHAR(255) NOT NULL, FOREIGN KEY (user_id) REFERENCES users (user_name), FOREIGN KEY (post_id) REFERENCES posts (id));")
+        cursor.execute("CREATE TABLE users(user_name VARCHAR(16) NOT NULL UNIQUE PRIMARY KEY, public_key VARCHAR(392) NOT NULL UNIQUE, key_file VARCHAR(1764) NOT NULL UNIQUE, time_created INT NOT NULL, profile_picture VARCHAR(64) NOT NULL, info VARCHAR(255));")
+        cursor.execute("CREATE TABLE posts(id VARCHAR(23) NOT NULL PRIMARY KEY, user_id VARCHAR(16) NOT NULL, post VARCHAR(255) NOT NULL, flags VARCHAR(10) NOT NULL, time_posted INT NOT NULL, FOREIGN KEY (user_id) REFERENCES users (user_name), signature VARCHAR(344));")
+        cursor.execute("CREATE TABLE comments(id INT NOT NULL PRIMARY KEY, user_id VARCHAR(16) NOT NULL, post_id VARCHAR(23) NOT NULL, comment VARCHAR(255) NOT NULL, FOREIGN KEY (user_id) REFERENCES users (user_name), FOREIGN KEY (post_id) REFERENCES posts (id), signature VARCHAR(344));")
 
     
         cursor.execute("DROP TABLE IF EXISTS ips;")

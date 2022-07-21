@@ -21,7 +21,6 @@ class Connection():
             keys_file = f.read()
         private_key = auth.sanitize_key(keys_file)
         msg = "{"+f'"type": "ACTION", "action": "REGISTER", "user_name": "{user_name}", "public_key": "{public_key}", "private_key": "{private_key}", "profile_picture": "{profile_picture}", "info": "{info}", "time": {time_registered}'+"}"
-        print(msg)
         self.connection.send(msg.encode("utf-8"))
         response = self.connection.recv(4096).decode("utf-8")
         if not response == "OK":
@@ -29,7 +28,8 @@ class Connection():
                 raise UserAlreadyExists(user_name)
             elif response == "WRONG CHARS":
                 raise WrongCaracters(user_name=user_name, public_key=public_key, profile_picture=profile_picture, info=info)
-
+            elif response == "DATABASE ERROR":
+                raise DatabaseError(msg)
 
     def post(self, content:str, post_id:str, user_name:str, flags:str, priv_key):
         time_posted = int(time.time())
@@ -42,6 +42,8 @@ class Connection():
                 raise WrongCaracters(user_name=user_name, public_key=content, profile_picture=post_id, info=flags)
             elif response == "WRONG SIGNATURE":
                 raise WrongSignature()
+            elif response == "DATABASE ERROR":
+                raise DatabaseError(msg)
 
     def get_user_posts(self, user_name:str):
         #return format: {'id': 'str(23)', 'user_id': 'str(16)', 'content': 'str(255)', 'flags': 'str(10)', 'time_posted': int}
@@ -101,7 +103,6 @@ def check_chars(*args):
 
     for i, char in enumerate(invalid_chars):
         if char in arguments:
-            print(char, i)
             return False, char
     return True, None
 
@@ -124,3 +125,7 @@ class WrongCaracters(Exception):
 class WrongSignature(Exception):
     def __init__(self, **kwargs: object):
         super().__init__("key verification failed")
+
+class DatabaseError(Exception):
+    def __init__(self, request):
+        super().__init__(f"The request '{request}' caused a database error")

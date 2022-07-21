@@ -54,7 +54,7 @@ class Database():
             for response in self.return_response:
                 if response[0] == queue_id:
                     self.return_response.remove((queue_id, response[1]))
-                    return 
+                    return response[1]
 
     def proces_queue(self):
         print("[STARTED QUEUE PROCESOR]")

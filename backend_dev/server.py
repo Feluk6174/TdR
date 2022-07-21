@@ -63,10 +63,13 @@ def new_post(msg_info, connection, ip=None):
     res = db.querry(f"SELECT * FROM posts WHERE id = '{msg_info['post_id']}';")
     if len(res) == 0:
         sql = f"INSERT INTO posts(id, user_id, post, flags, time_posted, signature) VALUES('{msg_info['post_id']}', '{msg_info['user_name']}', '{msg_info['content']}', '{msg_info['flags']}', {int(msg_info['time'])}, '{msg_info['signature']}');"
-        db.querry(sql)
-        broadcast(msg_info, ip)
-        if ip == None:
-            connection.connection.send('OK'.encode("utf-8"))
+        err = db.execute(sql)
+        if not err == "ERROR":
+            broadcast(msg_info, ip)
+            if ip == None:
+                connection.connection.send('OK'.encode("utf-8"))
+        else:
+            connection.connection.send('DATABASE ERROR'.encode("utf-8"))
     elif ip == None:
         connection.connection.send("ALREADY EXISTS".encode("utf-8"))
 
@@ -84,10 +87,13 @@ def register_user(msg_info, connection, ip=None):
     if len(res) == 0:
         sql = f"INSERT INTO users(user_name, public_key, key_file, time_created, profile_picture, info) VALUES('{msg_info['user_name']}', '{msg_info['public_key']}', '{msg_info['private_key']}', {int(time.time())}, '{msg_info['profile_picture']}', '{msg_info['info']}');"
         print("r",sql)
-        db.execute(sql)
-        broadcast(msg_info, ip)
-        if ip == None:
-            connection.connection.send("OK".encode("utf-8"))
+        err = db.execute(sql)
+        if not err == "ERROR":
+            broadcast(msg_info, ip)
+            if ip == None:
+                connection.connection.send("OK".encode("utf-8"))
+        else:
+            connection.connection.send("DATABASE ERROR".encode("utf-8"))
     elif ip == None:
         connection.connection.send("ALREADY EXISTS".encode("utf-8"))
 
@@ -128,7 +134,7 @@ def get_user_info(msg_info, connection):
     # (user_name, public_key, key_file, time_created, profile_picture, info)
     user_info = db.querry(f"SELECT * FROM users WHERE user_name = '{msg_info['user_name']}';")
     print(user_info)
-    if not len(user_info) == 0:
+    if not len(user_info) == 0 and not user_info == "ERROR":
         user_info = user_info[0]
         msg = "{"+f'"user_name": "{user_info[0]}", "public_key": "{user_info[1]}", "private_key": "{user_info[2]}",  "time_created": {user_info[3]}, "profile_picture": "{user_info[4]}", "info": "{user_info[5]}"'+"}"
     else:
@@ -245,13 +251,15 @@ def manage_ip(msg_info, node_ip):
     res = db.querry(f"SELECT * FROM ips WHERE ip = '{ip}';")
 
     if len(res) == 0:
-        db.execute(f"INSERT INTO ips(ip, time_connected) VALUES('{ip}', {time.time()});")
-        broadcast_ip(ip, node_ip)
+        error = db.execute(f"INSERT INTO ips(ip, time_connected) VALUES('{ip}', {time.time()});")
+        if not error == "ERROR":
+            broadcast_ip(ip, node_ip)
 
     elif res[0][1] <= int(time.time()) - seconds_to_update:
-        db.execute(f"DELETE FROM ips WHERE ip = '{ip}';")
-        db.execute(f"INSERT INTO ips(ip, time_connected) VALUES('{ip}', {time.time()});")
-        broadcast_ip(ip, node_ip)
+        err1 = db.execute(f"DELETE FROM ips WHERE ip = '{ip}';")
+        err2 = db.execute(f"INSERT INTO ips(ip, time_connected) VALUES('{ip}', {time.time()});")
+        if not err1 == "ERROR" and not err2 == "ERROR":
+            broadcast_ip(ip, node_ip)
 
 class NodeConnection():
     def __init__(self, connection, conn_info, address):

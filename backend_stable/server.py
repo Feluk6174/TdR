@@ -1,6 +1,8 @@
-from urllib import response
 import database
 import threading, time, socket, sys, json, math
+from Crypto.PublicKey import RSA
+from Crypto.Hash import SHA256
+import auth
 
 #todo fix
 
@@ -39,9 +41,7 @@ def broadcast(msg, ip):
         if not connection.ip == ip:
             msg_text = json.dumps(msg)
             formated_msg = msg_text.replace('"', '\\"')
-            print("b", ip, connection.ip, json.dumps(formated_msg))
             connection.queue.append(json.loads("{"+f'"type": "ACTION", "action": "SEND", "msg": "{formated_msg}"'+"}"))
-            print(connection.ip, connection.queue)
             
             
 
@@ -51,10 +51,18 @@ def new_post(msg_info, connection, ip=None):
     if not database.is_safe(msg_info["post_id"]):
         connection.connection.send("WRONG CHARS".encode("utf-8"))
         return
+
+    pub_key = db.querry(f"SELECT public_key FROM users WHERE user_name = '{msg_info['user_name']}'")
+    pub_key = RSA.import_key(auth.reconstruct_key(pub_key[0][0], key_type="pub"))
+
+    if not auth.verify(pub_key, msg_info["signature"], msg_info["content"], msg_info["post_id"], msg_info["user_name"], msg_info["flags"], msg_info["time"]):
+        connection.connection.send("WRONG SIGNATURE".encode("utf-8"))
+        return
+
     #CREATE TABLE posts(id INT NOT NULL PRIMARY KEY, user_id VARCHAR(16) NOT NULL, post VARCHAR(255) NOT NULL, time_posted INT NOT NULL, FOREIGN KEY (user_id) REFERENCES users (user_name));")
     res = db.querry(f"SELECT * FROM posts WHERE id = '{msg_info['post_id']}';")
     if len(res) == 0:
-        sql = f"INSERT INTO posts(id, user_id, post, flags, time_posted) VALUES('{msg_info['post_id']}', '{msg_info['user_name']}', '{msg_info['content']}', '{msg_info['flags']}', {int(time.time())});"
+        sql = f"INSERT INTO posts(id, user_id, post, flags, time_posted, signature) VALUES('{msg_info['post_id']}', '{msg_info['user_name']}', '{msg_info['content']}', '{msg_info['flags']}', {int(msg_info['time'])}, '{msg_info['signature']}');"
         db.querry(sql)
         broadcast(msg_info, ip)
         if ip == None:
@@ -66,7 +74,6 @@ def new_post(msg_info, connection, ip=None):
 def register_user(msg_info, connection, ip=None):
     print(f"({threading.current_thread().name})[{time.asctime()}] regitering user:", msg_info, ip)
     global db
-
     if not database.is_safe(msg_info["user_name"], msg_info['public_key'], msg_info['public_key'], msg_info['profile_picture'], msg_info['info']):
         connection.connection.send("WRONG CHARS".encode("utf-8"))
         return
@@ -75,7 +82,7 @@ def register_user(msg_info, connection, ip=None):
     res = db.querry(f"SELECT * FROM users WHERE user_name = '{msg_info['user_name']}'")
 
     if len(res) == 0:
-        sql = f"INSERT INTO users(user_name, public_key, time_created, profile_picture, info) VALUES('{msg_info['user_name']}', '{msg_info['public_key']}', {int(time.time())}, '{msg_info['profile_picture']}', '{msg_info['info']}');"
+        sql = f"INSERT INTO users(user_name, public_key, key_file, time_created, profile_picture, info) VALUES('{msg_info['user_name']}', '{msg_info['public_key']}', '{msg_info['private_key']}', {int(time.time())}, '{msg_info['profile_picture']}', '{msg_info['info']}');"
         print("r",sql)
         db.execute(sql)
         broadcast(msg_info, ip)
@@ -105,8 +112,7 @@ def get_posts(msg_info:dict, connection):
         print(res)
 
     for i, post in enumerate(posts):
-        print(i)
-        msg = "{"+f'"id": "{post[0]}", "user_id": "{post[1]}", "content": "{post[2]}", "flags": "{post[3]}", "time_posted": {post[4]}'+"}"
+        msg = "{"+f'"id": "{post[0]}", "user_id": "{post[1]}", "content": "{post[2]}", "flags": "{post[3]}", "time_posted": {post[4]}, "signature": "{post[5]}"'+"}"
         connection.connection.send(msg.encode("utf-8"))
         res = connection.recv()
         if not res == "OK":
@@ -119,12 +125,27 @@ def get_user_info(msg_info, connection):
     if not database.is_safe(msg_info["user_name"]):
         connection.connection.send("WRONG CHARS".encode("utf-8"))
         return
-    # (user_name, public_key, time_created, profile_picture, info)
+    # (user_name, public_key, key_file, time_created, profile_picture, info)
     user_info = db.querry(f"SELECT * FROM users WHERE user_name = '{msg_info['user_name']}';")
     print(user_info)
     if not len(user_info) == 0:
         user_info = user_info[0]
-        msg = "{"+f'"user_name": "{user_info[0]}", "public_key": "{user_info[1]}", "time_created": {user_info[2]}, "profile_picture": "{user_info[3]}", "info": "{user_info[4]}"'+"}"
+        msg = "{"+f'"user_name": "{user_info[0]}", "public_key": "{user_info[1]}", "private_key": "{user_info[2]}",  "time_created": {user_info[3]}, "profile_picture": "{user_info[4]}", "info": "{user_info[5]}"'+"}"
+    else:
+        msg = "{}"
+    connection.connection.send(msg.encode("utf-8"))
+
+def get_post(msg_info, connection):
+    global db
+    if not database.is_safe(msg_info["post_id"]):
+        connection.connection.send("WRONG CHARS".encode("utf-8"))
+        return
+    # (id, user_id, post, flags, time_posted, signature)
+    post = db.querry(f"SELECT * FROM posts WHERE id = '{msg_info['post_id']}';")
+    print(post)
+    if not len(post) == 0:
+        post = post[0]
+        msg = "{"+f'"id": "{post[0]}", "user_id": "{post[1]}", "content": "{post[2]}", "flags": "{post[3]}", "time_posted": {post[4]}, "signature": "{post[5]}"'+"}"
     else:
         msg = "{}"
     connection.connection.send(msg.encode("utf-8"))
@@ -144,9 +165,7 @@ class ClientConnection():
         global clients
         while True:
             try:
-                msg = self.connection.recv(1024).decode("utf-8")
-                print(msg)
-                #print("----", msg)
+                msg = self.connection.recv(4096).decode("utf-8")
                 if msg == "":
                     raise socket.error
                 msg = json.loads(msg)
@@ -164,7 +183,6 @@ class ClientConnection():
     def process_queue(self):
         while True:
             if not len(self.queue) == 0:
-                print(self.queue)
                 msg_info = self.queue[0]
                 print(f"({threading.current_thread().name})[{time.asctime()}] recived:", msg_info, type(msg_info))
 
@@ -179,6 +197,9 @@ class ClientConnection():
 
                 elif msg_info["action"] == "GET USER":
                     get_user_info(msg_info, self)
+
+                elif msg_info["action"] == "GET POST":
+                    get_post(msg_info, self)
 
                 elif msg_info["action"] == "SEND":
                     self.connection.send(msg_info["msg"].encode("utf-8"))
@@ -248,10 +269,7 @@ class NodeConnection():
         global connections
         while True:
             try:
-                msg = self.connection.recv(1024).decode("utf-8")
-                print(msg)
-                #print(".......", type(msg), msg)
-                #print(".......", type(msg), msg)
+                msg = self.connection.recv(4096).decode("utf-8")
                 if msg == "":
                     raise socket.error
                 
@@ -271,7 +289,6 @@ class NodeConnection():
     def process_queue(self):
         while True:
             if not len(self.queue) == 0:
-                print(self.queue)
                 msg_info = self.queue[0]
                 print(f"({threading.current_thread().name})[{time.asctime()}] recived:", msg_info, type(msg_info))
 
@@ -328,7 +345,7 @@ def connect_to_new_node():
 
             connection.send(json.dumps(server_info).encode("utf-8"))
 
-            if connection.recv(1024).decode("utf-8") == "OK":
+            if connection.recv(4096).decode("utf-8") == "OK":
                 #(ip[0][0], connection, ip[0][0])
                 conn_class = NodeConnection(connection, {"ip": ip[0][0]}, ip[0][0])
                 connections.append(conn_class)
@@ -370,7 +387,7 @@ def main():
     global server
     while True:
         connection, address = server.accept()
-        temp = connection.recv(1024).decode("utf-8")
+        temp = connection.recv(4096).decode("utf-8")
         print(temp)
         conn_info = json.loads(temp)
         print(f"[{time.asctime()}]", conn_info)
