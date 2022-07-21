@@ -8,7 +8,7 @@ class Logger():
         self.queue = []
         self.vervose = vervose
         thread = threading.Thread(target=self.proces_queue)
-        thread.start()
+        thread.start
 
     def log(self, message):
         self.queue.append(f"[{threading.current_thread().name}]({time.asctime})", message)

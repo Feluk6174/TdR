@@ -28,9 +28,9 @@ class Database():
         self.connect()
         self.queue = []
         self.return_response = []
+        self.logger = logger
         thread = threading.Thread(target=self.proces_queue)
         thread.start()
-        self.logger = logger
 
     def connect(self):
         self.connection = mysql.connector.connect(
