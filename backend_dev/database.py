@@ -3,7 +3,7 @@ import random
 import threading
 import time
 
-def log(logger, message):
+def log(message, logger = None):
     if not logger == None:
         logger.log(message)
     else:

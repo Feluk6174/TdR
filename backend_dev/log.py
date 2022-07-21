@@ -4,11 +4,11 @@ import threading
 
 class Logger():
     def __init__(self, log_file, vervose = False):
-        self.log_file = open(log_file+time.time()+".log", "w")
+        self.log_file = open(log_file+str(int(time.time()))+".log", "w")
         self.queue = []
         self.vervose = vervose
         thread = threading.Thread(target=self.proces_queue)
-        thread.start
+        thread.start()
 
     def log(self, message):
         self.queue.append(f"[{threading.current_thread().name}]({time.asctime})", message)
