@@ -48,24 +48,24 @@ def add_liked_post(post_id):
     file_my.close()
     #cal enviar-ho
 
-def Get(num):
+def open_my_user_info():
     try:
         my_user_info = json.loads(open("my_info.json", "r").read())
     except FileNotFoundError:
         my_user_info = ""
 
+    return my_user_info
+
+def Get(num):
+    my_user_info = open_my_user_info()
+
     username = my_user_info["basic_info"]["user_name"]
     password = my_user_info["basic_info"]["password"]
     profileimage = my_user_info["semi_basic_info"]["profile_image"]
-    public_key, private_key = auth.get_keys(username + password)
+    private_key, public_key = auth.get_keys(username + password)
     user_description = my_user_info["semi_basic_info"]["description"]
     user_following = my_user_info["semi_basic_info"]["user_following"]
     user_following = my_user_info["semi_basic_info"]["user_following"]
-    user_liked_id = my_user_info["semi_basic_info"]["liked_posts"]
-    user_liked = []
-    for post in user_liked_id:
-        actual_liked = api.get_post(post)
-        user_liked.append(actual_liked)
 
 
     if num == 0:
@@ -82,8 +82,6 @@ def Get(num):
         return user_following
     if num == 6:
         return password
-    if num == 7:
-        return user_liked
 
 def GetName():
     return Get(0)
@@ -99,5 +97,11 @@ def GetFollowing():
     return Get(5)
 def GetPassword():
     return Get(6)
-def GetLiked():
-    return Get(7) 
+def GetLiked(connection):
+    my_user_info = open_my_user_info()
+    user_liked_id = my_user_info["semi_basic_info"]["liked_posts"]
+    user_liked = []
+    for post in user_liked_id:
+        actual_liked = connection.get_post(post)
+        user_liked.append(actual_liked)
+    return user_liked

@@ -33,7 +33,7 @@ connection = None
 def GetNewPosts():
     global connection
     all_my_following = acces_my_info.GetFollowing()
-    my_liked_posts = acces_my_info.GetLiked()
+    my_liked_posts = acces_my_info.GetLiked(connection)
     all_posts = []
     for following in all_my_following:
         foll_posts = connection.get_user_posts(following)
@@ -41,9 +41,12 @@ def GetNewPosts():
         #0 none, 1 yes, 
         for post in foll_posts:
             actual_maybe_like = 0
-            for liked in my_liked_posts:
-                if liked["id"] == post["id"]:
-                    actual_maybe_like = 1
+            try:
+                for liked in my_liked_posts:
+                    if liked["id"] == post["id"]:
+                        actual_maybe_like = 1
+            except KeyError:
+                pass
             all_posts.append((following, foll_info["profile_picture"], post["flags"], post["content"], 0, post["time_posted"],post["id"], actual_maybe_like))
     return all_posts
 

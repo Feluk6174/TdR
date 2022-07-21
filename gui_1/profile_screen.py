@@ -259,12 +259,16 @@ class ProfileScreen (Screen):
             self.im.add_widget(self.color_bit)
 
     def create_my_posts(self):
-        my_liked_posts = acces_my_info.GetLiked()
+        conn = self.connection
+        my_liked_posts = acces_my_info.GetLiked(conn)
         for post in self.my_posts_list:
             actual_maybe_like = 0
-            for liked in my_liked_posts:
-                if liked["id"] == post["id"]:
-                    actual_maybe_like = 1
+            try:
+                for liked in my_liked_posts:
+                    if liked["id"] == post["id"]:
+                        actual_maybe_like = 1
+            except KeyError:
+                pass
             self.all_my_posts.append((self.username, acces_my_info.GetImage(), post["flags"], post["content"], 0, post["time_posted"], post["id"], actual_maybe_like))
             self.make_post_btn(self.username, acces_my_info.GetImage(), post["flags"], post["content"], 0, post["time_posted"], post["id"], actual_maybe_like)
         
@@ -345,8 +349,8 @@ class ProfileScreen (Screen):
 
     def UserFavourites(self, instance):
         self.username = acces_my_info.GetName()
-        #conn = self.connection
-        self.my_liked_list = acces_my_info.GetLiked()
+        conn = self.connection
+        self.my_liked_list = acces_my_info.GetLiked(conn)
         #self.my_liked_list = conn.get_posts_with_id()
         self.all_liked_posts = []
 

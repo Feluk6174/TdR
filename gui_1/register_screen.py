@@ -17,10 +17,9 @@ connection = None
 def Reg_f(connection):
     user_name = acces_my_info.GetName()
     public_key = acces_my_info.GetPubKey()
-    private_key = acces_my_info.GetPrivKey()     
     profile_picture = acces_my_info.GetImage()
     info = acces_my_info.GetDescription()
-    connection.register_user(user_name, public_key, private_key, profile_picture, info)
+    connection.register_user(user_name, public_key, "rsa_key.bin", profile_picture, info)
 
 def check_register():
     try:
@@ -181,12 +180,12 @@ class RegisterScreen (Screen):
                 following = following.split(", ")
                 create_my_info_file(self.username_text_box.text, self.password_text_box.text, "pub_my_key_storage.pem", "priv_my_key_storage.pem", self.image_str, self.description_text_box.text, following)
                 Reg_f(connection)
-                my_profile_screen = profile_screen.ProfileScreen(name = "profile")
+                my_profile_screen = profile_screen.ProfileScreen(connection, name = "profile")
                 self.sm.add_widget(home_screen.MainScreen(connection, name = "main"))
                 self.sm.add_widget(chat_screen.ChatScreen(name = "chat"))
                 self.sm.add_widget(search_screen.SearchScreen(name = "search"))
                 self.sm.add_widget(post_screen.PostUserScreen(connection, name = "last"))
-                self.sm.add_widget(profile_screen.ProfileScreen(connection, my_profile_screen))
+                self.sm.add_widget(my_profile_screen)
                 self.sm.add_widget(profile_image_screen.ImageScreen(my_profile_screen, name = "image"))
                 self.manager.transition = FallOutTransition()
                 self.manager.current = "main"
