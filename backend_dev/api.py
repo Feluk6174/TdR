@@ -21,7 +21,8 @@ class Connection():
             keys_file = f.read()
         private_key = auth.sanitize_key(keys_file)
         msg = "{"+f'"type": "ACTION", "action": "REGISTER", "user_name": "{user_name}", "public_key": "{public_key}", "private_key": "{private_key}", "profile_picture": "{profile_picture}", "info": "{info}", "time": {time_registered}'+"}"
-        self.connection.sendall(msg.encode("utf-8"))
+        temp = self.connection.send(msg.encode("utf-8"))
+        print(temp, len(msg))
         response = self.connection.recv(4096).decode("utf-8")
         if not response == "OK":
             if response == "ALREADY EXISTS":

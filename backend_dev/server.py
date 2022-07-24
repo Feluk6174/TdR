@@ -196,7 +196,7 @@ class ClientConnection():
                     self.responses.append(msg)
 
             except socket.error as e:
-                logger.log("[ERROR]" + e)
+                logger.log("[ERROR]" + str(e))
                 clients.remove(self)
                 break
 
@@ -304,7 +304,7 @@ class NodeConnection():
 
 
             except socket.error as e:
-                logger.log("[ERROR]", e)
+                logger.log("[ERROR]" + str(e))
                 connections.remove(self)
                 break
 
