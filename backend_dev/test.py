@@ -22,3 +22,4 @@ while True:
     temp.append(msg)
     print(msg)
     print(len(msg))
+    conn.send(b"ok")
