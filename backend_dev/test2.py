@@ -5,6 +5,7 @@ connection.connect(("195.181.244.246", 6969))
 
 msg = input("msg: ")
 
-connection.send(msg.encode("uft-8"))
+while True:
+    connection.send(msg.encode("utf-8"))
 
-print(len(msg))
+    print(len(msg))

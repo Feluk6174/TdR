@@ -13,7 +13,10 @@ server.listen()
 
 conn, addr = server.accept()
 
-msg = conn.recv(4096).decode("utf-8")
+temp = []
 
-print(msg)
-print(len(msg))
+while True:
+    msg = conn.recv(4096).decode("utf-8")
+    temp.append(msg)
+    print(msg)
+    print(len(msg))
