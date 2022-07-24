@@ -12,14 +12,14 @@ print(priv_key.export_key())
 with open("rsa_key.bin", "r") as f:
     keys_file = f.read()
 
-conn.register_user("Feluk6174", pub_key, "rsa_key.bin", "13388273892FA83BCADE910D082AB6619403DACAAA789020DC73F61839AC7390", "your mom is a pinnapple")
-conn.post("Hello world!", "1", "Feluk6174", "0101010101", priv_key)
-conn.post("Hey aixo ja funciona, sembla", "2", "Feluk6174", "0101010101", priv_key)
-conn.post("I just wanted to save the world", "3", "Feluk6174", "0101010101", priv_key)
-conn.post("ja no se que dir", "4", "Feluk6174", "0101010101", priv_key)
-print(conn.get_user_posts("Feluk6174"))
+conn.register_user("Feluk6175", pub_key, "rsa_key.bin", "13388273892FA83BCADE910D082AB6619403DACAAA789020DC73F61839AC7390", "your mom is a pinnapple")
+conn.post("Hello world!", "1", "Feluk6175", "0101010101", priv_key)
+conn.post("Hey aixo ja funciona, sembla", "2", "Feluk6175", "0101010101", priv_key)
+conn.post("I just wanted to save the world", "3", "Feluk6175", "0101010101", priv_key)
+conn.post("ja no se que dir", "4", "Feluk6175", "0101010101", priv_key)
+print(conn.get_user_posts("Feluk6175"))
 print(conn.get_post("1"))
-print(conn.get_user("Feluk6174"))
+print(conn.get_user("Feluk6175"))
 
 #b65672e9397175e9c099e86c608f2c5c10e48680172cd126e9ac14dfa3df534a
 #b65672e9397175e9c099e86c608f2c5c10e48680172cd126e9ac14dfa3df534a
