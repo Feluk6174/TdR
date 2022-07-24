@@ -185,7 +185,7 @@ class ClientConnection():
         while True:
             try:
                 msg = self.connection.recv(4096).decode("utf-8")
-                logger.log("rcvd: "msg)
+                logger.log("rcvd: " + msg)
                 if msg == "":
                     raise socket.error
                 msg = json.loads(msg)
