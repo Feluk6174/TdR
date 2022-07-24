@@ -131,6 +131,8 @@ class ClientConnection():
 
         num = int(msg_len/1024)
         num = num + 1 if not msg_len % 1024 == 0 else num
+        
+        self.connection.send(str(num).encode("utf-8"))
 
         temp = self.connection.recv(1024).decode("utf-8")
         if not temp == "OK":
@@ -218,6 +220,8 @@ class NodeConnection():
 
         num = int(msg_len/1024)
         num = num + 1 if not msg_len % 1024 == 0 else num
+
+        self.connection.send(str(num).encode("utf-8"))
 
         temp = self.connection.recv(1024).decode("utf-8")
         if not temp == "OK":
