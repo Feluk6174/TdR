@@ -11,16 +11,17 @@ server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind((HOST, PORT))
 server.listen()
 
+print(f"running on {HOST}:{PORT}")
+
 conn, addr = server.accept()
 
-temp = []
+num = int(conn.recv(1024).decode("utf-8"))
+conn.send("OK".encode("utf-8"))
+msg = ""
+for i in range(num):
+    msg += conn.recv(1024).decode("utf-8")
+    conn.send("OK".encode("utf-8"))
 
-while True:
-    msg = conn.recv(4096).decode("utf-8")
-    if len(msg) == 0:
-        break
-    temp.append(msg)
-    print(msg)
-    print(len(msg))
-    conn.send("ok".encode("utf-8"))
-    print("sent")
+
+print(msg)
+print(len(msg))
