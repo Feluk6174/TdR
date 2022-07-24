@@ -15,13 +15,14 @@ print(f"running on {HOST}:{PORT}")
 
 conn, addr = server.accept()
 
-num = int(conn.recv(1024).decode("utf-8"))
-conn.send("OK".encode("utf-8"))
-msg = ""
-for i in range(num):
-    msg += conn.recv(1024).decode("utf-8")
+while True:
+    num = int(conn.recv(1024).decode("utf-8"))
     conn.send("OK".encode("utf-8"))
+    msg = ""
+    for i in range(num):
+        msg += conn.recv(1024).decode("utf-8")
+        conn.send("OK".encode("utf-8"))
 
 
-print(msg)
-print(len(msg))
+    print(msg)
+    print(len(msg))
