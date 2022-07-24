@@ -112,12 +112,8 @@ class ClientConnection():
                 return res
 
     def recv(self):
-        for i in range(7):
-            print(i)
         num = int(self.connection.recv(1024).decode("utf-8"))
-        print(num)
         self.connection.send("OK".encode("utf-8"))
-        print("sent")
         msg = ""
         for i in range(num):
             msg += self.connection.recv(1024).decode("utf-8")
@@ -136,14 +132,14 @@ class ClientConnection():
 
         temp = self.connection.recv(1024).decode("utf-8")
         if not temp == "OK":
-            print(temp)
+            print("S1", temp)
 
         for i in range(num):
             print(i)
             self.connection.send(msg[1024*i:1024*i+1024].encode("utf-8"))
             temp = self.connection.recv(1024).decode("utf-8")
             if not temp == "OK":
-                print(temp)
+                print("S2", temp)
 
 
 class NodeConnection():
@@ -225,14 +221,13 @@ class NodeConnection():
 
         temp = self.connection.recv(1024).decode("utf-8")
         if not temp == "OK":
-            print(temp)
+            print("s1", temp)
 
         for i in range(num):
-            print(i)
             self.connection.send(msg[1024*i:1024*i+1024].encode("utf-8"))
             temp = self.connection.recv(1024).decode("utf-8")
             if not temp == "OK":
-                print(temp)
+                print("s2", temp)
 
     def recv(self):
         num = int(self.connection.recv(1024).decode("utf-8"))
