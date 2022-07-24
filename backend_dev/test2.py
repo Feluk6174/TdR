@@ -11,5 +11,9 @@ while True:
 
     print(len(msg))
 
-    if not connection.recv(4096) == b"ok":
+    msg = connection.recv(4096).decode("utf-8")
+
+    if not msg == "ok":
         break
+    else:
+        print("[ERROR]", msg)

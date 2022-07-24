@@ -22,4 +22,5 @@ while True:
     temp.append(msg)
     print(msg)
     print(len(msg))
-    conn.send(b"ok")
+    conn.send("ok".encode("utf-8"))
+    print("sent")
