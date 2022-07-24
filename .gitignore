@@ -144,3 +144,6 @@ pub_my_key_storage.pem
 priv_my_key_storage.pem
 
 rsa_key.bin
+backend_dev/rsa_key.bin
+backend_stable/rsa_key.bin
+auth/rsa_key.bin
