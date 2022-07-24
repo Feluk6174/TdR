@@ -112,8 +112,12 @@ class ClientConnection():
                 return res
 
     def recv(self):
+        for i in range(7):
+            print(i)
         num = int(self.connection.recv(1024).decode("utf-8"))
+        print(num)
         self.connection.send("OK".encode("utf-8"))
+        print("sent")
         msg = ""
         for i in range(num):
             msg += self.connection.recv(1024).decode("utf-8")
