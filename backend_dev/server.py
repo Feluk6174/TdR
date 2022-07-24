@@ -4,6 +4,7 @@ from Crypto.PublicKey import RSA
 from Crypto.Hash import SHA256
 import auth
 import log
+from typing import Union
 
 #todo fix
 
@@ -45,130 +46,6 @@ max_clients = 10
 
 #Client Node comunication
 
-def broadcast(msg, ip):
-    global connections, logger
-
-    logger.log(f"bradcasting: {msg} {ip}")
-
-    for connection in connections:
-        if not connection.ip == ip:
-            msg_text = json.dumps(msg)
-            formated_msg = msg_text.replace('"', '\\"')
-            connection.queue.append(json.loads("{"+f'"type": "ACTION", "action": "SEND", "msg": "{formated_msg}"'+"}"))
-            
-            
-
-def new_post(msg_info, connection, ip=None):
-    global db, logger
-    logger.log(f"posting: {msg_info} {ip}")
-    if not database.is_safe(msg_info["post_id"]):
-        connection.connection.send("WRONG CHARS".encode("utf-8"))
-        return
-
-    pub_key = db.querry(f"SELECT public_key FROM users WHERE user_name = '{msg_info['user_name']}'")
-    pub_key = RSA.import_key(auth.reconstruct_key(pub_key[0][0], key_type="pub"))
-
-    if not auth.verify(pub_key, msg_info["signature"], msg_info["content"], msg_info["post_id"], msg_info["user_name"], msg_info["flags"], msg_info["time"]):
-        connection.connection.send("WRONG SIGNATURE".encode("utf-8"))
-        return
-
-    #CREATE TABLE posts(id INT NOT NULL PRIMARY KEY, user_id VARCHAR(16) NOT NULL, post VARCHAR(255) NOT NULL, time_posted INT NOT NULL, FOREIGN KEY (user_id) REFERENCES users (user_name));")
-    res = db.querry(f"SELECT * FROM posts WHERE id = '{msg_info['post_id']}';")
-    if len(res) == 0:
-        sql = f"INSERT INTO posts(id, user_id, post, flags, time_posted, signature) VALUES('{msg_info['post_id']}', '{msg_info['user_name']}', '{msg_info['content']}', '{msg_info['flags']}', {int(msg_info['time'])}, '{msg_info['signature']}');"
-        err = db.execute(sql)
-        if not err == "ERROR":
-            broadcast(msg_info, ip)
-            if ip == None:
-                connection.connection.send('OK'.encode("utf-8"))
-        else:
-            connection.connection.send('DATABASE ERROR'.encode("utf-8"))
-    elif ip == None:
-        connection.connection.send("ALREADY EXISTS".encode("utf-8"))
-
-
-def register_user(msg_info, connection, ip=None):
-    global db, logger
-    logger.log(f"registering user: {msg_info} {ip}")
-    if not database.is_safe(msg_info["user_name"], msg_info['public_key'], msg_info['public_key'], msg_info['profile_picture'], msg_info['info']):
-        connection.connection.send("WRONG CHARS".encode("utf-8"))
-        return
-
-    #"CREATE TABLE users(user_name VARCHAR(16) NOT NULL UNIQUE PRIMARY KEY, public_key INT NOT NULL UNIQUE, time_created INT NOT NULL, profile_picture VARCHAR(64) NOT NULL, info VARCHAR(255));")
-    res = db.querry(f"SELECT * FROM users WHERE user_name = '{msg_info['user_name']}'")
-
-    if len(res) == 0:
-        sql = f"INSERT INTO users(user_name, public_key, key_file, time_created, profile_picture, info) VALUES('{msg_info['user_name']}', '{msg_info['public_key']}', '{msg_info['private_key']}', {int(time.time())}, '{msg_info['profile_picture']}', '{msg_info['info']}');"
-        logger.log("r"+sql)
-        err = db.execute(sql)
-        if not err == "ERROR":
-            broadcast(msg_info, ip)
-            if ip == None:
-                connection.connection.send("OK".encode("utf-8"))
-        else:
-            connection.connection.send("DATABASE ERROR".encode("utf-8"))
-    elif ip == None:
-        connection.connection.send("ALREADY EXISTS".encode("utf-8"))
-
-def get_posts(msg_info:dict, connection):
-    global db, logger
-    logger.log(f"geting posts: {msg_info}")
-
-    if not database.is_safe(msg_info['user_name']):
-        connection.connection.send("0".encode("utf-8"))
-        res = connection.recv()
-        if not res == "OK":
-            logger.log(res)
-        connection.connection.send("WRONG CHARS".encode("utf-8"))
-        return
-
-    posts = db.querry(f"SELECT * FROM posts WHERE user_id = '{msg_info['user_name']}'")
-
-    connection.connection.send(str(len(posts)).encode("utf-8"))
-
-    res = connection.recv()
-    if not res == "OK":
-        logger.log(res)
-
-    for i, post in enumerate(posts):
-        msg = "{"+f'"id": "{post[0]}", "user_id": "{post[1]}", "content": "{post[2]}", "flags": "{post[3]}", "time_posted": {post[4]}, "signature": "{post[5]}"'+"}"
-        connection.connection.send(msg.encode("utf-8"))
-        res = connection.recv()
-        if not res == "OK":
-            logger.log(res)
-
-    connection.connection.send("OK".encode("utf-8"))
-
-def get_user_info(msg_info, connection):
-    global db, logger
-    if not database.is_safe(msg_info["user_name"]):
-        connection.connection.send("WRONG CHARS".encode("utf-8"))
-        return
-    # (user_name, public_key, key_file, time_created, profile_picture, info)
-    user_info = db.querry(f"SELECT * FROM users WHERE user_name = '{msg_info['user_name']}';")
-    logger.log(user_info)
-    if not len(user_info) == 0 and not user_info == "ERROR":
-        user_info = user_info[0]
-        msg = "{"+f'"user_name": "{user_info[0]}", "public_key": "{user_info[1]}", "private_key": "{user_info[2]}",  "time_created": {user_info[3]}, "profile_picture": "{user_info[4]}", "info": "{user_info[5]}"'+"}"
-    else:
-        msg = "{}"
-    connection.connection.send(msg.encode("utf-8"))
-
-def get_post(msg_info, connection):
-    global db, logger
-    if not database.is_safe(msg_info["post_id"]):
-        connection.connection.send("WRONG CHARS".encode("utf-8"))
-        return
-    # (id, user_id, post, flags, time_posted, signature)
-    post = db.querry(f"SELECT * FROM posts WHERE id = '{msg_info['post_id']}';")
-    logger.log(post)
-    if not len(post) == 0:
-        post = post[0]
-        msg = "{"+f'"id": "{post[0]}", "user_id": "{post[1]}", "content": "{post[2]}", "flags": "{post[3]}", "time_posted": {post[4]}, "signature": "{post[5]}"'+"}"
-    else:
-        msg = "{}"
-    connection.connection.send(msg.encode("utf-8"))
-
 class ClientConnection():
     def __init__(self, connection, conn_info):
         self.connection = connection
@@ -184,7 +61,7 @@ class ClientConnection():
         global clients, logger
         while True:
             try:
-                msg = self.connection.recv(4096).decode("utf-8")
+                msg = self.recv()
                 logger.log("rcvd: " + msg)
                 if msg == "":
                     raise socket.error
@@ -223,57 +100,45 @@ class ClientConnection():
                     get_post(msg_info, self)
 
                 elif msg_info["action"] == "SEND":
-                    self.connection.send(msg_info["msg"].encode("utf-8"))
+                    self.send(msg_info["msg"])
 
                 self.queue.pop(0)
 
-    def recv(self):
+    def recv_from_queue(self):
         while True:
             if not len(self.responses) == 0:
                 res = self.responses[0]["response"]
                 self.responses.pop(0)
                 return res
 
-def manage_new_client(connection, conn_info):
-    global clients, max_clients, logger
-    logger.log(f"managing new client")
-    conn_class = ClientConnection(connection, conn_info)
-    if len(clients) <= max_clients:
-        clients.append(conn_class)
-        connection.send("OK".encode("utf-8"))
-        thread = threading.Thread(target=conn_class.manage_requests)
-        thread.start()
+    def recv(self):
+        num = int(self.connection.recv(1024).decode("utf-8"))
+        self.connection.send("OK".encode("utf-8"))
+        msg = ""
+        for i in range(num):
+            msg += self.connection.recv(1024).decode("utf-8")
+            self.connection.send("OK".encode("utf-8"))
 
-# Node - Node comunication
-def broadcast_ip(ip, node_ip):
-    global connections
-    msg_content = "{"+f'"type": "ACTION", "action": "IP", "ip": "{ip}"'+"}"
-    for connection in connections:
-        if not connection.ip == node_ip:
-            connection.queue.append(json.loads("{"+f'"type": "ACTION", "action": "SEND", "msg": {json.dumps(msg_content)}'+"}"))
+        return msg
 
-def manage_ip(msg_info, node_ip):
-    global IP, db
-    ip = msg_info["ip"]
-    if ip == IP:
-        return
 
-    seconds_to_delete = 60
-    seconds_to_update = 30
+    def send(self, msg:str):
+        msg_len = len(msg)
 
-    db.execute(f"DELETE FROM ips WHERE time_connected <= {int(time.time()) - seconds_to_delete}")
-    res = db.querry(f"SELECT * FROM ips WHERE ip = '{ip}';")
+        num = int(msg_len/1024)
+        num = num + 1 if not msg_len % 1024 == 0 else num
 
-    if len(res) == 0:
-        error = db.execute(f"INSERT INTO ips(ip, time_connected) VALUES('{ip}', {time.time()});")
-        if not error == "ERROR":
-            broadcast_ip(ip, node_ip)
+        temp = self.connection.recv(1024).decode("utf-8")
+        if not temp == "OK":
+            print(temp)
 
-    elif res[0][1] <= int(time.time()) - seconds_to_update:
-        err1 = db.execute(f"DELETE FROM ips WHERE ip = '{ip}';")
-        err2 = db.execute(f"INSERT INTO ips(ip, time_connected) VALUES('{ip}', {time.time()});")
-        if not err1 == "ERROR" and not err2 == "ERROR":
-            broadcast_ip(ip, node_ip)
+        for i in range(num):
+            print(i)
+            self.connection.send(msg[1024*i:1024*i+1024].encode("utf-8"))
+            temp = self.connection.recv(1024).decode("utf-8")
+            if not temp == "OK":
+                print(temp)
+
 
 class NodeConnection():
     def __init__(self, connection, conn_info, address):
@@ -291,7 +156,7 @@ class NodeConnection():
         global connections, logger
         while True:
             try:
-                msg = self.connection.recv(4096).decode("utf-8")
+                msg = self.recv()
                 if msg == "":
                     raise socket.error
                 
@@ -325,7 +190,7 @@ class NodeConnection():
                     new_post(msg_info, self, ip=self.ip)
 
                 if msg_info["action"] == "SEND":
-                    self.connection.send(msg_info["msg"].encode("utf-8"))
+                    self.send(msg_info["msg"])
 
                 n_connected = len(connections)
                 n_nodes = len(db.querry("SELECT * FROM ips;"))
@@ -337,14 +202,222 @@ class NodeConnection():
 
                 self.queue.pop(0)
     
-    def recv(self):
+    def recv_from_queue(self):
         while True:
             if not len(self.responses) == 0:
                 res = self.responses[0]
                 self.responses.pop(0)
                 return res
 
-def check_if_connected(ip):
+    def send(self, msg:str):
+        msg_len = len(msg)
+
+        num = int(msg_len/1024)
+        num = num + 1 if not msg_len % 1024 == 0 else num
+
+        temp = self.connection.recv(1024).decode("utf-8")
+        if not temp == "OK":
+            print(temp)
+
+        for i in range(num):
+            print(i)
+            self.connection.send(msg[1024*i:1024*i+1024].encode("utf-8"))
+            temp = self.connection.recv(1024).decode("utf-8")
+            if not temp == "OK":
+                print(temp)
+
+    def recv(self):
+        num = int(self.connection.recv(1024).decode("utf-8"))
+        self.connection.send("OK".encode("utf-8"))
+        msg = ""
+        for i in range(num):
+            msg += self.connection.recv(1024).decode("utf-8")
+            self.connection.send("OK".encode("utf-8"))
+
+        return msg
+
+def broadcast(msg, ip):
+    global connections, logger
+
+    logger.log(f"bradcasting: {msg} {ip}")
+
+    for connection in connections:
+        if not connection.ip == ip:
+            msg_text = json.dumps(msg)
+            formated_msg = msg_text.replace('"', '\\"')
+            connection.queue.append(json.loads("{"+f'"type": "ACTION", "action": "SEND", "msg": "{formated_msg}"'+"}"))
+            
+            
+
+def new_post(msg_info:dict, connection:Union[ClientConnection, NodeConnection], ip:str=None):
+    global db, logger
+    logger.log(f"posting: {msg_info} {ip}")
+    if not database.is_safe(msg_info["post_id"]):
+        connection.send("WRONG CHARS")
+        return
+
+    pub_key = db.querry(f"SELECT public_key FROM users WHERE user_name = '{msg_info['user_name']}'")
+    pub_key = RSA.import_key(auth.reconstruct_key(pub_key[0][0], key_type="pub"))
+
+    if not auth.verify(pub_key, msg_info["signature"], msg_info["content"], msg_info["post_id"], msg_info["user_name"], msg_info["flags"], msg_info["time"]):
+        connection.send("WRONG SIGNATURE")
+        return
+
+    #CREATE TABLE posts(id INT NOT NULL PRIMARY KEY, user_id VARCHAR(16) NOT NULL, post VARCHAR(255) NOT NULL, time_posted INT NOT NULL, FOREIGN KEY (user_id) REFERENCES users (user_name));")
+    res = db.querry(f"SELECT * FROM posts WHERE id = '{msg_info['post_id']}';")
+    if len(res) == 0:
+        sql = f"INSERT INTO posts(id, user_id, post, flags, time_posted, signature) VALUES('{msg_info['post_id']}', '{msg_info['user_name']}', '{msg_info['content']}', '{msg_info['flags']}', {int(msg_info['time'])}, '{msg_info['signature']}');"
+        err = db.execute(sql)
+        if not err == "ERROR":
+            broadcast(msg_info, ip)
+            if ip == None:
+                connection.send('OK')
+        else:
+            connection.send('DATABASE ERROR')
+    elif ip == None:
+        connection.send("ALREADY EXISTS")
+
+
+def register_user(msg_info:dict, connection:Union[ClientConnection, NodeConnection], ip:str=None):
+    global db, logger
+    logger.log(f"registering user: {msg_info} {ip}")
+    if not database.is_safe(msg_info["user_name"], msg_info['public_key'], msg_info['public_key'], msg_info['profile_picture'], msg_info['info']):
+        connection.send("WRONG CHARS")
+        return
+
+    #"CREATE TABLE users(user_name VARCHAR(16) NOT NULL UNIQUE PRIMARY KEY, public_key INT NOT NULL UNIQUE, time_created INT NOT NULL, profile_picture VARCHAR(64) NOT NULL, info VARCHAR(255));")
+    res = db.querry(f"SELECT * FROM users WHERE user_name = '{msg_info['user_name']}'")
+
+    if len(res) == 0:
+        sql = f"INSERT INTO users(user_name, public_key, key_file, time_created, profile_picture, info) VALUES('{msg_info['user_name']}', '{msg_info['public_key']}', '{msg_info['private_key']}', {int(time.time())}, '{msg_info['profile_picture']}', '{msg_info['info']}');"
+        logger.log("r"+sql)
+        err = db.execute(sql)
+        if not err == "ERROR":
+            broadcast(msg_info, ip)
+            if ip == None:
+                connection.send("OK")
+        else:
+            connection.send("DATABASE ERROR")
+    elif ip == None:
+        connection.send("ALREADY EXISTS")
+
+def get_posts(msg_info:dict, connection:ClientConnection):
+    global db, logger
+    logger.log(f"geting posts: {msg_info}")
+
+    if not database.is_safe(msg_info['user_name']):
+        connection.send("0")
+        res = connection.recv_from_queue()
+        if not res == "OK":
+            logger.log(res)
+        connection.send("WRONG CHARS")
+        return
+
+    posts = db.querry(f"SELECT * FROM posts WHERE user_id = '{msg_info['user_name']}'")
+
+    connection.send(str(len(posts)))
+
+    res = connection.recv_from_queue()
+    if not res == "OK":
+        logger.log(res)
+
+    for i, post in enumerate(posts):
+        msg = "{"+f'"id": "{post[0]}", "user_id": "{post[1]}", "content": "{post[2]}", "flags": "{post[3]}", "time_posted": {post[4]}, "signature": "{post[5]}"'+"}"
+        connection.send(msg)
+        res = connection.recv_from_queue()
+        if not res == "OK":
+            logger.log(res)
+
+    connection.send("OK")
+
+def get_user_info(msg_info:dict, connection:ClientConnection):
+    global db, logger
+    if not database.is_safe(msg_info["user_name"]):
+        connection.send("WRONG CHARS")
+        return
+    # (user_name, public_key, key_file, time_created, profile_picture, info)
+    user_info = db.querry(f"SELECT * FROM users WHERE user_name = '{msg_info['user_name']}';")
+    logger.log(user_info)
+    if not len(user_info) == 0 and not user_info == "ERROR":
+        user_info = user_info[0]
+        msg = "{"+f'"user_name": "{user_info[0]}", "public_key": "{user_info[1]}", "private_key": "{user_info[2]}",  "time_created": {user_info[3]}, "profile_picture": "{user_info[4]}", "info": "{user_info[5]}"'+"}"
+    else:
+        msg = "{}"
+    connection.send(msg)
+
+def get_post(msg_info:dict, connection:ClientConnection):
+    global db, logger
+    if not database.is_safe(msg_info["post_id"]):
+        connection.send("WRONG CHARS")
+        return
+    # (id, user_id, post, flags, time_posted, signature)
+    post = db.querry(f"SELECT * FROM posts WHERE id = '{msg_info['post_id']}';")
+    logger.log(post)
+    if not len(post) == 0:
+        post = post[0]
+        msg = "{"+f'"id": "{post[0]}", "user_id": "{post[1]}", "content": "{post[2]}", "flags": "{post[3]}", "time_posted": {post[4]}, "signature": "{post[5]}"'+"}"
+    else:
+        msg = "{}"
+    connection.send(msg)
+
+
+
+
+
+
+
+
+
+def manage_new_client(connection, conn_info):
+    global clients, max_clients, logger
+    logger.log(f"managing new client")
+    conn_class = ClientConnection(connection, conn_info)
+    if len(clients) <= max_clients:
+        clients.append(conn_class)
+        connection.send("OK".encode("utf-8"))
+        thread = threading.Thread(target=conn_class.manage_requests)
+        thread.start()
+
+# Node - Node comunication
+def broadcast_ip(ip:str, node_ip:str):
+    global connections
+    msg_content = "{"+f'"type": "ACTION", "action": "IP", "ip": "{ip}"'+"}"
+    for connection in connections:
+        if not connection.ip == node_ip:
+            connection.queue.append(json.loads("{"+f'"type": "ACTION", "action": "SEND", "msg": {json.dumps(msg_content)}'+"}"))
+
+def manage_ip(msg_info:dict, node_ip:str):
+    global IP, db
+    ip = msg_info["ip"]
+    if ip == IP:
+        return
+
+    seconds_to_delete = 60
+    seconds_to_update = 30
+
+    db.execute(f"DELETE FROM ips WHERE time_connected <= {int(time.time()) - seconds_to_delete}")
+    res = db.querry(f"SELECT * FROM ips WHERE ip = '{ip}';")
+
+    if len(res) == 0:
+        error = db.execute(f"INSERT INTO ips(ip, time_connected) VALUES('{ip}', {time.time()});")
+        if not error == "ERROR":
+            broadcast_ip(ip, node_ip)
+
+    elif res[0][1] <= int(time.time()) - seconds_to_update:
+        err1 = db.execute(f"DELETE FROM ips WHERE ip = '{ip}';")
+        err2 = db.execute(f"INSERT INTO ips(ip, time_connected) VALUES('{ip}', {time.time()});")
+        if not err1 == "ERROR" and not err2 == "ERROR":
+            broadcast_ip(ip, node_ip)
+
+
+
+
+
+
+
+
+
+def check_if_connected(ip:str):
     global connections
     for connection in connections:
         if ip == connection.ip:
@@ -368,7 +441,7 @@ def connect_to_new_node():
 
             connection.send(json.dumps(server_info).encode("utf-8"))
 
-            if connection.recv(4096).decode("utf-8") == "OK":
+            if connection.recv(1024).decode("utf-8") == "OK":
                 #(ip[0][0], connection, ip[0][0])
                 conn_class = NodeConnection(connection, {"ip": ip[0][0]}, ip[0][0])
                 connections.append(conn_class)
@@ -410,7 +483,7 @@ def main():
     global server, logger
     while True:
         connection, address = server.accept()
-        temp = connection.recv(4096).decode("utf-8")
+        temp = connection.recv(1024).decode("utf-8")
         logger.log(temp)
         conn_info = json.loads(temp)
         logger.log(conn_info)
