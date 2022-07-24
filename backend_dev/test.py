@@ -17,6 +17,8 @@ temp = []
 
 while True:
     msg = conn.recv(4096).decode("utf-8")
+    if len(msg) == 0:
+        break
     temp.append(msg)
     print(msg)
     print(len(msg))
