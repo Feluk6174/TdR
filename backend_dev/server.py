@@ -47,7 +47,7 @@ max_clients = 10
 #Client Node comunication
 
 class ClientConnection():
-    def __init__(self, connection, conn_info):
+    def __init__(self, connection:socket.socket, conn_info:dict):
         self.connection = connection
         self.info = conn_info
         self.queue = []
@@ -123,6 +123,8 @@ class ClientConnection():
 
 
     def send(self, msg:str):
+        global logger
+        logger.log("sending: "+msg)
         msg_len = len(msg)
 
         num = int(msg_len/512)
@@ -143,7 +145,7 @@ class ClientConnection():
 
 
 class NodeConnection():
-    def __init__(self, connection, conn_info, address):
+    def __init__(self, connection:socket.socket, conn_info:dict, address:str):
         self.connection = connection
         self.info = conn_info
         self.queue = []
