@@ -233,7 +233,7 @@ class NodeConnection():
         num = int(msg_len/512)
         num = num + 1 if not msg_len % 512 == 0 else num
         
-        print("sending num:", num)
+        print("sending num:", num, f"({msg})")
         self.send("{"+f'"type": "RESPONSE", "response": "{num}"'+"}")
 
         print("reciebeing confirmation")
