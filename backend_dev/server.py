@@ -165,7 +165,7 @@ class NodeConnection():
                     raise socket.error
                 
                 msg = json.loads(msg)
-
+                logger.log(msg["type"])
                 if msg["type"] == "ACTION":
                     self.queue.append(msg)
                 elif msg["type"] == "RESPONSE":
