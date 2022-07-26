@@ -113,11 +113,11 @@ class ClientConnection():
 
     def recv(self):
         num = int(self.connection.recv(1024).decode("utf-8"))
-        self.connection.send("OK".encode("utf-8"))
+        self.send('{"type": "RESPONSE", "response": "OK"}')
         msg = ""
         for i in range(num):
             msg += self.connection.recv(1024).decode("utf-8")
-            self.connection.send("OK".encode("utf-8"))
+            self.send('{"type": "RESPONSE", "response": "OK"}')
 
         return msg
 
