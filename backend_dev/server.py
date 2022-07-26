@@ -183,7 +183,7 @@ class NodeConnection():
             if not len(self.queue) == 0:
                 msg_info = self.queue[0]
                 logger.log(f"recived: {msg_info} {type(msg_info)}")
-
+                print(msg_info["action"])
                 if msg_info["action"] == "IP":
                     manage_ip(msg_info, self.ip)
 
@@ -214,6 +214,8 @@ class NodeConnection():
                 return res
 
     def send(self, msg:str):
+        global logger
+        logger.log("sending:"+msg)
         msg_len = len(msg)
 
         num = int(msg_len/1024)
