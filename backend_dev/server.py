@@ -130,7 +130,7 @@ class ClientConnection():
         num = int(msg_len/512)
         num = num + 1 if not msg_len % 512 == 0 else num
         
-        self.connection.send("{"+f'"type": "RESPONSE", "response": "{num}"'+"}")
+        self.send("{"+f'"type": "RESPONSE", "response": "{num}"'+"}")
 
         temp = self.recv_from_queue()
         if not temp == "OK":
@@ -138,7 +138,7 @@ class ClientConnection():
 
         for i in range(num):
             print(i)
-            self.connection.send("{"+f'"type": "RESPONSE", "response": "{msg[512*i:512*i+512]}"'+"}")
+            self.send("{"+f'"type": "RESPONSE", "response": "{msg[512*i:512*i+512]}"'+"}")
             temp = self.recv_from_queue()
             if not temp == "OK":
                 print("S2", temp)
@@ -234,7 +234,7 @@ class NodeConnection():
         num = num + 1 if not msg_len % 512 == 0 else num
         
         print("sending num:", num)
-        self.connection.send("{"+f'"type": "RESPONSE", "response": "{num}"'+"}")
+        self.send("{"+f'"type": "RESPONSE", "response": "{num}"'+"}")
 
         print("reciebeing confirmation")
         temp = self.recv_from_queue()
@@ -243,7 +243,7 @@ class NodeConnection():
 
         for i in range(num):
             print(i)
-            self.connection.send("{"+f'"type": "RESPONSE", "response": "{msg[512*i:512*i+512]}"'+"}")
+            self.send("{"+f'"type": "RESPONSE", "response": "{msg[512*i:512*i+512]}"'+"}")
             temp = self.recv_from_queue()
             if not temp == "OK":
                 print("S2", temp)
