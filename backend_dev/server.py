@@ -213,35 +213,37 @@ class NodeConnection():
                 self.responses.pop(0)
                 return res
 
-    def send(self, msg:str):
-        global logger
-        logger.log("sending:"+msg)
-        msg_len = len(msg)
-
-        num = int(msg_len/1024)
-        num = num + 1 if not msg_len % 1024 == 0 else num
-
-        self.connection.send(str(num).encode("utf-8"))
-
-        temp = self.recv_from_queue()
-        if not temp == "OK":
-            print("s1", temp)
-
-        for i in range(num):
-            self.connection.send(msg[1024*i:1024*i+1024].encode("utf-8"))
-            temp = self.recv_from_queue()
-            if not temp == "OK":
-                print("s2", temp)
-
     def recv(self):
-        num = int(self.connection.recv(1024).decode("utf-8"))
+        num = int(self.recv_from_queue())
         self.send('{"type": "RESPONSE", "response": "OK"}')
         msg = ""
         for i in range(num):
-            msg += self.connection.recv(1024).decode("utf-8")
+            msg += self.recv_from_queue()
             self.send('{"type": "RESPONSE", "response": "OK"}')
 
         return msg
+
+
+    def send(self, msg:str):
+        global logger
+        logger.log("sending: "+msg)
+        msg_len = len(msg)
+
+        num = int(msg_len/512)
+        num = num + 1 if not msg_len % 512 == 0 else num
+        
+        self.connection.send("{"+f'"type": "RESPONSE", "response": "{num}"'+"}")
+
+        temp = self.recv_from_queue()
+        if not temp == "OK":
+            print("S1", temp)
+
+        for i in range(num):
+            print(i)
+            self.connection.send("{"+f'"type": "RESPONSE", "response": "{msg[512*i:512*i+512]}"'+"}")
+            temp = self.recv_from_queue()
+            if not temp == "OK":
+                print("S2", temp)
 
 def broadcast(msg, ip):
     global connections, logger
