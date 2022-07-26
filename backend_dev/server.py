@@ -130,14 +130,14 @@ class ClientConnection():
         
         self.connection.send(str(num).encode("utf-8"))
 
-        temp = self.connection.recv(1024).decode("utf-8")
+        temp = self.recv_from_queue()
         if not temp == "OK":
             print("S1", temp)
 
         for i in range(num):
             print(i)
             self.connection.send(msg[1024*i:1024*i+1024].encode("utf-8"))
-            temp = self.connection.recv(1024).decode("utf-8")
+            temp = self.recv_from_queue()
             if not temp == "OK":
                 print("S2", temp)
 
@@ -219,13 +219,13 @@ class NodeConnection():
 
         self.connection.send(str(num).encode("utf-8"))
 
-        temp = self.connection.recv(1024).decode("utf-8")
+        temp = self.recv_from_queue()
         if not temp == "OK":
             print("s1", temp)
 
         for i in range(num):
             self.connection.send(msg[1024*i:1024*i+1024].encode("utf-8"))
-            temp = self.connection.recv(1024).decode("utf-8")
+            temp = self.recv_from_queue()
             if not temp == "OK":
                 print("s2", temp)
 

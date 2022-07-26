@@ -94,7 +94,7 @@ class Connection():
                 raise WrongCaracters(post_id=post_id)
             return {}
 
-    def send(self, msg):
+    def send(self, msg:str):
         msg_len = len(msg)
 
         num = int(msg_len/1024)
@@ -115,11 +115,11 @@ class Connection():
 
     def recv(self):
         num = int(self.connection.recv(1024).decode("utf-8"))
-        self.connection.send("OK".encode("utf-8"))
+        self.send('{"type": "RESPONSE", "response": "OK"}')
         msg = ""
         for i in range(num):
             msg += self.connection.recv(1024).decode("utf-8")
-            self.connection.send("OK".encode("utf-8"))
+            self.send('{"type": "RESPONSE", "response": "OK"}')
 
         return msg
 
