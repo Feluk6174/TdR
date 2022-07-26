@@ -234,7 +234,7 @@ class NodeConnection():
         num = num + 1 if not msg_len % 512 == 0 else num
         
         print("sending num:", num, f"({msg})")
-        self.send("{"+f'"type": "RESPONSE", "response": "{num}"'+"}")
+        self.connection.send(str("{"+f'"type": "RESPONSE", "response": "{num}"'+"}").encode("utf-8"))
 
         print("reciebeing confirmation")
         temp = self.recv_from_queue()
@@ -243,7 +243,7 @@ class NodeConnection():
 
         for i in range(num):
             print(i)
-            self.send("{"+f'"type": "RESPONSE", "response": "{msg[512*i:512*i+512]}"'+"}")
+            self.connection.send(str("{"+f'"type": "RESPONSE", "response": "{msg[512*i:512*i+512]}"'+"}").encode("utf-8"))
             temp = self.recv_from_queue()
             if not temp == "OK":
                 print("S2", temp)
