@@ -209,6 +209,7 @@ class NodeConnection():
     def recv_from_queue(self):
         while True:
             if not len(self.responses) == 0:
+                print(self.responses)
                 res = self.responses[0]
                 self.responses.pop(0)
                 return res
@@ -232,8 +233,10 @@ class NodeConnection():
         num = int(msg_len/512)
         num = num + 1 if not msg_len % 512 == 0 else num
         
+        print("sending num:", num)
         self.connection.send("{"+f'"type": "RESPONSE", "response": "{num}"'+"}")
 
+        print("reciebeing confirmation")
         temp = self.recv_from_queue()
         if not temp == "OK":
             print("S1", temp)
