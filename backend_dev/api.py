@@ -15,15 +15,21 @@ class Connection():
             print("[ESTABLISHED CONNECTION]")
 
     def register_user(self, user_name:str, public_key, key_path:str, profile_picture:str, info:str):
+        print(1, 1)
         time_registered = int(time.time())
+        print(1, 2)
         public_key = auth.sanitize_key(public_key.export_key().decode("utf-8"))
         with open(key_path, "r") as f:
             keys_file = f.read()
+        print(1, 3)
         private_key = auth.sanitize_key(keys_file)
+        print(1, 4)
         msg = "{"+f'"type": "ACTION", "action": "REGISTER", "user_name": "{user_name}", "public_key": "{public_key}", "private_key": "{private_key}", "profile_picture": "{profile_picture}", "info": "{info}", "time": {time_registered}'+"}"
+        print(1, 5)
         temp = self.send(msg)
         print(temp, len(msg))
         response = self.recv()
+        print(1, 6)
         if not response == "OK":
             if response == "ALREADY EXISTS":
                 raise UserAlreadyExists(user_name)
@@ -100,7 +106,7 @@ class Connection():
         num = int(msg_len/1024)
         num = num + 1 if not msg_len % 1024 == 0 else num
 
-        self.connection.send(str(num).encode("utf-8"))
+        self.connection.send(str("{"+f'"type": "RESPONSE", "response": "{num}"'+"}").encode("utf-8"))
 
         temp = self.connection.recv(1024).decode("utf-8")
         if not temp == "OK":
@@ -108,7 +114,7 @@ class Connection():
 
         for i in range(num):
             print(i)
-            self.connection.send(msg[1024*i:1024*i+1024].encode("utf-8"))
+            self.connection.send(str("{"+f'"type": "RESPONSE", "response": "{msg[512*i:512*i+512]}"'+"}").encode("utf-8"))
             temp = self.connection.recv(1024).decode("utf-8")
             if not temp == "OK":
                 print(temp)

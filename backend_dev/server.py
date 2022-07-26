@@ -233,20 +233,20 @@ class NodeConnection():
         num = int(msg_len/512)
         num = num + 1 if not msg_len % 512 == 0 else num
         
-        print("sending num:", num, f"({msg})")
+        logger.log("sending num:" + str(num) + f"({msg})")
         self.connection.send(str("{"+f'"type": "RESPONSE", "response": "{num}"'+"}").encode("utf-8"))
 
-        print("reciebeing confirmation")
+        logger.log("reciebeing confirmation")
         temp = self.recv_from_queue()
         if not temp == "OK":
-            print("S1", temp)
+            logger.log("S1" + temp)
 
         for i in range(num):
-            print(i)
+            logger.log(i)
             self.connection.send(str("{"+f'"type": "RESPONSE", "response": "{msg[512*i:512*i+512]}"'+"}").encode("utf-8"))
             temp = self.recv_from_queue()
             if not temp == "OK":
-                print("S2", temp)
+                logger.log("S2" + temp)
 
 def broadcast(msg, ip):
     global connections, logger
