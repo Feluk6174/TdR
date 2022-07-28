@@ -114,11 +114,11 @@ class ClientConnection():
     def recv(self):
         logger.log("recv")
         num = int(self.connection.recv(1024))
-        self.send('{"type": "RESPONSE", "response": "OK"}')
+        self.connection.send("OK")
         msg = ""
         for i in range(num):
             msg += self.connection.recv(1024)
-            self.send('{"type": "RESPONSE", "response": "OK"}')
+            self.connection.send("OK")
 
         return msg
 
@@ -131,16 +131,16 @@ class ClientConnection():
         num = int(msg_len/512)
         num = num + 1 if not msg_len % 512 == 0 else num
         
-        self.send(str(num).encode("utf-8"))
+        self.connection.send(str(num).encode("utf-8"))
 
-        temp = self.recv_from_queue()
+        temp = self.connection.recv(1024)
         if not temp == "OK":
             print("S1", temp)
 
         for i in range(num):
             print(i)
-            self.send("{"+f'"type": "RESPONSE", "response": "{msg[512*i:512*i+512]}"'+"}")
-            temp = self.recv_from_queue()
+            self.connection.send(msg[512*i:512*i+512])
+            temp = self.connection.recv(1024)
             if not temp == "OK":
                 print("S2", temp)
 
