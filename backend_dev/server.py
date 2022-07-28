@@ -112,7 +112,7 @@ class ClientConnection():
                 return res
 
     def recv(self):
-        num = int(self.recv_from_queue())
+        num = int(self.connection.recv())
         self.send('{"type": "RESPONSE", "response": "OK"}')
         msg = ""
         for i in range(num):
@@ -216,7 +216,7 @@ class NodeConnection():
                 return res
 
     def recv(self):
-        num = int(self.recv_from_queue())
+        num = int(self.connection.recv())
         self.send('{"type": "RESPONSE", "response": "OK"}')
         msg = ""
         for i in range(num):
@@ -235,8 +235,8 @@ class NodeConnection():
         num = num + 1 if not msg_len % 512 == 0 else num
         
         logger.log("sending num:" + str(num) + f"({msg})")
-        temp = self.connection.sendall(str("{"+f'"type": "RESPONSE", "response": "{num}"'+"}").encode("utf-8"))
-        logger.log("sent: " + temp)
+        temp = self.connection.send(str("{"+f'"type": "RESPONSE", "response": "{num}"'+"}").encode("utf-8"))
+        logger.log("sent: " + str(temp))
 
         logger.log("reciebeing confirmation")
         temp = self.recv_from_queue()
