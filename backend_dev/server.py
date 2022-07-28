@@ -131,7 +131,7 @@ class ClientConnection():
         num = int(msg_len/512)
         num = num + 1 if not msg_len % 512 == 0 else num
         
-        self.send("{"+f'"type": "RESPONSE", "response": "{num}"'+"}")
+        self.send(str(num))
 
         temp = self.recv_from_queue()
         if not temp == "OK":
