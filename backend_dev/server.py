@@ -112,6 +112,7 @@ class ClientConnection():
                 return res
 
     def recv(self):
+        logger.log("recv")
         num = int(self.connection.recv(1024))
         self.send('{"type": "RESPONSE", "response": "OK"}')
         msg = ""
