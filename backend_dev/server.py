@@ -131,7 +131,7 @@ class ClientConnection():
         num = int(msg_len/512)
         num = num + 1 if not msg_len % 512 == 0 else num
         
-        self.send(str(num))
+        self.send(str(num).encode("utf-8"))
 
         temp = self.recv_from_queue()
         if not temp == "OK":
@@ -236,7 +236,7 @@ class NodeConnection():
         num = num + 1 if not msg_len % 512 == 0 else num
         
         logger.log("sending num:" + str(num) + f"({msg})")
-        temp = self.connection.send(str("{"+f'"type": "RESPONSE", "response": "{num}"'+"}").encode("utf-8"))
+        temp = self.connection.send(str(num).encode("utf-8"))
         logger.log("sent: " + str(temp)+ str(len("{"+f'"type": "RESPONSE", "response": "{num}"'+"}")))
 
         logger.log("reciebeing confirmation")
