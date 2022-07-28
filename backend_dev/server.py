@@ -236,8 +236,8 @@ class NodeConnection():
         
         logger.log("sending num:" + str(num) + f"({msg})")
         temp = self.connection.sendall(str("{"+f'"type": "RESPONSE", "response": "{num}"'+"}").encode("utf-8"))
-        print(temp)
-        
+        logger.log("sent: " + temp)
+
         logger.log("reciebeing confirmation")
         temp = self.recv_from_queue()
         if not temp == "OK":
