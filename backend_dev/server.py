@@ -218,11 +218,11 @@ class NodeConnection():
 
     def recv(self):
         num = int(self.connection.recv(1024))
-        self.send('{"type": "RESPONSE", "response": "OK"}')
+        self.connection.send("OK")
         msg = ""
         for i in range(num):
             msg += self.connection.recv(1024)
-            self.send('{"type": "RESPONSE", "response": "OK"}')
+            self.connection.send("OK")
 
         return msg
 
@@ -240,14 +240,14 @@ class NodeConnection():
         logger.log("sent: " + str(temp)+ str(len("{"+f'"type": "RESPONSE", "response": "{num}"'+"}")))
 
         logger.log("reciebeing confirmation")
-        temp = self.recv_from_queue()
+        temp = self.connection.recv(1024)
         if not temp == "OK":
             logger.log("S1" + temp)
 
         for i in range(num):
             logger.log(i)
-            self.connection.send(str("{"+f'"type": "RESPONSE", "response": "{msg[512*i:512*i+512]}"'+"}").encode("utf-8"))
-            temp = self.recv_from_queue()
+            self.connection.send(str({msg[512*i:512*i+512]}).encode("utf-8"))
+            temp = self.connection.recv(1024)
             if not temp == "OK":
                 logger.log("S2" + temp)
 
