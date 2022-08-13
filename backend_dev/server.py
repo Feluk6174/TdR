@@ -74,7 +74,7 @@ class ClientConnection():
 
                 for msg in msgs:
                     msg = json.loads(msg)
-                    logger.log("rcvd", msg)
+                    logger.log("recv", msg)
 
                     if msg["type"] == "NUM" and not msg["num"] == 0:
                         self.temp_msgs[msg["id"]] = {"content": "", "num": msg["num"], "act_num": 0}
@@ -137,10 +137,8 @@ class ClientConnection():
 
     def recv_from_queue(self):
         global logger
-        logger.log("waiting q1")
         while True:
             if not len(self.responses) == 0:
-                logger.log("waiting q2", self.responses)
                 print(22, self.responses)
                 res = self.responses[0]
                 self.responses.pop(0)
@@ -148,7 +146,6 @@ class ClientConnection():
 
     def recv_send_response(self, msg_id:str):
         global logger
-        logger.log("waiting r")
         while True:
             if not len(self.send_responses) == 0:
                 print(self.send_responses)
@@ -168,24 +165,20 @@ class ClientConnection():
         num = int(msg_len/512)
         num = num + 1 if not msg_len % 512 == 0 else num
         
-        logger.log("sending num:" + str(num) + f"({msg})")
         send_msg = "{"+f'"type": "NUM", "num": {num}, "id": "{msg_id}"'+"}"
         temp = self.connection.send(send_msg.encode("utf-8"))
 
-        logger.log("reciebeing confirmation")
         temp = self.recv_send_response(msg_id)
         if not temp == "OK":
             logger.log("S1" + str(temp))
 
         for i in range(num):
-            logger.log(i)
             msg_part = msg[512*i:512*i+512].replace("\"", '\\"')
             send_msg = "{"+f'"type": "MSG PART", "id": "{msg_id}", "content": "{msg_part}"'+"}"
             self.connection.send(send_msg.encode("utf-8"))
             temp = self.recv_send_response(msg_id)
             if not temp == "OK":
                 logger.log("S2" + str(temp))
-            logger.log("end_send")
 
 
 class NodeConnection():
@@ -213,7 +206,6 @@ class NodeConnection():
                     raise socket.error
 
                 msgs = msg.replace("}{", "}\0{").split("\0")
-                logger.log("msgs", msgs)
                 for msg in msgs:
                     msg = json.loads(msg)
                     logger.log("msg", msg)

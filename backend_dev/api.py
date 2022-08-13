@@ -8,7 +8,7 @@ from Crypto.Hash import SHA256
 class Connection():
     def __init__(self):
         self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.connection.connect(("127.0.0.1", 30003))
+        self.connection.connect(("195.181.244.246", 30003))
 
         msg = '{"type": "CLIENT"}'
         self.connection.send(msg.encode("utf-8"))
@@ -16,21 +16,14 @@ class Connection():
             print("[ESTABLISHED CONNECTION]")
 
     def register_user(self, user_name:str, public_key, key_path:str, profile_picture:str, info:str):
-        print(1, 1)
         time_registered = int(time.time())
-        print(1, 2)
         public_key = auth.sanitize_key(public_key.export_key().decode("utf-8"))
         with open(key_path, "r") as f:
             keys_file = f.read()
-        print(1, 3)
         private_key = auth.sanitize_key(keys_file)
-        print(1, 4)
         msg = "{"+f'"type": "ACTION", "action": "REGISTER", "user_name": "{user_name}", "public_key": "{public_key}", "private_key": "{private_key}", "profile_picture": "{profile_picture}", "info": "{info}", "time": {time_registered}'+"}"
-        print(1, 5)
         temp = self.send(msg)
-        print(temp, len(msg))
         response = self.recv()
-        print(1, 6)
         if not response == "OK":
             if response == "ALREADY EXISTS":
                 raise UserAlreadyExists(user_name)
@@ -58,9 +51,7 @@ class Connection():
         posts = []
         msg = "{"+f'"type": "ACTION", "action": "GET POSTS", "user_name": "{user_name}"'+"}"
         self.send(msg)
-        print("n2")
         num = int(self.recv())
-        print("n", num)
         self.send('{"type": "RESPONSE", "response": "OK"}')
         if not num == 0: 
             for _ in range(num):
@@ -104,35 +95,26 @@ class Connection():
             return {}
 
     def send(self, msg:str):
-        print("sending: "+msg)
         msg_len = len(msg)
         msg_id = SHA256.new(msg.encode("utf-8")).hexdigest()
 
         num = int(msg_len/512)
         num = num + 1 if not msg_len % 512 == 0 else num
         
-        print("sending num:" + str(num) + f"({msg})")
         send_msg = "{"+f'"type": "NUM", "num": {num}, "id": "{msg_id}"'+"}"
         temp = self.connection.send(send_msg.encode("utf-8"))
 
-        print("reciebeing confirmation")
         temp = json.loads(self.connection.recv(1024).decode("utf-8"))
-        print(temp)
         temp = temp["response"]
-        print(temp)
         if not temp == "OK":
             print("S1" + str(temp))
 
         for i in range(num):
-            print(i)
             msg_part = msg[512*i:512*i+512].replace("\"", '\\"')
             send_msg = "{"+f'"type": "MSG PART", "id": "{msg_id}", "content": "{msg_part}"'+"}"
             self.connection.send(send_msg.encode("utf-8"))
-            print("sent")
             temp = json.loads(self.connection.recv(1024).decode("utf-8"))
-            print(temp)
             temp = temp["response"]
-            print(temp)
             if not temp == "OK":
                 print("S2" + str(temp))
 
