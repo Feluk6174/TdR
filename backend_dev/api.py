@@ -2,12 +2,13 @@ import socket
 import json
 import auth
 import time
+from Crypto.Hash import SHA256
 #todo func to change pp and info
 
 class Connection():
     def __init__(self):
         self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.connection.connect(("10.10.164.108", 30003))
+        self.connection.connect(("127.0.0.1", 30003))
 
         msg = '{"type": "CLIENT"}'
         self.connection.send(msg.encode("utf-8"))
@@ -57,7 +58,9 @@ class Connection():
         posts = []
         msg = "{"+f'"type": "ACTION", "action": "GET POSTS", "user_name": "{user_name}"'+"}"
         self.send(msg)
+        print("n2")
         num = int(self.recv())
+        print("n", num)
         self.send('{"type": "RESPONSE", "response": "OK"}')
         if not num == 0: 
             for _ in range(num):
@@ -77,7 +80,7 @@ class Connection():
 
     def get_user(self, user_name:str):
         msg = "{"+f'"type": "ACTION", "action": "GET USER", "user_name": "{user_name}"'+"}"
-        self.send(msg.encode("utf-8"))
+        self.send(msg)
         response = self.recv()
         try:
             return json.loads(response)
@@ -91,7 +94,7 @@ class Connection():
 
     def get_post(self, post_id:str):
         msg = "{"+f'"type": "ACTION", "action": "GET POST", "post_id": "{post_id}"'+"}"
-        self.send(msg.encode("utf-8"))
+        self.send(msg)
         response = self.recv()
         try:
             return json.loads(response)
@@ -101,38 +104,56 @@ class Connection():
             return {}
 
     def send(self, msg:str):
+        print("sending: "+msg)
         msg_len = len(msg)
+        msg_id = SHA256.new(msg.encode("utf-8")).hexdigest()
 
-        num = int(msg_len/1024)
-        num = num + 1 if not msg_len % 1024 == 0 else num
+        num = int(msg_len/512)
+        num = num + 1 if not msg_len % 512 == 0 else num
+        
+        print("sending num:" + str(num) + f"({msg})")
+        send_msg = "{"+f'"type": "NUM", "num": {num}, "id": "{msg_id}"'+"}"
+        temp = self.connection.send(send_msg.encode("utf-8"))
 
-        self.connection.send(str("{"+f'"type": "RESPONSE", "response": "{num}"'+"}").encode("utf-8"))
-
-        temp = self.connection.recv(1024).decode("utf-8")
+        print("reciebeing confirmation")
+        temp = json.loads(self.connection.recv(1024).decode("utf-8"))
+        print(temp)
+        temp = temp["response"]
+        print(temp)
         if not temp == "OK":
-            print(temp)
+            print("S1" + str(temp))
 
         for i in range(num):
             print(i)
-            self.connection.send(str("{"+f'"type": "RESPONSE", "response": "{msg[512*i:512*i+512]}"'+"}").encode("utf-8"))
-            temp = self.connection.recv(1024).decode("utf-8")
+            msg_part = msg[512*i:512*i+512].replace("\"", '\\"')
+            send_msg = "{"+f'"type": "MSG PART", "id": "{msg_id}", "content": "{msg_part}"'+"}"
+            self.connection.send(send_msg.encode("utf-8"))
+            print("sent")
+            temp = json.loads(self.connection.recv(1024).decode("utf-8"))
+            print(temp)
+            temp = temp["response"]
+            print(temp)
             if not temp == "OK":
-                print(temp)
+                print("S2" + str(temp))
+
 
     def recv(self):
-        num = int(self.connection.recv(1024).decode("utf-8"))
-        self.send('{"type": "RESPONSE", "response": "OK"}')
+        data = json.loads(self.connection.recv(1024).decode("utf-8"))
+        num = data["num"]
+        msg_id = data["id"]
+        response = "{"+f'"type": "CONN RESPONSE", "response": "OK", "id": "{msg_id}"'+"}"
+        self.connection.send(response.encode("utf-8"))
         msg = ""
         for i in range(num):
-            msg += self.connection.recv(1024).decode("utf-8")
-            self.send('{"type": "RESPONSE", "response": "OK"}')
+            msg += json.loads(self.connection.recv(1024).decode("utf-8"))["content"]
+            self.connection.send(response.encode("utf-8"))
 
         return msg
 
 
 
 def check_chars(*args):
-    invalid_chars = ["\\", "\'", "\"", "\n", "\t", "\r", "\0", "%", "\b", ";", "="]
+    invalid_chars = ["\\", "\'", "\"", "\n", "\t", "\r", "\0", "%", "\b", ";", "=", "\u259e"]
 
     arguments = ""
     for argument in args:

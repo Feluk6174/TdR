@@ -10,8 +10,11 @@ class Logger():
         thread = threading.Thread(target=self.proces_queue)
         thread.start()
 
-    def log(self, message):
-        self.queue.append(f"[{threading.current_thread().name}]({time.asctime()}) {message}")
+    def log(self, *messages):
+        text = f"[{threading.current_thread().name}]({time.asctime()}) "
+        for message in messages:
+            text += str(message) + " "
+        self.queue.append(text)
 
     def proces_queue(self):
         self.queue.append("[STARTED LOGGER]")

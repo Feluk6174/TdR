@@ -6,12 +6,13 @@ import auth
 import log
 from typing import Union
 
-#todo fix
-
-s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-s.connect(("8.8.8.8", 80))
-HOST = s.getsockname()[0]
-s.close()
+try:
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("8.8.8.8", 80))
+    HOST = s.getsockname()[0]
+    s.close()
+except OSError:
+    HOST = "127.0.0.1"
 try:
     PORT = int(sys.argv[1])
 except IndexError:
@@ -48,37 +49,67 @@ max_clients = 10
 
 class ClientConnection():
     def __init__(self, connection:socket.socket, conn_info:dict):
+        global logger
+        logger.log("client")
         self.connection = connection
         self.info = conn_info
         self.queue = []
         self.responses = []
+        self.temp_msgs = {}
+        self.send_responses = []
         self.ip = None
 
         thread = threading.Thread(target=self.process_queue)
         thread.start()
 
     def manage_requests(self):
-        global clients, logger
+        global connections, logger
         while True:
             try:
-                msg = self.recv()
-                logger.log("rcvd: " + msg)
+                msg = self.connection.recv(1024).decode("utf-8")
                 if msg == "":
                     raise socket.error
-                msg = json.loads(msg)
 
-                if msg["type"] == "ACTION":
-                    self.queue.append(msg)
-                elif msg["type"] == "RESPONSE":
-                    self.responses.append(msg)
+                msgs = msg.replace("}{", "}\0{").split("\0")
+
+                for msg in msgs:
+                    msg = json.loads(msg)
+                    logger.log("rcvd", msg)
+
+                    if msg["type"] == "NUM" and not msg["num"] == 0:
+                        self.temp_msgs[msg["id"]] = {"content": "", "num": msg["num"], "act_num": 0}
+                        send_msg = "{"+f'"type": "CONN RESPONSE", "response": "OK", "id": "{msg["id"]}"'+"}"
+                        self.connection.send(send_msg.encode("utf-8"))
+
+                    if msg["type"] == "MSG PART":
+                        self.temp_msgs[msg["id"]]["content"] += msg["content"]
+                        self.temp_msgs[msg["id"]]["act_num"] += 1
+
+                        if self.temp_msgs[msg["id"]]["num"] == self.temp_msgs[msg["id"]]["act_num"]:
+                            res_msg = json.loads(self.temp_msgs[msg["id"]]["content"])
+                            if res_msg["type"] == "ACTION":
+                                self.queue.append(res_msg)
+                            elif res_msg["type"] == "RESPONSE":
+                                self.responses.append(res_msg)
+                        send_msg = "{"+f'"type": "CONN RESPONSE", "response": "OK", "id": "{msg["id"]}"'+"}"
+                        self.connection.send(send_msg.encode("utf-8"))
+                    
+                    if msg["type"] == "CONN RESPONSE":
+                        self.send_responses.append(msg)
 
             except socket.error as e:
                 logger.log("[ERROR]" + str(e))
-                clients.remove(self)
+                connections.remove(self)
+                break
+
+            except json.decoder.JSONDecodeError as e:
+                logger.log("[ERROR]" + str(e) + " " + str(msg))
+                connections.remove(self)
                 break
 
     def process_queue(self):
         global logger
+        logger.log("client queue")
         while True:
             if not len(self.queue) == 0:
                 msg_info = self.queue[0]
@@ -105,44 +136,56 @@ class ClientConnection():
                 self.queue.pop(0)
 
     def recv_from_queue(self):
+        global logger
+        logger.log("waiting q1")
         while True:
             if not len(self.responses) == 0:
-                res = self.responses[0]["response"]
+                logger.log("waiting q2", self.responses)
+                print(22, self.responses)
+                res = self.responses[0]
                 self.responses.pop(0)
                 return res
 
-    def recv(self):
-        logger.log("recv")
-        num = int(self.connection.recv(1024))
-        self.connection.send("OK")
-        msg = ""
-        for i in range(num):
-            msg += self.connection.recv(1024)
-            self.connection.send("OK")
-
-        return msg
+    def recv_send_response(self, msg_id:str):
+        global logger
+        logger.log("waiting r")
+        while True:
+            if not len(self.send_responses) == 0:
+                print(self.send_responses)
+                for i, response in enumerate(self.send_responses):
+                    if response["id"] == msg_id:
+                        res = response["response"]
+                        self.send_responses.pop(i)
+                        return res
 
 
     def send(self, msg:str):
         global logger
         logger.log("sending: "+msg)
         msg_len = len(msg)
+        msg_id = SHA256.new(msg.encode("utf-8")).hexdigest()
 
         num = int(msg_len/512)
         num = num + 1 if not msg_len % 512 == 0 else num
         
-        self.connection.send(str(num).encode("utf-8"))
+        logger.log("sending num:" + str(num) + f"({msg})")
+        send_msg = "{"+f'"type": "NUM", "num": {num}, "id": "{msg_id}"'+"}"
+        temp = self.connection.send(send_msg.encode("utf-8"))
 
-        temp = self.connection.recv(1024)
+        logger.log("reciebeing confirmation")
+        temp = self.recv_send_response(msg_id)
         if not temp == "OK":
-            print("S1", temp)
+            logger.log("S1" + str(temp))
 
         for i in range(num):
-            print(i)
-            self.connection.send(msg[512*i:512*i+512])
-            temp = self.connection.recv(1024)
+            logger.log(i)
+            msg_part = msg[512*i:512*i+512].replace("\"", '\\"')
+            send_msg = "{"+f'"type": "MSG PART", "id": "{msg_id}", "content": "{msg_part}"'+"}"
+            self.connection.send(send_msg.encode("utf-8"))
+            temp = self.recv_send_response(msg_id)
             if not temp == "OK":
-                print("S2", temp)
+                logger.log("S2" + str(temp))
+            logger.log("end_send")
 
 
 class NodeConnection():
@@ -151,8 +194,12 @@ class NodeConnection():
         self.info = conn_info
         self.queue = []
         self.responses = []
+        self.send_responses = []
+        self.temp_msgs = {}
         self.ip = self.info["ip"]
         self.real_ip = address
+        global logger 
+        logger.log("connected by", self.ip)
 
         thread = threading.Thread(target=self.process_queue)
         thread.start()
@@ -161,20 +208,47 @@ class NodeConnection():
         global connections, logger
         while True:
             try:
-                msg = self.recv()
+                msg = self.connection.recv(1024).decode("utf-8")
                 if msg == "":
                     raise socket.error
-                
-                msg = json.loads(msg)
-                logger.log(msg["type"])
-                if msg["type"] == "ACTION":
-                    self.queue.append(msg)
-                elif msg["type"] == "RESPONSE":
-                    self.responses.append(msg)
 
+                msgs = msg.replace("}{", "}\0{").split("\0")
+                logger.log("msgs", msgs)
+                for msg in msgs:
+                    msg = json.loads(msg)
+                    logger.log("msg", msg)
+
+                    if msg["type"] == "NUM" and not msg["num"] == 0:
+                        self.temp_msgs[msg["id"]] = {"content": "", "num": msg["num"], "act_num": 0}
+                        send_msg = "{"+f'"type": "CONN RESPONSE", "response": "OK", "id": "{msg["id"]}"'+"}"
+                        self.connection.send(send_msg.encode("utf-8"))
+
+                    if msg["type"] == "MSG PART":
+                        self.temp_msgs[msg["id"]]["content"] += msg["content"]
+                        self.temp_msgs[msg["id"]]["act_num"] += 1
+
+                        if self.temp_msgs[msg["id"]]["num"] == self.temp_msgs[msg["id"]]["act_num"]:
+                            res_msg = json.loads(self.temp_msgs[msg["id"]]["content"])
+                            if res_msg["type"] == "ACTION":
+                                self.queue.append(res_msg)
+                            elif res_msg["type"] == "RESPONSE":
+                                self.responses.append(res_msg)
+                        send_msg = "{"+f'"type": "CONN RESPONSE", "response": "OK", "id": "{msg["id"]}"'+"}"
+                        self.connection.send(send_msg.encode("utf-8"))
+                    
+                    if msg["type"] == "CONN RESPONSE":
+                        logger.log("queueing", msg)
+                        self.send_responses.append(msg)
+                        #send_msg = "{"+f'"type": "CONN RESPONSE", "response": "OK", "id": "{msg["id"]}"'+"}"
+                        #self.connection.send(send_msg.encode("utf-8"))
 
             except socket.error as e:
                 logger.log("[ERROR]" + str(e))
+                connections.remove(self)
+                break
+
+            except json.decoder.JSONDecodeError as e:
+                logger.log("[ERROR]" + str(e) + " " + str(msg))
                 connections.remove(self)
                 break
 
@@ -211,45 +285,50 @@ class NodeConnection():
         print("waiting")
         while True:
             if not len(self.responses) == 0:
-                print(self.responses)
+                print(22, self.responses)
                 res = self.responses[0]
                 self.responses.pop(0)
                 return res
 
-    def recv(self):
-        num = int(self.connection.recv(1024))
-        self.connection.send("OK")
-        msg = ""
-        for i in range(num):
-            msg += self.connection.recv(1024)
-            self.connection.send("OK")
-
-        return msg
+    def recv_send_response(self, msg_id:str):
+        global logger
+        logger.log("waiting q")
+        while True:
+            if not len(self.send_responses) == 0:
+                logger.log("rcr", len(self.send_responses), threading.current_thread().name)
+                for i, response in enumerate(self.send_responses):
+                    if response["id"] == msg_id:
+                        res = response["response"]
+                        self.send_responses.pop(i)
+                        return res
 
 
     def send(self, msg:str):
         global logger
         logger.log("sending: "+msg)
         msg_len = len(msg)
+        msg_id = SHA256.new(msg.encode("utf-8")).hexdigest()
 
         num = int(msg_len/512)
         num = num + 1 if not msg_len % 512 == 0 else num
         
         logger.log("sending num:" + str(num) + f"({msg})")
-        temp = self.connection.send(str(num).encode("utf-8"))
-        logger.log("sent: " + str(temp)+ str(len("{"+f'"type": "RESPONSE", "response": "{num}"'+"}")))
+        send_msg = "{"+f'"type": "NUM", "num": {num}, "id": "{msg_id}"'+"}"
+        temp = self.connection.send(send_msg.encode("utf-8"))
 
         logger.log("reciebeing confirmation")
-        temp = self.connection.recv(1024)
+        temp = self.recv_send_response(msg_id)
         if not temp == "OK":
-            logger.log("S1" + temp)
+            logger.log("S1" + str(temp))
 
         for i in range(num):
             logger.log(i)
-            self.connection.send(str({msg[512*i:512*i+512]}).encode("utf-8"))
-            temp = self.connection.recv(1024)
+            msg_part = msg[512*i:512*i+512].replace("\"", '\\"')
+            send_msg = "{"+f'"type": "MSG PART", "id": "{msg_id}", "content": "{msg_part}"'+"}"
+            self.connection.send(send_msg.encode("utf-8"))
+            temp = self.recv_send_response(msg_id)
             if not temp == "OK":
-                logger.log("S2" + temp)
+                logger.log("S2" + str(temp))
 
 def broadcast(msg, ip):
     global connections, logger
@@ -333,6 +412,7 @@ def get_posts(msg_info:dict, connection:ClientConnection):
     connection.send(str(len(posts)))
 
     res = connection.recv_from_queue()
+    logger.log("res1", res)
     if not res == "OK":
         logger.log(res)
 
@@ -376,13 +456,6 @@ def get_post(msg_info:dict, connection:ClientConnection):
     connection.send(msg)
 
 
-
-
-
-
-
-
-
 def manage_new_client(connection, conn_info):
     global clients, max_clients, logger
     logger.log(f"managing new client")
@@ -423,13 +496,6 @@ def manage_ip(msg_info:dict, node_ip:str):
         err2 = db.execute(f"INSERT INTO ips(ip, time_connected) VALUES('{ip}', {time.time()});")
         if not err1 == "ERROR" and not err2 == "ERROR":
             broadcast_ip(ip, node_ip)
-
-
-
-
-
-
-
 
 
 def check_if_connected(ip:str):

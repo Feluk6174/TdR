@@ -10,7 +10,7 @@ def log(message, logger = None):
         print(message)
 
 def is_safe(*args, logger = None):
-    invalid_chars = ["\\", "\'", "\"", "\n", "\t", "\r", "\0", "%", "\b", ";", "="]
+    invalid_chars = ["\\", "\'", "\"", "\n", "\t", "\r", "\0", "%", "\b", ";", "=", "\u259e"]
 
     arguments = ""
     for argument in args:
@@ -74,7 +74,7 @@ class Database():
                         self.return_response.append((self.queue[0][2], cursor.fetchall()))
 
                     except mysql.connector.Error as e:
-                        log(e, logger = self.logger)
+                        log("[ERROR]", e, logger = self.logger)
                         self.connect()
                         self.return_response.append((self.queue[0][2], "ERROR"))
 
@@ -86,7 +86,7 @@ class Database():
                         self.return_response.append((self.queue[0][2], None))
                         
                     except mysql.connector.Error as e:
-                        log(e, logger = self.logger)
+                        log("[ERROR]", e, logger = self.logger)
                         self.connect()
                         self.return_response.append((self.queue[0][2], "ERROR"))
                 
