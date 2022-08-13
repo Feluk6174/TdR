@@ -139,7 +139,6 @@ class ClientConnection():
         global logger
         while True:
             if not len(self.responses) == 0:
-                print(22, self.responses)
                 res = self.responses[0]
                 self.responses.pop(0)
                 return res
@@ -148,7 +147,6 @@ class ClientConnection():
         global logger
         while True:
             if not len(self.send_responses) == 0:
-                print(self.send_responses)
                 for i, response in enumerate(self.send_responses):
                     if response["id"] == msg_id:
                         res = response["response"]
@@ -250,7 +248,6 @@ class NodeConnection():
             if not len(self.queue) == 0:
                 msg_info = self.queue[0]
                 logger.log(f"recived: {msg_info} {type(msg_info)}")
-                print(msg_info["action"])
                 if msg_info["action"] == "IP":
                     manage_ip(msg_info, self.ip)
 
@@ -274,20 +271,16 @@ class NodeConnection():
                 self.queue.pop(0)
     
     def recv_from_queue(self):
-        print("waiting")
         while True:
             if not len(self.responses) == 0:
-                print(22, self.responses)
                 res = self.responses[0]
                 self.responses.pop(0)
                 return res
 
     def recv_send_response(self, msg_id:str):
         global logger
-        logger.log("waiting q")
         while True:
             if not len(self.send_responses) == 0:
-                logger.log("rcr", len(self.send_responses), threading.current_thread().name)
                 for i, response in enumerate(self.send_responses):
                     if response["id"] == msg_id:
                         res = response["response"]
@@ -303,18 +296,14 @@ class NodeConnection():
 
         num = int(msg_len/512)
         num = num + 1 if not msg_len % 512 == 0 else num
-        
-        logger.log("sending num:" + str(num) + f"({msg})")
         send_msg = "{"+f'"type": "NUM", "num": {num}, "id": "{msg_id}"'+"}"
         temp = self.connection.send(send_msg.encode("utf-8"))
 
-        logger.log("reciebeing confirmation")
         temp = self.recv_send_response(msg_id)
         if not temp == "OK":
             logger.log("S1" + str(temp))
 
         for i in range(num):
-            logger.log(i)
             msg_part = msg[512*i:512*i+512].replace("\"", '\\"')
             send_msg = "{"+f'"type": "MSG PART", "id": "{msg_id}", "content": "{msg_part}"'+"}"
             self.connection.send(send_msg.encode("utf-8"))
