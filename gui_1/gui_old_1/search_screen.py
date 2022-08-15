@@ -23,7 +23,7 @@ from kivy.clock import Clock
 from kivy.uix.screenmanager import FallOutTransition
 from kivy.uix.screenmanager import SlideTransition
 import kivy.utils
-import home_screen, access_my_info
+import acces_my_info, home_screen
 from datetime import datetime
 
 import home_screen, functions
@@ -102,7 +102,7 @@ class SearchScreen (Screen):
         #current: 1 = popular, 2 = fav
         self.current_posts = 0
         #self.quantity_popular_posts = 8
-        #self.quantity_for_user_posts = 11
+        #self.quantity_favourite_posts = 11
         #self.popular_posts_header_press(0)
 
 
@@ -165,8 +165,8 @@ class SearchScreen (Screen):
             self.content_grid.remove_widget(self.newest_posts_box)
         
         if self.current_posts == 3:
-            self.for_user_posts_box.clear_widgets()
-            self.content_grid.remove_widget(self.for_user_posts_box)
+            self.favourite_posts_box.clear_widgets()
+            self.content_grid.remove_widget(self.favourite_posts_box)
 
         self.posts_display_header_box.clear_widgets()
 
@@ -177,9 +177,9 @@ class SearchScreen (Screen):
         self.posts_display_header_box.add_widget(self.new_posts_header_display_btn)
         self.new_posts_header_display_btn.bind(on_press = self.new_posts_header_press)
         
-        self.for_user_posts_header_display_btn = Button (text = "For You")
-        self.posts_display_header_box.add_widget(self.for_user_posts_header_display_btn)
-        self.for_user_posts_header_display_btn.bind(on_press = self.for_user_posts_header_press)
+        self.favourite_posts_header_display_btn = Button (text = "Favourites")
+        self.posts_display_header_box.add_widget(self.favourite_posts_header_display_btn)
+        self.favourite_posts_header_display_btn.bind(on_press = self.favourite_posts_header_press)
 
         self.popular_posts_box = BoxLayout(size_hint_y = None, height = len(self.all_popular_posts_info) * Window.size[0] / 1.61, orientation = "vertical")
         self.content_grid.add_widget(self.popular_posts_box)
@@ -200,8 +200,8 @@ class SearchScreen (Screen):
             self.content_grid.remove_widget(self.popular_posts_box)
         
         if self.current_posts == 3:
-            self.for_user_posts_box.clear_widgets()
-            self.content_grid.remove_widget(self.for_user_posts_box)
+            self.favourite_posts_box.clear_widgets()
+            self.content_grid.remove_widget(self.favourite_posts_box)
 
         self.posts_display_header_box.clear_widgets()
 
@@ -212,9 +212,9 @@ class SearchScreen (Screen):
         self.new_posts_header_display_label = Label(text = "New")
         self.posts_display_header_box.add_widget(self.new_posts_header_display_label)
         
-        self.for_user_posts_header_display_btn = Button (text = "For You")
-        self.posts_display_header_box.add_widget(self.for_user_posts_header_display_btn)
-        self.for_user_posts_header_display_btn.bind(on_press = self.for_user_posts_header_press)
+        self.favourite_posts_header_display_btn = Button (text = "Favourites")
+        self.posts_display_header_box.add_widget(self.favourite_posts_header_display_btn)
+        self.favourite_posts_header_display_btn.bind(on_press = self.favourite_posts_header_press)
 
 
         self.newest_posts_box = BoxLayout(size_hint_y = None, height = len(self.all_newest_posts_info) * Window.size[0] / 1.61, orientation = "vertical")
@@ -226,27 +226,9 @@ class SearchScreen (Screen):
         self.content_grid.bind(minimum_height=self.content_grid.setter('height'))
         self.current_posts = 2
 
-    def for_user_posts_header_press(self, instance):
-        """
-        conn = self.connection
-        all_my_following = access_my_info.get_following_users()
-        self.all_for_user_posts_info = []
-        for user in all_my_following:
-            liked_id_from_user = conn.get_liked_posts_id_from_user(user)
-            for id in liked_id_from_user:
-                post = conn.get_post_from_id(id)
-                self.all_for_user_posts_info.append(post)
-                erased = 0
-                for x in range(len(self.all_for_user_posts_info)):
-                    repeat = 0
-                    for post in self.all_for_user_posts_info:
-                        if self.all_for_user_posts_info[x] == post:
-                            repeat = repeat + 1
-                    if repeat > 1:
-                        self.all_for_user_posts_info.pop(x)
-        """
-        self.all_for_user_posts_info = []
-        
+    def favourite_posts_header_press(self, instance):
+        #self.username = acces_my_info.GetName()
+        self.all_favourite_posts_info = acces_my_info.get_liked_posts(self.connection)
 
         if self.current_posts == 1:
             self.popular_posts_box.clear_widgets()
@@ -266,22 +248,32 @@ class SearchScreen (Screen):
         self.popular_posts_header_display_btn.add_widget(self.new_posts_header_display_btn)
         self.new_posts_header_display_btn.bind(on_press = self.new_posts_header_press)
 
-        self.for_user_posts_header_display_label = Label (text = "For You")
-        self.posts_display_header_box.add_widget(self.for_user_posts_header_display_label)
+        self.favourite_posts_header_display_label = Label (text = "Favourites")
+        self.posts_display_header_box.add_widget(self.favourite_posts_header_display_label)
 
-        self.for_user_posts_box = BoxLayout(size_hint_y = None, height = len(self.all_for_user_posts_info) * Window.size[0] / 1.61, orientation = "vertical")
-        self.content_grid.add_widget(self.for_user_posts_box)
+        self.favourite_posts_box = BoxLayout(size_hint_y = None, height = len(self.all_favourite_posts_info) * Window.size[0] / 1.61, orientation = "vertical")
+        self.content_grid.add_widget(self.favourite_posts_box)
 
-        #for_user posts
-        self.create_for_user_posts()
+        #favourite posts
+        self.create_favourite_posts()
         
         self.content_grid.bind(minimum_height=self.content_grid.setter('height'))
         self.current_posts = 3
 
+    def create_favourite_posts(self):
+        self.all_displayed_posts_list = []
+        connection = self.connection
+        for a in len(self.all_favourite_posts_info):
+            actual_maybe_like = 1
+            user_liked_info = connection.get_user_info(self.all_favourite_posts_info[a]["user_name"])
+            self.post_btn = functions.make_post_btn(self, self.all_favourite_posts_info[a]["user_name"], user_liked_info["profile_image"], self.all_favourite_posts_info[a]["flags"], self.all_favourite_posts_info[a]["content"], 0, self.all_favourite_posts_info[a]["time_posted"], self.all_favourite_posts_info[a]["id"], actual_maybe_like, a)
+            self.favourite_posts_box.add_widget(self.post_btn)
+            self.all_displayed_posts_list.append((self.all_favourite_posts_info[a]["id"], self.post_btn, actual_maybe_like))
+
     def create_popular_posts(self):
         self.all_displayed_posts_list = []
         conn = self.connection
-        my_liked_posts_id = access_my_info.get_liked_posts_id(conn)
+        my_liked_posts_id = acces_my_info.get_liked_posts_id(conn)
         for p in len(self.all_popular_posts_info):
             user_post_info = conn.get_user_info(self.all_popular_posts_info[p]["user_name"])
             #0 none, 1 yes, 
@@ -296,12 +288,13 @@ class SearchScreen (Screen):
             self.popular_posts_box.add_widget(self.post_btn)
             self.all_displayed_posts_list.append((self.all_popular_posts_info[p]["id"], self.post_btn, actual_maybe_like))
 
+
     def create_newest_posts(self):
         self.all_displayed_posts_list = []
         conn = self.connection
-        my_liked_posts_id = access_my_info.get_liked_id(conn)
+        my_liked_posts_id = acces_my_info.get_liked_id(conn)
         for t in len(self.all_newest_posts_info):
-            user_post_info = conn.get_user_info(self.all_newest_posts_info[t]["user_name"])
+            user_post_info = conn.get_user(self.all_newest_posts_info[t]["user_name"])
             actual_maybe_like = 0
             try:
                 for liked in my_liked_posts_id:
@@ -312,24 +305,6 @@ class SearchScreen (Screen):
             self.post_btn = functions.make_post_btn(self, self.all_newest_posts_info[t]["user_name"], user_post_info["profile_image"], self.all_newest_posts_info[t]["flags"], self.all_newest_posts_info[t]["content"], 0, self.all_newest_posts_info[t]["time_posted"], self.all_newest_posts_info[t]["id"], actual_maybe_like, t)
             self.newest_posts_box.add_widget(self.post_btn)
             self.all_displayed_posts_list.append((self.all_newest_posts_info[t]["id"], self.post_btn, actual_maybe_like))
-
-    #improve. check if liked
-    def create_for_user_posts(self):
-        self.all_displayed_posts_list = []
-        conn = self.connection
-        my_liked_posts_id = access_my_info.get_liked_id(conn)
-        for a in len(self.all_for_user_posts_info):
-            user_post_info = conn.get_user(self.all_newest_posts_info[a]["user_name"])
-            actual_maybe_like = 0
-            try:
-                for liked in my_liked_posts_id:
-                    if liked == self.all_newest_posts_info[a]["id"]:
-                        actual_maybe_like = 1
-            except KeyError:
-                pass
-            self.post_btn = functions.make_post_btn(self, self.all_for_user_posts_info[a]["user_name"], user_post_info["profile_image"], self.all_for_user_posts_info[a]["flags"], self.all_for_user_posts_info[a]["content"], 0, self.all_for_user_posts_info[a]["time_posted"], self.all_for_user_posts_info[a]["id"], actual_maybe_like, a)
-            self.for_user_posts_box.add_widget(self.post_btn)
-            self.all_displayed_posts_list.append((self.all_for_user_posts_info[a]["id"], self.post_btn, actual_maybe_like))
 
     def get_filter_flags(self):
         self.flag_list = ""

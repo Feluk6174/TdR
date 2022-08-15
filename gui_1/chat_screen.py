@@ -1,10 +1,11 @@
 #import kivy
+from multiprocessing import connection
 from kivy.app import App
 from functools import partial
 from kivy.uix.widget import Widget
 from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.button import Button
 from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.button import Button
 from kivy.uix.button import ButtonBehavior
 from kivy.uix.label import Label
 from kivy.uix.image import Image
@@ -17,110 +18,186 @@ from kivy.base import runTouchApp
 from kivy.properties import StringProperty
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
+import time
 from kivy.clock import Clock
 from kivy.uix.screenmanager import FallOutTransition
 from kivy.uix.screenmanager import SlideTransition
 import kivy.utils
-import acces_my_info
+import home_screen, access_my_info
+from datetime import datetime
 
-def get_post_text(num):
-    return str(num)
+import search_screen, functions
+
 
 class ChatScreen (Screen):
-    def __init__(self, **kwargs):
+    def __init__(self, connection, **kwargs):
         super(ChatScreen, self).__init__(**kwargs)
-        self.Box0 = BoxLayout()
-        self.Box0.orientation = "vertical"
-        self.add_widget(self.Box0)
 
-        self.box1 = BoxLayout (size_hint = (1, 0.1 / 0.9))
-        self.Box0.add_widget(self.box1)
+        self.connection = connection
 
-        self.lab1 = Button (border = (0, 0, 0, 0), size_hint = (None, None), size = ((Window.size[1] - Window.size[0] / 5) * 0.1, (Window.size[1] - Window.size[0] / 5) * 0.1), background_normal = 'images/logo.png', background_down = 'images/logo.png')
-        self.box1.add_widget(self.lab1)
-        self.lab1.bind(on_release = self.press_btn13)
+        self.main_all_box = BoxLayout(orientation = "vertical")
+        self.add_widget(self.main_all_box)
+
+        self.header_box = BoxLayout (size_hint = (1, 0.1))
+        self.main_all_box.add_widget(self.header_box)
+
+        self.logo = Button (border = (0, 0, 0, 0), size_hint = (None, None), size = ((Window.size[1] - Window.size[0] / 5) * 0.1, (Window.size[1] - Window.size[0] / 5) * 0.1), background_normal = 'images/logo.png', background_down = 'images/logo.png', on_release = self.press_home_btn)
+        self.header_box.add_widget(self.logo)
         
-        self.text1 = Label(text = "Small brother", size_hint = (2, 1))
-        self.box1.add_widget(self.text1)
-        self.text1.bind(on_text_validate = self.Search1)
+        self.header_text = Label(text = "Small brother", size_hint = (2, 1))
+        self.header_box.add_widget(self.header_text)
         
-        self.btn1 = Button(border = (0, 0, 0, 0), size_hint = (None, None), size = ((Window.size[1] - Window.size[0] / 5) * 0.1, (Window.size[1] - Window.size[0] / 5) * 0.1), background_normal = 'images/settings1.png', background_down = 'images/settings2.png')
-        self.box1.add_widget(self.btn1)
-        self.btn1.bind(on_press = self.Settings)
+        self.header_btn = Button(border = (0, 0, 0, 0), size_hint = (None, None), size = ((Window.size[1] - Window.size[0] / 5) * 0.1, (Window.size[1] - Window.size[0] / 5) * 0.1), background_normal = 'images/settings1.png', background_down = 'images/settings2.png')
+        self.header_box.add_widget(self.header_btn)
+        self.header_btn.bind(on_release = self.header_btn_press)
         
-        self.lay_float = FloatLayout()
-        self.Box0.add_widget(self.lay_float)
 
-        self.box2 = BoxLayout (pos_hint = {"x" : 0, "y" : 0})
-        self.lay_float.add_widget(self.box2)
+        self.float_content_layout = FloatLayout()
+        self.main_all_box.add_widget(self.float_content_layout)
+
+        self.content_box = BoxLayout (pos_hint = {"x" : 0, "y" : 0})
+        self.float_content_layout.add_widget(self.content_box)
         
-        self.grid = GridLayout(cols = 1, size_hint_y = None)
-        self.grid.bind(minimum_height=self.grid.setter('height'))
+        self.content_grid = GridLayout(cols = 1, size_hint_y = None)
+        self.content_grid.bind(minimum_height=self.content_grid.setter('height'))
 
-        for a in range (20):
-            self.btn = Button (size_hint_y = None, height = Window.size[0] / (1.61 * 2), text = "A" + (get_post_text(a)))
-            self.grid.add_widget(self.btn)
+        self.content_grid_scroll = ScrollView ()
+        self.content_grid_scroll.add_widget (self.content_grid)
+        self.content_box.add_widget (self.content_grid_scroll)
 
-        self.scroll = ScrollView ()
-        self.scroll.add_widget (self.grid)
-        self.box2.add_widget (self.scroll)
+        #create_chats()
+        self.refresh_messages()
 
-        self.ran2 = Button (border = (0, 0, 0, 0), background_normal = 'images/dice1.png', size_hint = (None, None), height = Window.size[0] * 0.2, width = Window.size[0] * 0.2, pos_hint = {"x" : 0.75, "y" : 0.035})
-        self.lay_float.add_widget(self.ran2)
-        self.ran2.bind(on_press = self.random2)
+        #desplegable para configurar la búsqueda
+        self.random_chat_btn = Button (border = (0, 0, 0, 0), background_normal = 'images/dice1.png', size_hint = (None, None), height = Window.size[0] * 0.2, width = Window.size[0] * 0.2, pos_hint = {"x" : 0.75, "y" : 0.035})
+        self.float_content_layout.add_widget(self.random_chat_btn)
+        self.random_chat_btn.bind(on_release = self.random_chat_press)
 
 
-        self.box3 = BoxLayout (size_hint_y = None, height = Window.size[0] / 5)
-        self.Box0.add_widget(self.box3)
+        self.ground_box = BoxLayout (size_hint_y = None, height = Window.size[0] / 5)
+        self.main_all_box.add_widget(self.ground_box)
 
-        self.btn11 = Label (text = ("Chat"))
-        self.box3.add_widget(self.btn11)
+        self.chat_label = Label (text = ("Chat"))
+        self.ground_box.add_widget(self.chat_label)
 
-        self.btn12 = Button (text = ("S"))
-        self.box3.add_widget(self.btn12)
-        self.btn12.bind(on_press = self.press_btn12)
+        self.search_btn = Button (text = ("S"))
+        self.ground_box.add_widget(self.search_btn)
+        self.search_btn.bind(on_release = self.press_search_btn)
 
-        self.btn13 = Button (text = ("H"))
-        self.box3.add_widget(self.btn13)
-        self.btn13.bind(on_press = self.press_btn13)
+        self.home_btn = Button (text = ("H"))
+        self.ground_box.add_widget(self.home_btn)
+        self.home_btn.bind(on_release = self.press_home_btn)
 
-        self.btn14 = Button (text = ("P"))
-        self.box3.add_widget(self.btn14)
-        self.btn14.bind(on_press = self.press_btn14)
+        self.make_posts_btn = Button (text = ("P"))
+        self.ground_box.add_widget(self.make_posts_btn)
+        self.make_posts_btn.bind(on_release = self.press_make_posts_btn)
 
-        self.btn15 = Button (text = ("U"))
-        self.box3.add_widget(self.btn15)
-        self.btn15.bind(on_press = self.press_btn15)
+        self.user_profile_btn = Button (text = ("U"))
+        self.ground_box.add_widget(self.user_profile_btn)
+        self.user_profile_btn.bind(on_release = self.press_user_profile_btn)
 
+
+    def generate_chats(self):
+        #last_time_stamp = access_my_info.get_last_time_stamp()
+        conn = self.connection
+        self.displayed_chat_list = []
+        chat_list = access_my_info.get_new_chats(conn, (0, 20))
+        #gotta get last timestamp, ask api for new messages and change stored timestamp
+        for a in range (len(chat_list)):
+            #functions.create_chat(chat_list{a}, a)
+            self.chat_btn = self.create_chat(chat_list[a], a)
+            self.content_grid.add_widget(self.chat_btn)
+            self.displayed_chat_list.append([chat_list[a]["chat_name"], self.chat_btn])
+            #info in chat (diccionari): "type" = chat (0) or group (1), "users" = list by alfabetic order (start with you??) (another list. 0 name 1 role in the group), "id" (get from hash of members, timestamp an rnd number?), "chat_name"(only if group) = nom del xat per l'usuari, "image" = ...(if a group), "alert" = 0 (no) or 1 (yes)
+            #les claus dels chats estan en un altre document i les aconseguim per la id del chat
+
+    def create_chat(self, chat_info, order_number):
+        conn = self.connection
+
+        self.chat_btn = BoxLayout(orientation = 'horizontal', size_hint_y = None, height = Window.size[0] / 1.61 / 2)
+
+
+        self.image_box = BoxLayout(orientation = 'horizontal', size_hint_x = None, width = Window.size[0] / 1.61 / 3)
+        self.chat_btn.add_widget(self.image_box)
+
+        self.black_border_for_image_btn_1 = Button(background_color = (0, 0, 0, 1), size_hint_x = None, width = Window.size[0] / 1.61 / 3 / 4, on_release = partial(self.chat_press, order_number))
+        self.black_border_for_image_btn_1.add_widget(self.black_border_for_image_btn_1)
+
+        self.black_border_for_image_box = BoxLayout(orientation = 'vertical', size_hint_x = None, width = Window.size[0] / 1.61 / 2)
+        self.image_box.add_widget(self.black_border_for_image_box)
+
+        self.black_border_for_image_btn_2 = Button(background_color = (0, 0, 0, 1), size_hint_y = None, height = Window.size[0] / 1.61 / 3 / 4, on_release = partial(self.chat_press, order_number))
+        self.black_border_for_image_box.add_widget(self.black_border_for_image_btn_2)
+
+        if chat_info["type"] == 0:
+            user_info = conn.get_user_info(chat_info["users"][0])
+            self.image_grid = functions.build_image(user_info["profile_image"])
         
-    def Search1(instance, value):
+        elif chat_info["type"] == 1:
+            self.image_grid = functions.build_image(chat_info["image"])
+        
+        self.black_border_for_image_box.add_widget(self.image_grid)
+
+
+        self.middle_box = BoxLayout(orientation = 'vertical')
+        self.chat_btn.add_widget(self.middle_box)
+
+        if chat_info["type"] == 0:
+            self.chat_name_btn = Button(text = chat_info["users"][0], on_release = partial(self.chat_press, order_number))
+        
+        elif chat_info["type"] == 1:
+            self.chat_name_btn = Button(text = chat_info["chat_name"], on_release = partial(self.chat_press, order_number))
+        
+        self.middle_box.add_widget(self.chat_name_btn)
+
+        if chat_info["type"] == 0:
+            last_message = access_my_info.message_from_chat(chat_info["users"][0], 0)
+            self.last_message_btn = Button(text = last_message, on_release = partial(self.chat_press, order_number))
+
+        elif chat_info["type"] == 1:
+            last_message = access_my_info.message_from_chat(chat_info["chat_name"], 0)
+            self.last_message_btn = Button(text = last_message, on_release = partial(self.chat_press, order_number))
+
+        self.middle_box.add_widget(self.last_message_btn)
+
+        if chat_info["alert"] == 1:
+            self.alert_btn = Button(on_release = partial(self.chat_press, order_number), size_hint_x = None, width = Window.size[0] / 1.61 / 3, border = (0, 0, 0, 0), background_normal = 'images/logo.png')
+            self.chat_btn.add_widget(self.alert_btn)
+
+    def chat_press(self, order_number):
         pass
 
-    def Settings(self, instance):
+    def image_press(self, order_number):
+        self.chat_press(order_number)
+
+    def refresh_messages(self):
         pass
     
-    def random2(self, instance):
+    def header_btn_press(self, instance):
         pass
 
-    def press_btn11(self, instance):
-        pass
+    #def press_chat_btn(self, instance):
+        #pass
 
-    def press_btn12(self, instance):
+    def press_search_btn(self, instance):
+        search_screen.popular_posts_header_press(0)
         self.manager.transition = SlideTransition()
         self.manager.current = "search"
         self.manager.transition.direction = "left"
 
-    def press_btn13(self, instance):
-        self.manager.transition = SlideTransition()
-        self.manager.current = "main"
-        self.manager.transition.direction = "left"
-
-    def press_btn14(self, instance):
+    def press_home_btn(self, instance):
+        home_screen.get_my_posts(0)
         self.manager.transition = SlideTransition()
         self.manager.current = "last"
         self.manager.transition.direction = "left"
 
-    def press_btn15(self, instance):
+    def press_make_posts_btn(self, instance):
+        self.manager.transition = SlideTransition()
+        self.manager.current = "last"
+        self.manager.transition.direction = "left"
+
+    def press_user_profile_btn(self, instance):
+        #profile_screen.set_profile_screen_inputs
         self.manager.transition = SlideTransition()
         self.manager.current = "profile"
         self.manager.transition.direction = "left"

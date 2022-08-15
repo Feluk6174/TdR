@@ -22,55 +22,41 @@ from kivy.uix.screenmanager import FallOutTransition
 from kivy.uix.screenmanager import SlideTransition
 import kivy.utils
 import json
+import register_screen
 import random
 from datetime import datetime
-from kivy.graphics import BorderImage
-from kivy.lang import Builder
 
-import api, register_screen, user_image_register_screen, profile_screen, home_screen, chat_screen, search_screen, create_post_screen, user_image_screen
+import chat_screen, home_screen, loading_screen, post_screen, profile_screen, search_screen, acces_my_info, register_screen, profile_image_screen, api, profile_image_register_screen
 
-#optional. errase when doing apk
-Window.size = (500, 750)
-
+Window.size = (540*0.7, 880*0.7)
 connection = api.Connection()
 
 
 class MyApp (App):
     def build(self):
-
-        #set basis. screen manager and connection
         global connection
         sm = ScreenManager()
-
-        #look if user created and if it is registered. if it does not, make it
-        check_info = register_screen.check_my_info_exists()
-        if check_info == False:
-            sm.add_widget(register_screen.RegisterScreen(connection, name = "register"))
-            sm.add_widget(user_image_register_screen.ImageScreen(connection, name = "image_register"))
-        elif check_info == True:
-            check_register = register_screen.check_my_info_exists(connection)
-            if check_register == False:
-                register_screen.register(connection)
-            #make screens of app
+        check = register_screen.check_register()
+        if check == True:
+            #pass
+            #register_screen.Reg_f(connection)
             my_profile_screen = profile_screen.ProfileScreen(connection, name = "profile")
+            
             sm.add_widget(home_screen.MainScreen(connection, name = "main"))
-            sm.add_widget(chat_screen.ChatScreen(connection, name = "chat"))
+            sm.add_widget(chat_screen.ChatScreen(name = "chat"))
             sm.add_widget(search_screen.SearchScreen(connection, name = "search"))
-            sm.add_widget(create_post_screen.PostUserScreen(connection, name = "last"))
+            sm.add_widget(post_screen.PostUserScreen(connection, name = "last"))
             sm.add_widget(my_profile_screen)
-            sm.add_widget(user_image_screen.ImageScreen(my_profile_screen, name = "image"))
+            sm.add_widget(profile_image_screen.ImageScreen(my_profile_screen, name = "image"))
+        elif check == False:
+            sm.add_widget(register_screen.RegisterScreen(connection, sm, name = "register"))
+            sm.add_widget(profile_image_register_screen.ImageScreen(name = "image"))
+            sm.add_widget(loading_screen.LoadScreen(name = "load"))
         return sm
-
-
 
 if __name__ == "__main__":
     MyApp().run()
-
-
-
-
-#order posts
-#functions clicking posts
+    
 
 
 
