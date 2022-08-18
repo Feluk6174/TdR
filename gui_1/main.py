@@ -67,7 +67,10 @@ if __name__ == "__main__":
     MyApp().run()
 
 
-
+#make image of register repeat password and 2 (when wrong)
+#improve buttons to other screens
+#alarm symbol in chat button on ground box of other screens
+#refresh def in all screens
 
 #order posts
 #functions clicking posts

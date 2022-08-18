@@ -130,7 +130,7 @@ class ChatScreen (Screen):
         self.black_border_for_image_box.add_widget(self.black_border_for_image_btn_2)
 
         if chat_info["type"] == 0:
-            user_info = conn.get_user_info(chat_info["users"][0])
+            user_info = conn.get_user(chat_info["users"][0])
             self.image_grid = functions.build_image(user_info["profile_image"])
         
         elif chat_info["type"] == 1:

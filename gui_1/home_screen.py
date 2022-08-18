@@ -130,6 +130,7 @@ class MainScreen (Screen):
         self.posts_box.clear_widgets()
         self.posts_grid.remove_widget(self.posts_box)
         self.all_posts_info = self.get_new_follower_posts(self.connection)
+        self.all_posts_info = functions.order_posts_by_timestamp(self.all_posts_info)
         self.posts_box = BoxLayout(orientation = "vertical", size_hint_y = None, height = Window.size[0] / 1.61 * (len(self.all_posts_info)))
         self.posts_grid.add_widget(self.posts_box)
         for p in range(len(self.all_posts_info)):

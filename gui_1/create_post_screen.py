@@ -176,7 +176,7 @@ class PostUserScreen (Screen):
     #    pass
 
     def press_user_profile_btn(self, instance):
-        profile_screen.refresh_profile_screen(profile_scrn)
+        profile_screen.refresh_profile_screen(profile_screen)
         self.manager.transition = SlideTransition()
         self.manager.current = "profile"
         self.manager.transition.direction = "left"

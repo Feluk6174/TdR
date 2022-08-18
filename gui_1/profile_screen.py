@@ -176,6 +176,7 @@ class ProfileScreen (Screen):
         #self.my_posts_list = conn.get_user_posts(self.user_name_btn.text)
         #self.my_posts_list = access_my_info.get_my_posts()
         self.my_posts_list = []
+        self.my_posts_list = functions.order_posts_by_timestamp(self.my_posts_list)
 
         if self.current_posts == 2:
             self.favourite_posts_box.clear_widgets()
@@ -201,6 +202,7 @@ class ProfileScreen (Screen):
         #with connection or in phone memory
         #self.my_liked_list = access_my_info.get_liked_posts(conn)
         self.my_liked_posts_list = []
+        self.my_liked_posts_list = functions.order_posts_by_timestamp(self.my_liked_posts_list)
 
         if self.current_posts == 1:
             self.my_posts_box.clear_widgets()

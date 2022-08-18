@@ -144,4 +144,19 @@ def add_liked_or_unliked_post(post_id, like_or_not):
     #change in server (api) and in my info (acces_my_info)
     pass
 
-
+def order_posts_by_timestamp(posts_to_order):
+    length = len(posts_to_order)
+    how_big_list = []
+    final_list = []
+    for a in range (length):
+        how_big_list.append([0, 0])
+        for b in range (length):
+            if posts_to_order[a]["time_stamp"] > posts_to_order[b]["time_stamp"]:
+                how_big_list[a][1] = how_big_list[a][1] + 1
+            elif posts_to_order[a]["time_stamp"] < posts_to_order[b]["time_stamp"]:
+                how_big_list[a][0] = how_big_list[a][0] + 1
+    for c in range (length):
+        for d in range (length):
+            if how_big_list[c][0] == d:
+                final_list.append(posts_to_order[c])
+    return final_list

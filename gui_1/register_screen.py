@@ -69,7 +69,7 @@ class RegisterScreen (Screen):
         
 
         #llista imatges de fons ((inicials)
-        self.my_list_of_background_images = ['images/username_register.png', 'images/password_register.png', 'images/description_register.png', 'images/following_register.png']
+        self.my_list_of_background_images = ['images/username_register.png', 'images/password_register.png', 'images/repeat_password_register.png', 'images/description_register.png', 'images/following_register.png']
 
         self.main_box = BoxLayout()
         self.main_box.orientation = "vertical"
@@ -92,14 +92,17 @@ class RegisterScreen (Screen):
 
         self.password_text_input = TextInput(size_hint = (1, 1), multiline = False, background_normal = self.my_list_of_background_images[1], password = True, keyboard_on_key_down = self.password_text_input_background_image_f)
         self.main_box.add_widget(self.password_text_input)
+
+        self.repeat_password_text_input = TextInput(size_hint = (1, 1), multiline = False, background_normal = self.my_list_of_background_images[2], password = True, keyboard_on_key_down = self.repeat_password_text_input_background_image_f)
+        self.main_box.add_widget(self.repeat_password_text_input)
         
         self.image_button = Button(text = "Make your profile image", on_press = self.to_image_making)
         self.main_box.add_widget(self.image_button)
         
-        self.description_text_input = TextInput(size_hint = (1, 2), multiline = False, background_normal = self.my_list_of_background_images[2], keyboard_on_key_down = self.description_text_input_background_image_f)
+        self.description_text_input = TextInput(size_hint = (1, 2), multiline = False, background_normal = self.my_list_of_background_images[3], keyboard_on_key_down = self.description_text_input_background_image_f)
         self.main_box.add_widget(self.description_text_input)
         
-        self.following_text_input = TextInput(size_hint = (1, 1), multiline = False, background_normal = self.my_list_of_background_images[3], keyboard_on_key_down = self.following_text_input_background_image_f)
+        self.following_text_input = TextInput(size_hint = (1, 1), multiline = False, background_normal = self.my_list_of_background_images[4], keyboard_on_key_down = self.following_text_input_background_image_f)
         self.main_box.add_widget(self.following_text_input)
         
         self.register_button = Button(size_hint = (1, 1), text = "Register")
@@ -116,13 +119,19 @@ class RegisterScreen (Screen):
         if self.following_text_input.text != "":
             self.following_text_input.background_normal = 'atlas://data/images/defaulttheme/textinput'
         elif self.following_text_input.text == "":
-            self.following_text_input.background_normal = self.my_list_of_background_images[3]
+            self.following_text_input.background_normal = self.my_list_of_background_images[4]
          
     def description_text_input_background_image_f(self, instance):
         if self.description_text_input.text != "":
             self.description_text_input.background_normal = 'atlas://data/images/defaulttheme/textinput'
         if self.description_text_input.text == "":
-            self.description_text_input.background_normal = self.my_list_of_background_images[2]
+            self.description_text_input.background_normal = self.my_list_of_background_images[3]
+
+    def repeat_password_text_input_background_image_f(self, instance):
+        if self.password_text_input.text != "":
+            self.password_text_input.background_normal = 'atlas://data/images/defaulttheme/textinput'
+        elif self.password_text_input.text == "":
+            self.password_text_input.background_normal = self.my_list_of_background_images[2]
 
     def password_text_input_background_image_f(self, instance):
         if self.password_text_input.text != "":
@@ -149,14 +158,16 @@ class RegisterScreen (Screen):
             self.password_check = self.check_password()
             self.image_str = user_image_register_screen.get_my_image()
             self.color_check = self.check_image()
-            if self.password_check == False:
+            if self.password_check == False or self.password_text_input.text != self.repeat_password_text_input.text:
                 self.my_list_of_background_images[1] = 'images/password_2_register.png'
                 self.password_text_input.text = ""
+                self.my_list_of_background_images[2] = 'images/repeat_password_2_register.png'
+                self.repeat_password_text_input.text = ""
                 self.register_button.text = "Register. Sorry, try again"
             elif self.color_check == False:
                 self.image_button.text = "MAKE YOUR PROFILE IMAGE!"
                 self.register_button.text = "Register. Sorry, try again"
-            if self.password_check == True and self.color_check == True:
+            if self.password_check == True and self.color_check == True and self.password_text_input.text == self.repeat_password_text_input.text:
 
                 #guardar la informacio
                 self.username_text = self.username_text_input.text

@@ -159,6 +159,7 @@ class SearchScreen (Screen):
         #connection = self.connection
         #self.all_popular_posts_info = connection.get_popular_posts(self.get_filter_flags)
         self.all_popular_posts_info = []
+        self.all_popular_posts_info = functions.order_posts_by_timestamp(self.all_popular_posts_info)
 
         if self.current_posts == 2:
             self.newest_posts_box.clear_widgets()
@@ -194,6 +195,7 @@ class SearchScreen (Screen):
         #connection = self.connection
         #self.all_new_posts_info = connection.get_newest_posts(self.get_filter_flags)
         self.all_newest_posts_info = []
+        self.all_newest_posts_info = functions.order_posts_by_timestamp(self.all_newest_posts_info)
 
         if self.current_posts == 1:
             self.popular_posts_box.clear_widgets()
@@ -246,7 +248,7 @@ class SearchScreen (Screen):
                         self.all_for_user_posts_info.pop(x)
         """
         self.all_for_user_posts_info = []
-        
+        self.all_for_user_posts_info = functions.order_posts_by_timestamp(self.all_for_user_posts_info)
 
         if self.current_posts == 1:
             self.popular_posts_box.clear_widgets()
@@ -330,6 +332,9 @@ class SearchScreen (Screen):
             self.post_btn = functions.make_post_btn(self, self.all_for_user_posts_info[a]["user_name"], user_post_info["profile_image"], self.all_for_user_posts_info[a]["flags"], self.all_for_user_posts_info[a]["content"], 0, self.all_for_user_posts_info[a]["time_posted"], self.all_for_user_posts_info[a]["id"], actual_maybe_like, a)
             self.for_user_posts_box.add_widget(self.post_btn)
             self.all_displayed_posts_list.append((self.all_for_user_posts_info[a]["id"], self.post_btn, actual_maybe_like))
+
+    def refresh_search_screen(self):
+        pass
 
     def get_filter_flags(self):
         self.flag_list = ""

@@ -260,7 +260,7 @@ class ProfileScreen (Screen):
 
     def create_my_posts(self):
         conn = self.connection
-        my_liked_posts = acces_my_info.GetLiked(conn)
+        my_liked_posts = acces_my_info.get_liked(conn)
         for post in self.my_posts_list:
             actual_maybe_like = 0
             try:
@@ -348,7 +348,7 @@ class ProfileScreen (Screen):
         pass
 
     def UserFavourites(self, instance):
-        self.username = acces_my_info.GetName()
+        self.username = acces_my_info.get_name()
         conn = self.connection
         self.my_liked_list = acces_my_info.GetLiked(conn)
         #self.my_liked_list = conn.get_posts_with_id()
