@@ -12,6 +12,7 @@ def gen_key(passphrase):
     with open("rsa_key.bin", "wb") as f:
         f.write(encrypted_key)
 
+    print(key.publickey().export_key())
 
 def get_keys(passphrase):
     with open("rsa_key.bin", "rb") as f:

@@ -11,14 +11,21 @@ print(priv_key.export_key())
 
 with open("rsa_key.bin", "r") as f:
     keys_file = f.read()
-
+print(1.1)
 conn.register_user("Feluk6174", pub_key, "rsa_key.bin", "13388273892FA83BCADE910D082AB6619403DACAAA789020DC73F61839AC7390", "your mom is a pinnapple")
+print(2.1)
 conn.post("Hello world!", "1", "Feluk6174", "0101010101", priv_key)
+print(3.1)
 conn.post("Hey aixo ja funciona, sembla", "2", "Feluk6174", "0101010101", priv_key)
+print(4.1)
 conn.post("I just wanted to save the world", "3", "Feluk6174", "0101010101", priv_key)
+print(5.1)
 conn.post("ja no se que dir", "4", "Feluk6174", "0101010101", priv_key)
+print(6.1)
 print(conn.get_user_posts("Feluk6174"))
+print(7.1)
 print(conn.get_post("1"))
+print(8.1)
 print(conn.get_user("Feluk6174"))
 
 #b65672e9397175e9c099e86c608f2c5c10e48680172cd126e9ac14dfa3df534a

@@ -3,8 +3,14 @@ import random
 import threading
 import time
 
-def is_safe(*args):
-    invalid_chars = ["\\", "\'", "\"", "\n", "\t", "\r", "\0", "%", "\b", ";", "="]
+def log(message, logger = None):
+    if not logger == None:
+        logger.log(message)
+    else:
+        print(message)
+
+def is_safe(*args, logger = None):
+    invalid_chars = ["\\", "\'", "\"", "\n", "\t", "\r", "\0", "%", "\b", ";", "=", "\u259e"]
 
     arguments = ""
     for argument in args:
@@ -12,16 +18,17 @@ def is_safe(*args):
 
     for char in invalid_chars:
         if char in arguments:
-            print("[ERROR] Invalid char ", char)
+            log(logger, f"[ERROR] Invalid char {char}")
             return False
     return True
 
 
 class Database():
-    def __init__(self):
+    def __init__(self, logger=None):
         self.connect()
         self.queue = []
         self.return_response = []
+        self.logger = logger
         thread = threading.Thread(target=self.proces_queue)
         thread.start()
 
@@ -54,10 +61,10 @@ class Database():
             for response in self.return_response:
                 if response[0] == queue_id:
                     self.return_response.remove((queue_id, response[1]))
-                    return 
+                    return response[1]
 
     def proces_queue(self):
-        print("[STARTED QUEUE PROCESOR]")
+        log("[STARTED QUEUE PROCESOR]", logger=self.logger)
         while True:
             if len(self.queue) > 0:
                 if self.queue[0][0] == "q":
@@ -67,7 +74,7 @@ class Database():
                         self.return_response.append((self.queue[0][2], cursor.fetchall()))
 
                     except mysql.connector.Error as e:
-                        print(f"[ERROR]({threading.current_thread().name})", e)
+                        log("[ERROR]", e, logger = self.logger)
                         self.connect()
                         self.return_response.append((self.queue[0][2], "ERROR"))
 
@@ -79,7 +86,7 @@ class Database():
                         self.return_response.append((self.queue[0][2], None))
                         
                     except mysql.connector.Error as e:
-                        print(f"[ERROR]{threading.current_thread().name}", e)
+                        log("[ERROR]", e, logger = self.logger)
                         self.connect()
                         self.return_response.append((self.queue[0][2], "ERROR"))
                 
@@ -98,9 +105,9 @@ class Database():
         cursor.execute("DROP TABLE IF EXISTS posts;")
         cursor.execute("DROP TABLE IF EXISTS users;")
 
-        cursor.execute("CREATE TABLE users(user_name VARCHAR(16) NOT NULL UNIQUE PRIMARY KEY, public_key VARCHAR(392) NOT NULL UNIQUE, key_file VARCHAR(1764) NOT NULL UNIQUE, time_created INT NOT NULL, profile_picture VARCHAR(64) NOT NULL, info VARCHAR(255));")
-        cursor.execute("CREATE TABLE posts(id VARCHAR(23) NOT NULL PRIMARY KEY, user_id VARCHAR(16) NOT NULL, post VARCHAR(255) NOT NULL, flags VARCHAR(10) NOT NULL, time_posted INT NOT NULL, FOREIGN KEY (user_id) REFERENCES users (user_name), signature VARCHAR(344));")
-        cursor.execute("CREATE TABLE comments(id INT NOT NULL PRIMARY KEY, user_id VARCHAR(16) NOT NULL, post_id VARCHAR(23) NOT NULL, comment VARCHAR(255) NOT NULL, FOREIGN KEY (user_id) REFERENCES users (user_name), FOREIGN KEY (post_id) REFERENCES posts (id), signature VARCHAR(344));")
+        cursor.execute("CREATE TABLE users(user_name VARCHAR(16) COLLATE ascii_general_ci NOT NULL UNIQUE PRIMARY KEY, public_key VARCHAR(392) COLLATE ascii_general_ci NOT NULL UNIQUE, key_file VARCHAR(1764) COLLATE ascii_general_ci NOT NULL UNIQUE, time_created INT NOT NULL, profile_picture VARCHAR(64) COLLATE ascii_general_ci NOT NULL, info VARCHAR(200));")
+        cursor.execute("CREATE TABLE posts(id VARCHAR(23) NOT NULL PRIMARY KEY, user_id VARCHAR(16) COLLATE ascii_general_ci NOT NULL, post VARCHAR(255) NOT NULL, flags VARCHAR(10) NOT NULL, time_posted INT NOT NULL, signature VARCHAR(344), FOREIGN KEY (user_id) REFERENCES users (user_name));")
+        cursor.execute("CREATE TABLE comments(id INT NOT NULL PRIMARY KEY, user_id VARCHAR(16) COLLATE ascii_general_ci NOT NULL, post_id VARCHAR(23) NOT NULL, comment VARCHAR(255) NOT NULL, FOREIGN KEY (user_id) REFERENCES users (user_name), signature VARCHAR(344), FOREIGN KEY (post_id) REFERENCES posts (id));")
 
     
         cursor.execute("DROP TABLE IF EXISTS ips;")

@@ -1,30 +1,32 @@
-import auth
 import socket
 import time
-from Crypto.PublicKey import RSA
-from Crypto.Hash import SHA256
-
-auth.gen_key("Hola")
-priv_key, pub_key = auth.get_keys("Hola")
 
 connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-connection.connect(("127.0.0.1", 2222))
+connection.connect(("195.181.244.246", 6969))
 
-connection.send(auth.sanitize_key(pub_key.export_key().decode("utf-8")).encode("utf-8"))
- 
-time.sleep(1)
-data = "Hello World"
-connection.send(data.encode("utf-8"))
+msg = input("msg: ")
 
-time.sleep(1)
+msg_len = len(msg)
 
-signature = auth.sign(priv_key, data)
+num = int(msg_len/1024)
+num = num + 1 if not msg_len % 1024 == 0 else num
 
-connection.send(signature)
+while True:
+    connection.send(str(num).encode("utf-8"))
 
-print(pub_key)
-print(data)
-print(signature)
+    temp = connection.recv(1024).decode("utf-8")
+    if not temp == "OK":
+        print(temp)
+    #string[start:end:step]
 
-print(auth.verify(pub_key, signature, data))
-print("sent")
+    for i in range(num):
+        print(i)
+        connection.send(msg[1024*i:1024*i+1024].encode("utf-8"))
+        temp = connection.recv(1024).decode("utf-8")
+        if not temp == "OK":
+            print(temp)
+
+
+    print(msg_len, num)
+
+connection.close()
