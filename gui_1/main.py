@@ -67,12 +67,12 @@ if __name__ == "__main__":
     MyApp().run()
 
 
-#make image of register repeat password and 2 (when wrong)
+
+#text_input a alçada de teclat
 #improve buttons to other screens
 #alarm symbol in chat button on ground box of other screens
 #refresh def in all screens
 
-#order posts
 #functions clicking posts
 
 
@@ -88,9 +88,6 @@ if __name__ == "__main__":
 #textbox with background text
 #writing box
 #string into different lines 
-
-#password x2 + *****
-#small brother label
 
 #my_posts
 #following, followers

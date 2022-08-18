@@ -27,6 +27,7 @@ from datetime import datetime
 from kivy.graphics import BorderImage
 from kivy.lang import Builder
 
+import access_my_info
 
 
 def change_time(date):
@@ -72,12 +73,9 @@ def hex_color(hex_num):
     return col
 
 
-def build_image(screen, user_image, order_number):
+def build_image(screen, user_image, order_number, width):
     image_grid = GridLayout(cols = 8, size_hint_x = None)
-    if order_number < 0:
-        image_grid.width = (Window.size[1]  - Window.size[0] / 5) * 0.9 / 5
-    else:
-        image_grid.width = Window.size[0] / 1.61 / 6
+    image_grid.width = width
     for x in range (64):
         color_bit = Button(background_normal = '', background_color = kivy.utils.get_color_from_hex(hex_color(user_image[x])), on_release = partial(screen.image_press, order_number))
         image_grid.add_widget(color_bit)
@@ -93,7 +91,7 @@ def make_post_btn(screen, user_name, user_image, post_flags, text_content, nlike
     first_box = BoxLayout(orientation = "horizontal", size_hint = (1, 0.5))
     post.add_widget(first_box)
             
-    image_grid = build_image(screen, user_image, order_number)
+    image_grid = build_image(screen, user_image, order_number, (Window.size[1]  - Window.size[0] / 5) * 0.9 / 5)
     first_box.add_widget(image_grid)
         
     post_user_name = Button(text = user_name)
@@ -142,6 +140,7 @@ def make_post_btn(screen, user_name, user_image, post_flags, text_content, nlike
 
 def add_liked_or_unliked_post(post_id, like_or_not):
     #change in server (api) and in my info (acces_my_info)
+    access_my_info.add_or_remove_liked_post(post_id, like_or_not)
     pass
 
 def order_posts_by_timestamp(posts_to_order):
@@ -160,3 +159,28 @@ def order_posts_by_timestamp(posts_to_order):
             if how_big_list[c][0] == d:
                 final_list.append(posts_to_order[c])
     return final_list
+
+
+def check_new_chat_alarm():
+    pass
+
+def change_my_description(description):
+    access_my_info.change_my_description(description)
+    #enviar a conn
+
+def change_my_profile_image(color_string):
+    access_my_info.change_my_image(color_string)
+    #enviar a conn
+
+
+def adapt_text_to_window(text, text_size, window_size):
+    text_to_cut_lenght = len(text)
+    letters_per_line = window_size / text_size
+    jump_done = 0
+    while text_to_cut_lenght > letters_per_line:
+        for x in range (letters_per_line):
+            if text[len(text) - text_to_cut_lenght + letters_per_line - x -1] == " ":
+                if jump_done == 0:
+                    jump_done = 1
+                    text[letters_per_line - x -1] = "\"
+                    text_to_cut_lenght = text_to_cut_lenght - letters_per_line - x -1

@@ -146,7 +146,7 @@ class ProfileScreen (Screen):
         self.text_description = self.user_description_input.text
         self.description_box.clear_widgets()
 
-        access_my_info.change_my_description(self.text_description)
+        functions.change_my_description(self.text_description)
 
         self.user_description_btn = Button(text = self.text_description, on_release = self.user_description_press)
         self.description_box.add_widget(self.user_description_btn)
@@ -162,7 +162,7 @@ class ProfileScreen (Screen):
     def refresh_profile_screen(self):
         self.user_image_box.clear_widgets()
 
-        self.user_image_grid = functions.build_image(self, access_my_info.get_image(), -1)
+        self.user_image_grid = functions.build_image(self, access_my_info.get_image(), 0, Window.size[0] / 1.61 / 6)
         self.user_image_box.add_widget(self.user_image_grid)
         
         if self.current_posts != 1:

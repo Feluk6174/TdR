@@ -116,7 +116,7 @@ class ChatScreen (Screen):
 
         self.chat_btn = BoxLayout(orientation = 'horizontal', size_hint_y = None, height = Window.size[0] / 1.61 / 2)
 
-
+        """
         self.image_box = BoxLayout(orientation = 'horizontal', size_hint_x = None, width = Window.size[0] / 1.61 / 3)
         self.chat_btn.add_widget(self.image_box)
 
@@ -128,15 +128,16 @@ class ChatScreen (Screen):
 
         self.black_border_for_image_btn_2 = Button(background_color = (0, 0, 0, 1), size_hint_y = None, height = Window.size[0] / 1.61 / 3 / 4, on_release = partial(self.chat_press, order_number))
         self.black_border_for_image_box.add_widget(self.black_border_for_image_btn_2)
+        """
 
         if chat_info["type"] == 0:
             user_info = conn.get_user(chat_info["users"][0])
-            self.image_grid = functions.build_image(user_info["profile_image"])
+            self.image_grid = functions.build_image(self, user_info["profile_image"], order_number, Window.size[0] / 1.61 / 2)
         
         elif chat_info["type"] == 1:
-            self.image_grid = functions.build_image(chat_info["image"])
+            self.image_grid = functions.build_image(self, chat_info["image"], order_number, Window.size[0] / 1.61 / 2)
         
-        self.black_border_for_image_box.add_widget(self.image_grid)
+        self.chat_btn.add_widget(self.image_grid)
 
 
         self.middle_box = BoxLayout(orientation = 'vertical')

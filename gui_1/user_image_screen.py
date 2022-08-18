@@ -95,7 +95,7 @@ class ImageScreen (Screen):
         color_str = ""
         for a in range (len(self.color_number_list)):
             color_str = color_str + self.color_number_list[a]
-        access_my_info.change_my_profile_image(color_str)
+        functions.change_my_profile_image(color_str)
         
         prof_screen = self.profile_screen
         prof_screen.refresh_profile_screen()
