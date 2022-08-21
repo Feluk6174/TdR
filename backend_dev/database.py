@@ -14,7 +14,7 @@ def is_safe(*args, logger = None):
 
     arguments = ""
     for argument in args:
-        arguments += argument
+        arguments += argument if not argument == None else ""
 
     for char in invalid_chars:
         if char in arguments:

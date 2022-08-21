@@ -1,7 +1,2 @@
-temp = ["hello", "world"]
-
-def test(*args):
-    
-    text = args
-
-test("hello", "world")
+t = "1234"
+print([int(c) for c in t])
