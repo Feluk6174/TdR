@@ -527,7 +527,6 @@ def get_post(msg_info:dict, connection:ClientConnection):
         msg = "{}"
     connection.send(msg)
 
-
 def manage_new_client(connection, conn_info):
     global clients, max_clients, logger
     logger.log(f"managing new client")
