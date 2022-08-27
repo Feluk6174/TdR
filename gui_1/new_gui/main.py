@@ -30,7 +30,7 @@ from kivy.lang import Builder
 import api, register_screen, user_image_register_screen, profile_screen, home_screen, chat_screen, search_screen, create_post_screen, user_image_screen
 
 #optional. errase when doing apk
-Window.size = (500, 750)
+Window.size = (500, 600)
 
 connection = api.Connection()
 
@@ -45,22 +45,26 @@ class MyApp (App):
         #look if user created and if it is registered. if it does not, make it
         check_info = register_screen.check_my_info_exists()
         if check_info == False:
-            sm.add_widget(register_screen.RegisterScreen(connection, name = "register"))
-            sm.add_widget(user_image_register_screen.ImageScreen(connection, name = "image_register"))
+            sm.add_widget(register_screen.RegisterScreen(connection, sm, name = "register"))
+            sm.add_widget(user_image_register_screen.ImageScreen(name = "image_register"))
         elif check_info == True:
+            print(4, __name__)
             check_register = register_screen.check_my_user_exists(connection)
             if check_register == False:
+                print(3)
                 register_screen.register(connection)
             #make screens of app
             my_profile_screen = profile_screen.ProfileScreen(connection, name = "profile")
             my_search_screen = search_screen.SearchScreen(connection, name = "search")
             my_chat_screen = chat_screen.ChatScreen(connection, name = "chat")
+            print(1)
             sm.add_widget(home_screen.MainScreen(connection, my_profile_screen, my_search_screen, my_chat_screen, name = "main"))
             sm.add_widget(my_chat_screen)
             sm.add_widget(my_search_screen)
             sm.add_widget(create_post_screen.PostUserScreen(connection, name = "create"))
             sm.add_widget(my_profile_screen)
             sm.add_widget(user_image_screen.ImageScreen(my_profile_screen, name = "image"))
+            print(2)
         return sm
 
 

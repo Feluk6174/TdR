@@ -68,6 +68,12 @@ class SearchScreen (Screen):
         self.content_in_scroll_box = BoxLayout(orientation = 'vertical')
         self.content_grid.add_widget(self.content_in_scroll_box)
 
+        self.all_flags = [['images/check_verd.png'], ['images/red_cross.png'], ['images/age18.png'], ['images/blood.png'], ['images/fist.png'], ['images/soga.png'], ['images/white.png'], ['images/white.png'], ['images/white.png'], ['images/white.png'], ['images/white.png'], ['images/white.png']]
+        for d in range(len(self.all_flags) - 2):
+            self.all_flags[d + 2].append(str(d + 2))
+        for x in range (len(self.all_flags) - 2):
+            self.all_flags[x + 2].append(0)
+        
         #firstposts
         #current: 1 = new, 2 = search
         self.current_posts = 0        
@@ -103,11 +109,11 @@ class SearchScreen (Screen):
 
     def flag_press(self, instance):
         flag_number = int(instance.text)
-        self.all_flags[flag_number][3] = (self.all_flags[flag_number][3] + 1) % 2 
-        if self.all_flags[flag_number][3] == 1:
-            instance.background_normal = self.all_flags[flag_number][0]
-        elif self.all_flags[flag_number][3] == 0:
+        self.all_flags[flag_number][2] = (self.all_flags[flag_number][2] + 1) % 2 
+        if self.all_flags[flag_number][2] == 1:
             instance.background_normal = self.all_flags[1][0]
+        elif self.all_flags[flag_number][2] == 0:
+            instance.background_normal = self.all_flags[flag_number][0]
 
     def search_header_press(self, instance):
         if self.current_posts == 1:
@@ -138,15 +144,10 @@ class SearchScreen (Screen):
         self.flag_grid = GridLayout(rowss = 1, size_hint_x = None)
         self.flag_grid.bind(minimum_width = self.flag_grid.setter('width'))
         self.flag_filter_scroll.add_widget(self.flag_grid)
-
-        self.all_flags = [['images/check_verd.png'], ['images/red_cross.png'], ['images/age18.png'], ['images/blood.png'], ['images/fist.png'], ['images/soga.png'], ['images/white.png'], ['images/white.png'], ['images/white.png'], ['images/white.png'], ['images/white.png'], ['images/white.png']]
-        for d in range(len(self.all_flags) - 2):
-            self.all_flags[d + 2].append(str(d + 2))
         
         for x in range (len(self.all_flags) - 2):
             self.flag_btn = Button(border = (0, 0, 0, 0), font_size = 1, size_hint_x = None, width = (Window.size[1] - Window.size[0] / 5) * 0.9 / 12, text = str(self.all_flags[x + 2][1]), on_release = self.flag_press, background_normal = self.all_flags[x + 2][0])
             self.all_flags[x + 2].append(self.flag_btn)
-            self.all_flags[x + 2].append(0)
             self.flag_grid.add_widget(self.flag_btn)
         
         self.search_btn = Button(size_hint_y = None, height = Window.size[1] / 6, on_release = self.search_def, border = (0, 0, 0, 0), text = "Clear")
@@ -164,8 +165,10 @@ class SearchScreen (Screen):
 
     def new_posts_header_press(self, instance):
         connection = self.connection
-        self.all_new_posts_info = connection.get_posts(sort_by = "time_posted", sort_order = "desc", num = 20, exclude_flags = self.get_filter_flags)
-        self.all_newest_posts_info = functions.order_posts_by_timestamp(self.all_newest_posts_info)
+        self.all_new_posts_info = connection.get_posts(sort_by = "time_posted", sort_order = "desc", num = 20, exclude_flags = self.get_filter_flags())
+        print(self.all_new_posts_info)
+        self.all_newest_posts_info = functions.order_posts_by_timestamp(self.all_new_posts_info)
+        print(self.all_newest_posts_info)
 
         if self.current_posts == 2:
             self.content_in_scroll_box.clear_widgets()
@@ -193,8 +196,8 @@ class SearchScreen (Screen):
         self.all_displayed_posts_list = []
         conn = self.connection
         my_liked_posts_id = access_my_info.get_liked_id()
-        for t in len(self.all_newest_posts_info):
-            user_post_info = conn.get_user(self.all_newest_posts_info[t]["user_name"])
+        for t in range(len(self.all_newest_posts_info)):
+            user_post_info = conn.get_user(self.all_newest_posts_info[t]["user_id"])
             actual_maybe_like = 0
             try:
                 for liked in my_liked_posts_id:
@@ -202,7 +205,7 @@ class SearchScreen (Screen):
                         actual_maybe_like = 1
             except KeyError:
                 pass
-            self.post_btn = functions.make_post_btn(self, self.all_newest_posts_info[t]["user_name"], user_post_info["profile_image"], self.all_newest_posts_info[t]["flags"], self.all_newest_posts_info[t]["content"], 0, self.all_newest_posts_info[t]["time_posted"], self.all_newest_posts_info[t]["id"], actual_maybe_like, t)
+            self.post_btn = functions.make_post_btn(self, self.all_newest_posts_info[t]["user_id"], user_post_info["profile_picture"], self.all_newest_posts_info[t]["flags"], self.all_newest_posts_info[t]["content"], 0, self.all_newest_posts_info[t]["time_posted"], self.all_newest_posts_info[t]["id"], actual_maybe_like, t)
             self.content_in_scroll_box.add_widget(self.post_btn)
             self.all_displayed_posts_list.append((self.all_newest_posts_info[t]["id"], self.post_btn, actual_maybe_like))
 
@@ -216,8 +219,8 @@ class SearchScreen (Screen):
 
     def get_filter_flags(self):
         self.flag_list = ""
-        for y in range (len(self.all_flags) - 1):
-            self.flag_list = self.flag_list + str(self.all_flags[y + 1][3])
+        for y in range (len(self.all_flags) - 2):
+            self.flag_list = self.flag_list + str(self.all_flags[y + 2][2])
         return self.flag_list
 
     def name_press(self, order_number,instance):
@@ -245,7 +248,7 @@ class SearchScreen (Screen):
                 self.all_displayed_posts_list = []
                 my_liked_posts_id = access_my_info.get_liked_id()
                 for t in len(searched_posts):
-                    user_post_info = conn.get_user(searched_posts[t]["user_name"])
+                    user_post_info = conn.get_user(searched_posts[t]["user_id"])
                     actual_maybe_like = 0
                     try:
                         for liked in my_liked_posts_id:
@@ -253,7 +256,7 @@ class SearchScreen (Screen):
                                 actual_maybe_like = 1
                     except KeyError:
                         pass
-                    self.post_btn = functions.make_post_btn(self, searched_posts[t]["user_name"], user_post_info["profile_image"], searched_posts[t]["flags"], searched_posts[t]["content"], 0, searched_posts[t]["time_posted"], searched_posts[t]["id"], actual_maybe_like, t)
+                    self.post_btn = functions.make_post_btn(self, searched_posts[t]["user_id"], user_post_info["profile_picture"], searched_posts[t]["flags"], searched_posts[t]["content"], 0, searched_posts[t]["time_posted"], searched_posts[t]["id"], actual_maybe_like, t)
                     self.searched_box.add_widget(self.post_btn)
                     self.all_displayed_posts_list.append((searched_posts[t]["id"], self.post_btn, actual_maybe_like))
                 self.searched_box.height = Window.size[0]/1.61 * len(searched_posts)
@@ -271,10 +274,10 @@ class SearchScreen (Screen):
                 self.searched_user_box = BoxLayout(orientation = 'horizontal', size_hint_y = None, height = Window.size[1]/6)
                 self.searched_box.add_widget(self.searched_user_box)
 
-                self.searched_user_image_grid = functions.build_image(self, searched_user["profile_image"], 0, Window.size[1]/6)
+                self.searched_user_image_grid = functions.build_image(self, searched_user["profile_picture"], 0, Window.size[1]/6)
                 self.searched_user_box.add_widget(self.searched_user_image_grid)
 
-                self.searched_user_name_btn = Button(text = searched_user["user_name"], on_release = partial(self.name_press, 0))
+                self.searched_user_name_btn = Button(text = searched_user["user_id"], on_release = partial(self.name_press, 0))
                 self.searched_user_box.add_widget(self.searched_user_name_btn)
 
                 self.searched_box.height = Window.size[1]/6

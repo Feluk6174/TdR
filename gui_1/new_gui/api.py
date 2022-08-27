@@ -69,7 +69,6 @@ class Connection():
         msg = "{"+f'"type": "ACTION", "action": "GET POSTS", "user_name": "{user_name}", "hashtag": "{hashtag}", "include_flags": "{include_flags}", "exclude_flags":"{exclude_flags}", "sort_by": "{sort_by}", "sort_order": "{sort_order}", "num": "{num}"'+"}"
         self.send(msg)
         num = int(self.recv())
-        print(num)
         self.send('{"type": "RESPONSE", "response": "OK"}')
         if not num == 0: 
             for _ in range(num):

@@ -119,7 +119,7 @@ class ChatScreen (Screen):
 
         if chat_info["type"] == 0:
             user_info = conn.get_user(chat_info["users"][0])
-            self.image_grid = functions.build_image(self, user_info["profile_image"], order_number, Window.size[0] / 1.61 / 2)
+            self.image_grid = functions.build_image(self, user_info["profile_picture"], order_number, Window.size[0] / 1.61 / 2)
         
         elif chat_info["type"] == 1:
             self.image_grid = functions.build_image(self, chat_info["image"], order_number, Window.size[0] / 1.61 / 2)

@@ -73,7 +73,7 @@ class ProfileScreen (Screen):
 
         self.user_name_btn = Button(text = access_my_info.get_user_name())
         self.user_image_name_box.add_widget(self.user_name_btn)
-        self.user_name_btn.bind(on_release = self.user_name_press)
+        #self.user_name_btn.bind(on_release = self.user_name_press)
 
         self.description_box = BoxLayout(size_hint_y = None, height = (Window.size[1] - Window.size[0] / 5) * 2 * 0.9 / 5)
         self.content_grid.add_widget(self.description_box)
@@ -236,7 +236,7 @@ class ProfileScreen (Screen):
                         actual_maybe_like = 1
             except KeyError:
                 pass
-            self.post_btn = functions.make_post_btn(self.my_posts_list[a]["user_name"], my_image, self.my_posts_list[a]["flags"], self.my_posts_list[a]["content"], 0, self.my_posts_list[a]["time_posted"], self.my_posts_list[a]["id"], actual_maybe_like, a)
+            self.post_btn = functions.make_post_btn(self.my_posts_list[a]["user_id"], my_image, self.my_posts_list[a]["flags"], self.my_posts_list[a]["content"], 0, self.my_posts_list[a]["time_posted"], self.my_posts_list[a]["id"], actual_maybe_like, a)
             self.my_posts_box.add_widget(self.post)
             self.all_displayed_posts_list.append(self.my_posts_list[a]["id"], self.post_btn, actual_maybe_like)
 
@@ -250,8 +250,8 @@ class ProfileScreen (Screen):
 
         actual_maybe_like = 1
         for b in range (len(self.my_liked_posts_list)):
-            user_liked_info = conn.get_user(self.my_liked_posts_list[b]["user_name"])        
-            self.post_btn = functions.make_post_btn(self.my_liked_posts_list[b]["user_name"], user_liked_info["profile_image"], self.my_liked_posts_list[b]["flags"], self.my_liked_posts_list[b]["content"], self.my_liked_posts_list[b]["likes"], self.my_liked_posts_list[b]["time_posted"], self.my_liked_posts_list[b]["id"], actual_maybe_like, b)
+            user_liked_info = conn.get_user(self.my_liked_posts_list[b]["user_id"])        
+            self.post_btn = functions.make_post_btn(self.my_liked_posts_list[b]["user_id"], user_liked_info["profile_picture"], self.my_liked_posts_list[b]["flags"], self.my_liked_posts_list[b]["content"], self.my_liked_posts_list[b]["likes"], self.my_liked_posts_list[b]["time_posted"], self.my_liked_posts_list[b]["id"], actual_maybe_like, b)
             self.my_posts_box.add_widget(self.post)
             self.all_displayed_posts_list.append(self.my_liked_posts_list[b]["id"], self.post_btn, actual_maybe_like)
         

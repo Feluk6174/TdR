@@ -28,7 +28,7 @@ from datetime import datetime
 from kivy.graphics import BorderImage
 from kivy.lang import Builder
 
-import user_image_register_screen, auth, home_screen, search_screen, chat_screen, create_post_screen, profile_screen, user_image_screen, acces_my_info
+import user_image_register_screen, auth, home_screen, search_screen, chat_screen, create_post_screen, profile_screen, user_image_screen, access_my_info
 
 
 def check_my_info_exists():
@@ -40,7 +40,7 @@ def check_my_info_exists():
 
 def check_my_user_exists(connection):
     my_user_info = json.loads(open("my_info.json", "r").read())
-    username = my_user_info["basic_info"]["username"]
+    username = my_user_info["basic_info"]["user_name"]
     check = check_user_exists(connection, username)
     return check
 
@@ -53,10 +53,10 @@ def check_user_exists(connection, user):
 
 #gotta change this!!!!!!!!!!!!!
 def register(connection):
-    user_name = acces_my_info.GetName()
-    public_key = acces_my_info.GetPubKey()
-    profile_picture = acces_my_info.GetImage()
-    info = acces_my_info.GetDescription()
+    user_name = access_my_info.get_user_name()
+    public_key = access_my_info.get_pub_key()
+    profile_picture = access_my_info.get_profile_image()
+    info = access_my_info.get_description()
     connection.register_user(user_name, public_key, "rsa_key.bin", profile_picture, info)
 
 class RegisterScreen (Screen):
@@ -87,22 +87,27 @@ class RegisterScreen (Screen):
         self.title_box.add_widget(self.title)
 
         #cos de la pantalla. text inputs i boto
-        self.username_text_input = TextInput(size_hint = (1, 1), multiline = False, background_normal = self.my_list_of_background_images[0], keyboard_on_key_down = self.username_text_input_background_image_f)
+        self.username_text_input = TextInput(size_hint = (1, 1), multiline = False, background_normal = self.my_list_of_background_images[0])
+        #self.username_text_input.bind(keyboard_on_key_down = self.username_text_input_background_image_f)
         self.main_box.add_widget(self.username_text_input)
 
-        self.password_text_input = TextInput(size_hint = (1, 1), multiline = False, background_normal = self.my_list_of_background_images[1], password = True, keyboard_on_key_down = self.password_text_input_background_image_f)
+        self.password_text_input = TextInput(size_hint = (1, 1), multiline = False, background_normal = self.my_list_of_background_images[1], password = True)
+        #self.password_text_input.bind(keyboard_on_key_down = self.password_text_input_background_image_f)
         self.main_box.add_widget(self.password_text_input)
 
-        self.repeat_password_text_input = TextInput(size_hint = (1, 1), multiline = False, background_normal = self.my_list_of_background_images[2], password = True, keyboard_on_key_down = self.repeat_password_text_input_background_image_f)
+        self.repeat_password_text_input = TextInput(size_hint = (1, 1), multiline = False, background_normal = self.my_list_of_background_images[2], password = True)
+        #self.repeat_password_text_input.bind(keyboard_on_key_down = self.repeat_password_text_input_background_image_f)
         self.main_box.add_widget(self.repeat_password_text_input)
         
         self.image_button = Button(text = "Make your profile image", on_press = self.to_image_making)
         self.main_box.add_widget(self.image_button)
         
-        self.description_text_input = TextInput(size_hint = (1, 2), multiline = False, background_normal = self.my_list_of_background_images[3], keyboard_on_key_down = self.description_text_input_background_image_f)
+        self.description_text_input = TextInput(size_hint = (1, 2), multiline = False, background_normal = self.my_list_of_background_images[3])
+        #self.description_text_input.bind(keyboard_on_key_down = self.description_text_input_background_image_f)
         self.main_box.add_widget(self.description_text_input)
         
-        self.following_text_input = TextInput(size_hint = (1, 1), multiline = False, background_normal = self.my_list_of_background_images[4], keyboard_on_key_down = self.following_text_input_background_image_f)
+        self.following_text_input = TextInput(size_hint = (1, 1), multiline = False, background_normal = self.my_list_of_background_images[4])
+        #self.following_text_input.bind(keyboard_on_key_down = self.following_text_input_background_image_f)
         self.main_box.add_widget(self.following_text_input)
         
         self.register_button = Button(size_hint = (1, 1), text = "Register")
@@ -159,6 +164,7 @@ class RegisterScreen (Screen):
             self.image_str = user_image_register_screen.get_my_image()
             self.color_check = self.check_image()
             if self.password_check == False or self.password_text_input.text != self.repeat_password_text_input.text:
+                print("sexeanal")
                 self.my_list_of_background_images[1] = 'images/password_2_register.png'
                 self.password_text_input.text = ""
                 self.my_list_of_background_images[2] = 'images/repeat_password_2_register.png'
@@ -167,11 +173,12 @@ class RegisterScreen (Screen):
             elif self.color_check == False:
                 self.image_button.text = "MAKE YOUR PROFILE IMAGE!"
                 self.register_button.text = "Register. Sorry, try again"
-            if self.password_check == True and self.color_check == True and self.password_text_input.text == self.repeat_password_text_input.text:
+            elif self.password_check == True and self.color_check == True and self.password_text_input.text == self.repeat_password_text_input.text:
 
                 #guardar la informacio
                 self.username_text = self.username_text_input.text
                 self.password_text = self.password_text_input.text
+                print("pwd", self.password_text)
                 self.description_text = self.description_text_input.text
                 self.following_text = self.following_text_input.text
                 self.following_list = self.following_text.split(", ")
@@ -204,12 +211,14 @@ class RegisterScreen (Screen):
         register(con)
         #create (add) the rest of the main screens
         my_profile_screen = profile_screen.ProfileScreen(con, name = "profile")
-        self.sm.add_widget(home_screen.MainScreen(con, name = "main"))
-        self.sm.add_widget(chat_screen.ChatScreen(name = "chat"))
-        self.sm.add_widget(search_screen.SearchScreen(name = "search"))
-        self.sm.add_widget(create_post_screen.PostUserScreen(con, name = "last"))
-        self.sm.add_widget(my_profile_screen)
-        self.sm.add_widget(user_image_screen.ImageScreen(my_profile_screen, name = "image"))
+        my_search_screen = search_screen.SearchScreen(con, name = "search")
+        my_chat_screen = chat_screen.ChatScreen(con, name = "chat")
+        self.manager.add_widget(home_screen.MainScreen(con, my_profile_screen, my_search_screen, my_chat_screen, name = "main"))
+        self.manager.add_widget(my_chat_screen)
+        self.manager.add_widget(my_search_screen)
+        self.manager.add_widget(create_post_screen.PostUserScreen(con, name = "create"))
+        self.manager.add_widget(my_profile_screen)
+        self.manager.add_widget(user_image_screen.ImageScreen(my_profile_screen, name = "image"))
         self.manager.transition = FallOutTransition()
         self.manager.current = "main"
     
@@ -217,15 +226,15 @@ class RegisterScreen (Screen):
         dictionary = {}
         dictionary["basic_info"] = {}
         dictionary["semi_basic_info"] = {}
-        dictionary["basic_info"]["user_name"] = self.username_text
+        dictionary["basic_info"]["user_id"] = self.username_text
         dictionary["basic_info"]["password"] = self.password_text
         #dictionary["basic_info"]["user_pub_key"] = pub_key
         #dictionary["basic_info"]["user_priv_key"] = priv_key
         #dictionary["basic_info"]["user_key_storage"] = "rsa_key.bin"
-        dictionary["semi_basic_info"]["profile_image"] = self.image_str
+        dictionary["semi_basic_info"]["profile_picture"] = self.image_str
         dictionary["semi_basic_info"]["description"] = self.description_text
         dictionary["semi_basic_info"]["user_following"] = self.following_list
-        dictionary["semi_basic_info"]["liked_posts"] = []
+        dictionary["semi_basic_info"]["liked_posts_id"] = []
         my_info_file = open("my_info.json", "w")
         my_info_file.write(json.dumps(dictionary))
         my_info_file.close

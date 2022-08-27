@@ -147,7 +147,7 @@ def order_posts_by_timestamp(posts_to_order):
         for b in range (length):
             #if posts_to_order[a]["time_stamp"] > posts_to_order[b]["time_stamp"]:
             #    how_big_list[a][1] = how_big_list[a][1] + 1
-            if posts_to_order[a]["time_stamp"] < posts_to_order[b]["time_stamp"]:
+            if posts_to_order[a]["time_posted"] < posts_to_order[b]["time_posted"]:
                 how_big_list[a] = how_big_list[a] + 1
     for c in range (length):
         for d in range (length):

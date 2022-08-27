@@ -32,7 +32,7 @@ from main import connection
 
 def change_my_image(col_str):
     my_user_info = open_my_user_info()
-    my_user_info["semi_basic_info"]["profile_image"] = col_str
+    my_user_info["semi_basic_info"]["profile_picture"] = col_str
     file_my = open("my_info.json", "w")
     file_my.write(json.dumps(my_user_info))
     file_my.close()
@@ -67,7 +67,7 @@ def open_my_user_info():
 
 def get_user_name():
     my_user_info = open_my_user_info()
-    username = my_user_info["basic_info"]["user_name"]
+    username = my_user_info["basic_info"]["user_id"]
     return username
 
 def get_password():
@@ -77,19 +77,19 @@ def get_password():
 
 def get_profile_image():
     my_user_info = open_my_user_info()
-    profileimage = my_user_info["semi_basic_info"]["profile_image"]
+    profileimage = my_user_info["semi_basic_info"]["profile_picture"]
     return profileimage
 
 def get_priv_key():
     my_user_info = open_my_user_info()
-    username = my_user_info["basic_info"]["user_name"]
+    username = my_user_info["basic_info"]["user_id"]
     password = my_user_info["basic_info"]["password"]
     private_key, public_key = auth.get_keys(username + password)
     return private_key
 
-def get_priv_key():
+def get_pub_key():
     my_user_info = open_my_user_info()
-    username = my_user_info["basic_info"]["user_name"]
+    username = my_user_info["basic_info"]["user_id"]
     password = my_user_info["basic_info"]["password"]
     private_key, public_key = auth.get_keys(username + password)
     return public_key
