@@ -132,31 +132,26 @@ def make_post_btn(screen, user_name, user_image, post_flags, text_content, nlike
     likes_box.add_widget(like_heart)
     like_heart.bind(on_release = partial(screen.like_press, order_number))
 
-    num_likes = Label (text = (str(nlikes)), size_hint = (1, 1))
-    likes_box.add_widget(num_likes)
+    #num_likes = Label (text = (str(nlikes)), size_hint = (1, 1))
+    #likes_box.add_widget(num_likes)
 
     return post
 
-
-def add_liked_or_unliked_post(post_id, like_or_not):
-    #change in server (api) and in my info (acces_my_info)
-    access_my_info.add_or_remove_liked_post(post_id, like_or_not)
-    pass
 
 def order_posts_by_timestamp(posts_to_order):
     length = len(posts_to_order)
     how_big_list = []
     final_list = []
     for a in range (length):
-        how_big_list.append([0, 0])
+        how_big_list.append(0)
         for b in range (length):
-            if posts_to_order[a]["time_stamp"] > posts_to_order[b]["time_stamp"]:
-                how_big_list[a][1] = how_big_list[a][1] + 1
-            elif posts_to_order[a]["time_stamp"] < posts_to_order[b]["time_stamp"]:
-                how_big_list[a][0] = how_big_list[a][0] + 1
+            #if posts_to_order[a]["time_stamp"] > posts_to_order[b]["time_stamp"]:
+            #    how_big_list[a][1] = how_big_list[a][1] + 1
+            if posts_to_order[a]["time_stamp"] < posts_to_order[b]["time_stamp"]:
+                how_big_list[a] = how_big_list[a] + 1
     for c in range (length):
         for d in range (length):
-            if how_big_list[c][0] == d:
+            if how_big_list[c] == d:
                 final_list.append(posts_to_order[c])
     return final_list
 

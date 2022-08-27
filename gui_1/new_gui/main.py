@@ -53,10 +53,12 @@ class MyApp (App):
                 register_screen.register(connection)
             #make screens of app
             my_profile_screen = profile_screen.ProfileScreen(connection, name = "profile")
-            sm.add_widget(home_screen.MainScreen(connection, name = "main"))
-            sm.add_widget(chat_screen.ChatScreen(connection, name = "chat"))
-            sm.add_widget(search_screen.SearchScreen(connection, name = "search"))
-            sm.add_widget(create_post_screen.PostUserScreen(connection, name = "last"))
+            my_search_screen = search_screen.SearchScreen(connection, name = "search")
+            my_chat_screen = chat_screen.ChatScreen(connection, name = "chat")
+            sm.add_widget(home_screen.MainScreen(connection, my_profile_screen, my_search_screen, my_chat_screen, name = "main"))
+            sm.add_widget(my_chat_screen)
+            sm.add_widget(my_search_screen)
+            sm.add_widget(create_post_screen.PostUserScreen(connection, name = "create"))
             sm.add_widget(my_profile_screen)
             sm.add_widget(user_image_screen.ImageScreen(my_profile_screen, name = "image"))
         return sm
@@ -71,25 +73,13 @@ if __name__ == "__main__":
 #text_input a alçada de teclat
 #improve buttons to other screens
 #alarm symbol in chat button on ground box of other screens
-#refresh def in all screens
 
 #functions clicking posts
 
-
-
-#post_screen + structure
-#likes
 #flags
 #chat subjects: art, programation, videogames, philosophy, politic, sport, books, 
 
-#actualitzar pàgina al clicar el botó de desplaçament cap a allà
 
-#search screen improve
 #textbox with background text
 #writing box
-#string into different lines 
 
-#my_posts
-#following, followers
-#best + new
-#reload up 
