@@ -142,9 +142,9 @@ def start():
     time.sleep(10)
     connect_to_new_node()
 
-def init(get_logger:log.Logger, get_clients:list, get_connections:list, get_db:database.Database, get_HOST:str, get_IP:str, get_PORT:str):
+def init(get_logger:log.Logger, get_clients:list, get_connections:list, get_db:database.Database, get_HOST:str, get_IP:str, get_PORT:str, get_server:socket.socket):
     # sets global variables
-    global logger, clients, connections, db, HOST, IP, PORT, get_suposed_connected, server_info, max_clients
+    global logger, clients, connections, db, HOST, IP, PORT, get_suposed_connected, server_info, max_clients, server
 
     logger.stop()
     logger = get_logger
@@ -155,6 +155,7 @@ def init(get_logger:log.Logger, get_clients:list, get_connections:list, get_db:d
     HOST = get_HOST
     IP = get_IP
     PORT = get_PORT
+    server = get_server
 
     get_suposed_connected = lambda n: int(5*math.log2(n))
     get_suposed_connected = lambda n: 3
@@ -163,10 +164,11 @@ def init(get_logger:log.Logger, get_clients:list, get_connections:list, get_db:d
 
     max_clients = 10
 
+
 logger = log.Logger(None)
 clients = []
 connections = []
-db = database.Database
+db = database.Database()
 HOST = ""
 IP = ""
 PORT = ""
@@ -174,3 +176,4 @@ PORT = ""
 get_suposed_connected = lambda n: 3
 server_info = {}
 max_clients = 0
+server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

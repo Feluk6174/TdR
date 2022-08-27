@@ -1,5 +1,3 @@
-from argparse import _ActionStr
-from xml.etree.ElementInclude import include
 import database
 import threading, socket, sys
 import log
@@ -40,7 +38,7 @@ if __name__ == "__main__":
 
     db = database.Database(logger = logger)
 
-    managment.init(logger, clients, connections, db, HOST, IP, PORT)
+    managment.init(logger, clients, connections, db, HOST, IP, PORT, server)
     user_actions.init(logger, db)
     conn.init(logger, clients, connections, db)
 

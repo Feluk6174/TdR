@@ -5,7 +5,6 @@ from Crypto.Hash import SHA256
 
 import database
 import log
-import user_actions
 import managment
 
 class ClientConnection():
@@ -286,4 +285,6 @@ def init(get_logger:log.Logger, get_clients:list, get_connections:list, get_db:d
 logger = log.Logger(None)
 clients = []
 connections = []
-db = database.Database
+db = database.Database()
+
+import user_actions

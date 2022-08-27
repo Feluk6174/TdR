@@ -9,7 +9,7 @@ from typing import Union
 class Connection():
     def __init__(self):
         self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.connection.connect(("192.168.1.134", 30003))
+        self.connection.connect(("192.168.1.136", 30003))
 
         msg = '{"type": "CLIENT"}'
         self.connection.send(msg.encode("utf-8"))
@@ -63,10 +63,10 @@ class Connection():
                 if response == "WRONG CHARS":
                     raise WrongCaracters(user_name=user_name)
 
-    def get_posts(self, sort_by:str = None, sort_order:Union[str, int] = None, user_name:str = None, hashtag:str = None, exclude_flags:str = None, include_flags:str = None):
+    def get_posts(self, sort_by:str = None, sort_order:Union[str, int] = None, user_name:str = None, hashtag:str = None, exclude_flags:str = None, include_flags:str = None, num:int = None):
         #return format: {'id': 'str(23)', 'user_id': 'str(16)', 'content': 'str(255)', 'flags': 'str(10)', 'time_posted': int}
         posts = []
-        msg = "{"+f'"type": "ACTION", "action": "GET POSTS", "user_name": "{user_name}", "hashtag": "{hashtag}", "include_flags": "{include_flags}", "exclude_flags":"{exclude_flags}", "sort_by": "{sort_by}", "sort_order": "{sort_order}"'+"}"
+        msg = "{"+f'"type": "ACTION", "action": "GET POSTS", "user_name": "{user_name}", "hashtag": "{hashtag}", "include_flags": "{include_flags}", "exclude_flags":"{exclude_flags}", "sort_by": "{sort_by}", "sort_order": "{sort_order}", "num": "{num}"'+"}"
         self.send(msg)
         num = int(self.recv())
         print(num)

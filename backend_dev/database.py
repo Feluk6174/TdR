@@ -2,10 +2,11 @@ import mysql.connector
 import random
 import threading
 import time
+import log as log_lib
 
-def log(message, logger = None):
+def log(*message, logger:log_lib.Logger = None):
     if not logger == None:
-        logger.log(message)
+        logger.log(*message)
     else:
         print(message)
 
@@ -18,13 +19,13 @@ def is_safe(*args, logger = None):
 
     for char in invalid_chars:
         if char in arguments:
-            log(logger, f"[ERROR] Invalid char {char}")
+            log(f"[ERROR] Invalid char {char}", logger)
             return False
     return True
 
 
 class Database():
-    def __init__(self, logger=None):
+    def __init__(self, logger:log_lib.Logger=None):
         self.connect()
         self.queue = []
         self.return_response = []

@@ -1,10 +1,9 @@
-from tabnanny import verbose
 import time
 import threading
 
 class Logger():
-    def __init__(self, log_file, vervose = False):
-        self.log_file_name = log_file+str(int(time.time()))+".log"
+    def __init__(self, log_file:str, vervose:str = False):
+        self.log_file_name = str(log_file)+str(int(time.time()))+".log"
         self.queue = []
         self.vervose = vervose
         self.thread = threading.Thread(target=self.proces_queue)
