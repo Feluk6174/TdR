@@ -1,7 +1,8 @@
-temp = ["hello", "world"]
+from Crypto.Hash import SHA256
 
-def test(*args):
-    
-    text = args
+n = 10000
+r = 0
+for i in range(n):
+    r += int(SHA256.new(b"hello"+bytes(10+i)).hexdigest(), 16)/int(SHA256.new(b"hello"+bytes(2+i)).hexdigest(), 16)*100
 
-test("hello", "world")
+print(r/n)
