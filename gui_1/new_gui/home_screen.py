@@ -151,8 +151,8 @@ class MainScreen (Screen):
         self.posts_grid.bind(minimum_height=self.posts_grid.setter('height'))
 
     def get_new_follower_posts(self, connection):
-        all_my_following = access_my_info.get_following_users()
-        my_liked_posts = access_my_info.get_liked_posts_id()
+        all_my_following = access_my_info.get_following()
+        my_liked_posts = access_my_info.get_liked_id()
         all_posts = []
         for following in all_my_following:
             follower_posts = connection.get_user_posts(following)
@@ -182,8 +182,8 @@ class MainScreen (Screen):
         num = (num + 1) % 2
         if num == 1:
             instance.background_normal = 'images/heart2.png'
-            access_my_info.add_liked_or_unliked_post(self.all_posts_i_get[order_number][0], 1)
+            access_my_info.add_or_remove_liked_post(self.all_posts_i_get[order_number][0], 1)
         if num == 0:
             instance.background_normal = 'images/heart.png'
-            access_my_info.add_liked_or_unliked_post(self.all_posts_i_get[order_number][0], 0)
+            access_my_info.add_or_remove_liked_post(self.all_posts_i_get[order_number][0], 0)
         self.all_posts_i_get[order_number][2] = num

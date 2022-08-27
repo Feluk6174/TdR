@@ -289,7 +289,7 @@ class SearchScreen (Screen):
             functions.add_liked_or_unliked_post(self.all_displayed_posts_list[order_number][0], 1)
         if num == 0:
             instance.background_normal = 'images/heart.png'
-            access_my_info.add_liked_or_unliked_post(self.all_displayed_posts_list[order_number][0], 0)
+            access_my_info.add_or_remove_liked_post(self.all_displayed_posts_list[order_number][0], 0)
         self.all_displayed_posts_list[order_number][2] = num
 
     def press_chat_btn(self, instance):

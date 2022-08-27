@@ -98,7 +98,7 @@ class ChatScreen (Screen):
 
 
     def generate_chats(self):
-        last_time_stamp = access_my_info.get_last_time_stamp()
+        #last_time_stamp = access_my_info.get_last_time_stamp()
         conn = self.connection
         self.displayed_chat_list = []
         chat_list = access_my_info.get_new_chats(conn, (0, 20))

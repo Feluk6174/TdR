@@ -140,8 +140,8 @@ class PostUserScreen (Screen):
 
     def send_post_final(self, post_flags, text_content):
         conn = self.connection
-        user_name = access_my_info.get_name()
-        private_key = access_my_info.get_private_key()
+        user_name = access_my_info.get_user_name()
+        private_key = access_my_info.get_priv_key()
         post_flags = str(post_flags)
         #post_likes = nlikes
         #date = int(time.time())

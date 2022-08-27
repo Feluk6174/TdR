@@ -68,10 +68,10 @@ class ProfileScreen (Screen):
         self.user_image_box = BoxLayout()
         self.user_image_name_box.add_widget(self.user_image_box)
         
-        self.user_image_grid = functions.build_image(self, access_my_info.get_image(), 0, Window.size[0] / 1.61 / 6)
+        self.user_image_grid = functions.build_image(self, access_my_info.get_profile_image(), 0, Window.size[0] / 1.61 / 6)
         self.user_image_box.add_widget(self.user_image_grid)
 
-        self.user_name_btn = Button(text = access_my_info.get_name())
+        self.user_name_btn = Button(text = access_my_info.get_user_name())
         self.user_image_name_box.add_widget(self.user_name_btn)
         self.user_name_btn.bind(on_release = self.user_name_press)
 
@@ -193,7 +193,7 @@ class ProfileScreen (Screen):
     def user_favourites_press(self, instance):
         conn = self.connection
         #with connection or in phone memory
-        self.my_liked_list_id = access_my_info.get_liked_posts_id()
+        self.my_liked_list_id = access_my_info.get_liked_id()
         self.my_liked_list = []
         for id in self.my_liked_list_id:
             self.my_liked_list.append(conn.get_post(id = id))
@@ -225,9 +225,9 @@ class ProfileScreen (Screen):
         self.my_posts_box = BoxLayout(size_hint_y = None, height = len(self.my_posts_list) * Window.size[0] / 1.61, orientation = "vertical")
         self.content_grid.add_widget(self.my_posts_box)
 
-        my_liked_posts_id = access_my_info.get_liked_posts_id()
+        my_liked_posts_id = access_my_info.get_liked_id()
         self.all_displayed_posts_list = []
-        my_image = access_my_info.get_image()
+        my_image = access_my_info.get_profile_image()
         for a in range (len(self.my_posts_list)):
             actual_maybe_like = 0
             try:

@@ -48,7 +48,10 @@ def change_my_description(description):
 
 def add_or_remove_liked_post(post_id, like):
     my_user_info = open_my_user_info()
-    my_user_info["semi_basic_info"]["liked_posts"].append(post_id)
+    if like == 0:
+        my_user_info["semi_basic_info"]["liked_posts"].append(post_id)
+    elif like == 1:
+        my_user_info["semi_basic_info"]["liked_posts"].remove(post_id)
     file_my = open("my_info.json", "w")
     file_my.write(json.dumps(my_user_info))
     file_my.close()
@@ -100,11 +103,6 @@ def get_following():
     my_user_info = open_my_user_info()
     user_following = my_user_info["semi_basic_info"]["user_following"]
     return user_following
-
-def get_followed():
-    username = get_user_name()
-    followed_by = connection.get_followed_by(username)
-    return followed_by
 
 def get_liked():
     user_liked_id = get_liked_id
