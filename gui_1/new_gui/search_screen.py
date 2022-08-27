@@ -78,7 +78,7 @@ class SearchScreen (Screen):
         #current: 1 = new, 2 = search
         self.current_posts = 0        
 
-        self.refresh_search_screen()
+        #self.refresh_search_screen()
 
 
         self.ground_box = BoxLayout (size_hint_y = None, height = Window.size[0] / 5)

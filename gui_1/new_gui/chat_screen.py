@@ -66,7 +66,7 @@ class ChatScreen (Screen):
         self.content_box.add_widget (self.content_grid_scroll)
 
         #create_chats()
-        self.refresh_messages()
+        #self.refresh_messages()
 
         #desplegable para configurar la búsqueda
         self.random_chat_btn = Button (border = (0, 0, 0, 0), background_normal = 'images/dice1.png', size_hint = (None, None), height = Window.size[0] * 0.2, width = Window.size[0] * 0.2, pos_hint = {"x" : 0.75, "y" : 0.035})
