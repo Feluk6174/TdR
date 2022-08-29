@@ -164,6 +164,9 @@ class ChatScreen (Screen):
     def header_btn_press(self, instance):
         pass
 
+    def random_chat_press(self, instance):
+        pass
+
     #def press_chat_btn(self, instance):
         #pass
 

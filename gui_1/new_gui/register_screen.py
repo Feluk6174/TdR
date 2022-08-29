@@ -40,7 +40,7 @@ def check_my_info_exists():
 
 def check_my_user_exists(connection):
     my_user_info = json.loads(open("my_info.json", "r").read())
-    username = my_user_info["basic_info"]["user_name"]
+    username = my_user_info["basic_info"]["user_id"]
     check = check_user_exists(connection, username)
     return check
 
@@ -69,7 +69,7 @@ class RegisterScreen (Screen):
         
 
         #llista imatges de fons ((inicials)
-        self.my_list_of_background_images = ['images/username_register.png', 'images/password_register.png', 'images/repeat_password_register.png', 'images/description_register.png', 'images/following_register.png']
+        #self.my_list_of_background_images = ['images/username_register.png', 'images/password_register.png', 'images/repeat_password_register.png', 'images/description_register.png', 'images/following_register.png']
 
         self.main_box = BoxLayout()
         self.main_box.orientation = "vertical"
@@ -87,38 +87,69 @@ class RegisterScreen (Screen):
         self.title_box.add_widget(self.title)
 
         #cos de la pantalla. text inputs i boto
-        self.username_text_input = TextInput(size_hint = (1, 1), multiline = False, background_normal = self.my_list_of_background_images[0])
+        self.username_box = BoxLayout(orientation = 'vertical')
+        self.main_box.add_widget(self.username_box)
+
+        self.username_btn = Button(text = "Username:", border = (0, 0, 0, 0))
+        self.username_box.add_widget(self.username_btn)
+
+        self.username_text_input = TextInput(multiline = False)
         #self.username_text_input.bind(keyboard_on_key_down = self.username_text_input_background_image_f)
-        self.main_box.add_widget(self.username_text_input)
+        self.username_box.add_widget(self.username_text_input)
 
-        self.password_text_input = TextInput(size_hint = (1, 1), multiline = False, background_normal = self.my_list_of_background_images[1], password = True)
+        self.password_box = BoxLayout(orientation = 'vertical')
+        self.main_box.add_widget(self.password_box)
+
+        self.password_btn = Button(text = "Password:", border = (0, 0, 0, 0))
+        self.password_box.add_widget(self.password_btn)
+
+        self.password_text_input = TextInput(multiline = False, password = True)
         #self.password_text_input.bind(keyboard_on_key_down = self.password_text_input_background_image_f)
-        self.main_box.add_widget(self.password_text_input)
+        self.password_box.add_widget(self.password_text_input)
 
-        self.repeat_password_text_input = TextInput(size_hint = (1, 1), multiline = False, background_normal = self.my_list_of_background_images[2], password = True)
+        self.repeat_password_box = BoxLayout(orientation = 'vertical')
+        self.main_box.add_widget(self.repeat_password_box)
+
+        self.repeat_password_btn = Button(text = "Repeat password:", border = (0, 0, 0, 0))
+        self.repeat_password_box.add_widget(self.repeat_password_btn)
+        
+        self.repeat_password_text_input = TextInput(multiline = False, password = True)
         #self.repeat_password_text_input.bind(keyboard_on_key_down = self.repeat_password_text_input_background_image_f)
-        self.main_box.add_widget(self.repeat_password_text_input)
+        self.repeat_password_box.add_widget(self.repeat_password_text_input)
         
         self.image_button = Button(text = "Make your profile image", on_press = self.to_image_making)
         self.main_box.add_widget(self.image_button)
         
-        self.description_text_input = TextInput(size_hint = (1, 2), multiline = False, background_normal = self.my_list_of_background_images[3])
+        self.description_box = BoxLayout(orientation = 'vertical', size_hint_y = 2)
+        self.main_box.add_widget(self.description_box)
+
+        self.description_btn = Button(text = "Description:", border = (0, 0, 0, 0))
+        self.description_box.add_widget(self.description_btn)
+        
+        self.description_text_input = TextInput(multiline = False, size_hint_y = 3)
         #self.description_text_input.bind(keyboard_on_key_down = self.description_text_input_background_image_f)
-        self.main_box.add_widget(self.description_text_input)
+        self.description_box.add_widget(self.description_text_input)
         
-        self.following_text_input = TextInput(size_hint = (1, 1), multiline = False, background_normal = self.my_list_of_background_images[4])
+        self.following_box = BoxLayout(orientation = 'vertical')
+        self.main_box.add_widget(self.following_box)
+
+        self.following_btn = Button(text = "Following:", border = (0, 0, 0, 0))
+        self.following_box.add_widget(self.following_btn)
+
+        self.following_text_input = TextInput(multiline = False)
         #self.following_text_input.bind(keyboard_on_key_down = self.following_text_input_background_image_f)
-        self.main_box.add_widget(self.following_text_input)
+        self.following_box.add_widget(self.following_text_input)
         
-        self.register_button = Button(size_hint = (1, 1), text = "Register")
-        self.main_box.add_widget(self.register_button)
-        self.register_button.bind(on_release = self.register)
+        self.register_btn = Button(size_hint = (1, 1), text = "Register")
+        self.main_box.add_widget(self.register_btn)
+        self.register_btn.bind(on_release = self.register)
         
     #creem o modifiquem la imatge de perfil 
     def to_image_making(self, instance):
         self.manager.transition = FallOutTransition()
         self.manager.current = "image_register"
     
+    """
     #funcions per que al deixar de seleccionar una casella hi hagi el fons corresponent
     def following_text_input_background_image_f(self, instance):
         if self.following_text_input.text != "":
@@ -149,30 +180,31 @@ class RegisterScreen (Screen):
             self.username_text_input.background_normal = 'atlas://data/images/defaulttheme/textinput'
         elif self.username_text_input.text == "":
             self.username_text_input.background_normal = self.my_list_of_background_images[0]
-    
+    """
+
     #register user f
     def register(self, instance):
-
         #comprovar username, password i image que son correctes
         self.other_users = check_user_exists(self.connection, self.username_text_input.text)
         if self.other_users == True:
-            self.my_list_of_background_images[0] = 'images/username_2_register.png'
+            self.username_btn.text = "Username incorrect:"
             self.username_text_input.text = ""
-            self.register_button.text = "Register. Sorry, try again"
+            self.register_btn.text = "Register. Sorry, try again"
         elif self.other_users == False:
             self.password_check = self.check_password()
             self.image_str = user_image_register_screen.get_my_image()
             self.color_check = self.check_image()
-            if self.password_check == False or self.password_text_input.text != self.repeat_password_text_input.text:
-                print("sexeanal")
-                self.my_list_of_background_images[1] = 'images/password_2_register.png'
+            if self.password_check == False:
+                self.password_btn.text = "Password incorrect:"
                 self.password_text_input.text = ""
-                self.my_list_of_background_images[2] = 'images/repeat_password_2_register.png'
+                self.register_btn.text = "Register. Sorry, try again"
+            elif self.password_text_input.text != self.repeat_password_text_input.text:
+                self.repeat_password_btn.text = "Repeat password incorrect"
                 self.repeat_password_text_input.text = ""
-                self.register_button.text = "Register. Sorry, try again"
+                self.register_btn.text = "Register. Sorry, try again"
             elif self.color_check == False:
                 self.image_button.text = "MAKE YOUR PROFILE IMAGE!"
-                self.register_button.text = "Register. Sorry, try again"
+                self.register_btn.text = "Register. Sorry, try again"
             elif self.password_check == True and self.color_check == True and self.password_text_input.text == self.repeat_password_text_input.text:
 
                 #guardar la informacio

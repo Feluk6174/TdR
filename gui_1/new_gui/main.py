@@ -30,7 +30,7 @@ from kivy.lang import Builder
 import api, register_screen, user_image_register_screen, profile_screen, home_screen, chat_screen, search_screen, create_post_screen, user_image_screen
 
 #optional. errase when doing apk
-Window.size = (500, 600)
+Window.size = (400, 600)
 
 connection = api.Connection()
 

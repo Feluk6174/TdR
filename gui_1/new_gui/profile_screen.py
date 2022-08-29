@@ -144,10 +144,6 @@ class ProfileScreen (Screen):
         self.user_description_btn = Button(text = self.text_description, on_release = self.user_description_press)
         self.description_box.add_widget(self.user_description_btn)
 
-    def user_followers_press(self, instance):
-        #go to screen
-        pass
-
     def user_following_press(self, instance):
         #go to screen
         pass
