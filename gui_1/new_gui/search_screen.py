@@ -324,7 +324,8 @@ class SearchScreen (Screen):
         self.manager.current = "profile"
         self.manager.transition.direction = "left"
     
-    def add_screens(self, home_screen, profile_screen, chat_screen):
+    def add_screens(self, home_screen, profile_screen, chat_screen, other_profile_screen):
         self.home_screen = home_screen
         self.profile_screen = profile_screen
         self.chat_screen = chat_screen
+        self.other_profile_sceen = other_profile_screen

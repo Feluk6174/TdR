@@ -197,7 +197,8 @@ class ChatScreen (Screen):
         self.manager.current = "profile"
         self.manager.transition.direction = "left"
 
-    def add_screens(self, home_screen, profile_screen, search_screen):
+    def add_screens(self, home_screen, profile_screen, search_screen, other_profile_screen):
         self.home_screen = home_screen
         self.profile_screen = profile_screen
         self.search_screen = search_screen
+        self.other_profile_screen = other_profile_screen

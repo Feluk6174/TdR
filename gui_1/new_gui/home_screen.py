@@ -31,16 +31,19 @@ import chat_screen, search_screen, profile_screen, functions, access_my_info
 
 
 class MainScreen (Screen):
-    def __init__(self, conn, my_profile_screen, my_search_screen, my_chat_screen, **kwargs):
+    def __init__(self, conn, my_profile_screen, my_search_screen, my_chat_screen, other_profile_screen, **kwargs):
         super(MainScreen, self).__init__(**kwargs)
 
         self.chat_screen = my_chat_screen
         self.profile_screen = my_profile_screen
         self.search_screen = my_search_screen
+        self.other_profile_screen = other_profile_screen
 
-        self.chat_screen.add_screens(self, self.profile_screen, self.search_screen)
-        self.profile_screen.add_screens(self, self.chat_screen, self.search_screen)
-        self.search_screen.add_screens(self, self.profile_screen, self.chat_screen)
+        self.chat_screen.add_screens(self, self.profile_screen, self.search_screen, self.other_profile_screen)
+        self.profile_screen.add_screens(self, self.chat_screen, self.search_screen, self.other_profile_screen)
+        self.search_screen.add_screens(self, self.profile_screen, self.chat_screen, self.other_profile_screen)
+        self.chat_screen.add_screens(self, self.profile_screen, self.search_screen, self.other_profile_screen)
+        self.other_profile_screen.add_screens(self, self.profile_screen, self.search_screen, self.chat_screen)
 
         self.connection = conn
 

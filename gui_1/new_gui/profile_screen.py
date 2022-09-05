@@ -233,7 +233,7 @@ class ProfileScreen (Screen):
             except KeyError:
                 pass
             self.post_btn = functions.make_post_btn(self.my_posts_list[a]["user_id"], my_image, self.my_posts_list[a]["flags"], self.my_posts_list[a]["content"], 0, self.my_posts_list[a]["time_posted"], self.my_posts_list[a]["id"], actual_maybe_like, a)
-            self.my_posts_box.add_widget(self.post)
+            self.my_posts_box.add_widget(self.post_btn)
             self.all_displayed_posts_list.append(self.my_posts_list[a]["id"], self.post_btn, actual_maybe_like)
 
         self.content_grid.bind(minimum_height=self.content_grid.setter('height'))
@@ -248,7 +248,7 @@ class ProfileScreen (Screen):
         for b in range (len(self.my_liked_posts_list)):
             user_liked_info = conn.get_user(self.my_liked_posts_list[b]["user_id"])        
             self.post_btn = functions.make_post_btn(self.my_liked_posts_list[b]["user_id"], user_liked_info["profile_picture"], self.my_liked_posts_list[b]["flags"], self.my_liked_posts_list[b]["content"], self.my_liked_posts_list[b]["likes"], self.my_liked_posts_list[b]["time_posted"], self.my_liked_posts_list[b]["id"], actual_maybe_like, b)
-            self.my_posts_box.add_widget(self.post)
+            self.my_posts_box.add_widget(self.post_btn)
             self.all_displayed_posts_list.append(self.my_liked_posts_list[b]["id"], self.post_btn, actual_maybe_like)
         
         self.content_grid.bind(minimum_height=self.content_grid.setter('height'))
@@ -312,8 +312,9 @@ class ProfileScreen (Screen):
 
     #def press_user_profile_btn(self, instance):
         #pass
-    
-    def add_screens(self, home_screen, chat_screen, search_screen):
+
+    def add_screens(self, home_screen, chat_screen, search_screen, other_profile_screen):
         self.home_screen = home_screen
         self.chat_screen = chat_screen
-        self.search_sscreen = search_screen
+        self.search_screen = search_screen
+        self.other_profile_screen = other_profile_screen

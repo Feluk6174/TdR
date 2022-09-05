@@ -27,7 +27,7 @@ from datetime import datetime
 from kivy.graphics import BorderImage
 from kivy.lang import Builder
 
-import api, register_screen, user_image_register_screen, profile_screen, home_screen, chat_screen, search_screen, create_post_screen, user_image_screen
+import api, register_screen, user_image_register_screen, profile_screen, home_screen, chat_screen, search_screen, create_post_screen, user_image_screen, other_user_profile_screen
 
 #optional. errase when doing apk
 Window.size = (400, 600)
@@ -48,23 +48,21 @@ class MyApp (App):
             sm.add_widget(register_screen.RegisterScreen(connection, sm, name = "register"))
             sm.add_widget(user_image_register_screen.ImageScreen(name = "image_register"))
         elif check_info == True:
-            print(4, __name__)
             check_register = register_screen.check_my_user_exists(connection)
             if check_register == False:
-                print(3)
                 register_screen.register(connection)
             #make screens of app
             my_profile_screen = profile_screen.ProfileScreen(connection, name = "profile")
             my_search_screen = search_screen.SearchScreen(connection, name = "search")
             my_chat_screen = chat_screen.ChatScreen(connection, name = "chat")
-            print(1)
-            sm.add_widget(home_screen.MainScreen(connection, my_profile_screen, my_search_screen, my_chat_screen, name = "main"))
+            other_profile_screen = other_user_profile_screen.OtherProfileScreen(connection, name = "other_profile")
+            sm.add_widget(home_screen.MainScreen(connection, my_profile_screen, my_search_screen, my_chat_screen, other_profile_screen, name = "main"))
             sm.add_widget(my_chat_screen)
             sm.add_widget(my_search_screen)
             sm.add_widget(create_post_screen.PostUserScreen(connection, name = "create"))
             sm.add_widget(my_profile_screen)
             sm.add_widget(user_image_screen.ImageScreen(my_profile_screen, name = "image"))
-            print(2)
+            sm.add_widget(other_profile_screen)
         return sm
 
 
