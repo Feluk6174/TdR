@@ -32,6 +32,7 @@ import home_screen, functions, chat_screen, profile_screen
 class SearchScreen (Screen):
     def __init__(self, conn, **kwargs):
         super(SearchScreen, self).__init__(**kwargs)
+        print(2)
 
         self.connection = conn
 
@@ -102,6 +103,8 @@ class SearchScreen (Screen):
         self.user_profile_btn = Button (text = ("U"))
         self.ground_box.add_widget(self.user_profile_btn)
         self.user_profile_btn.bind(on_release = self.press_user_profile_btn)
+
+        print(20)
         
 
     def header_btn_press(self, instance):
@@ -296,8 +299,6 @@ class SearchScreen (Screen):
         self.all_displayed_posts_list[order_number][2] = num
 
     def press_chat_btn(self, instance):
-        chat_scrn = self.chat_sc
-        chat_screen.generate_chats(chat_scrn)
         self.manager.transition = SlideTransition()
         self.manager.current = "chat"
         self.manager.transition.direction = "right"
@@ -306,8 +307,8 @@ class SearchScreen (Screen):
     #   pass
 
     def press_home_btn(self, instance):
-        home_scrn = self.home_screen
-        home_screen.get_my_posts(home_scrn)
+        home_screen = self.home_screen
+        home_screen.get_my_posts(home_screen)
         self.manager.transition = SlideTransition()
         self.manager.current = "home"
         self.manager.transition.direction = "left"
@@ -318,14 +319,13 @@ class SearchScreen (Screen):
         self.manager.transition.direction = "left"
 
     def press_user_profile_btn(self, instance):
-        profile_scrn = self.profile_screen
-        profile_screen.refresh_profile_screen(profile_scrn)
+        profile_screen = self.profile_screen
+        profile_screen.refresh_profile_screen(profile_screen)
         self.manager.transition = SlideTransition()
         self.manager.current = "profile"
         self.manager.transition.direction = "left"
     
-    def add_screens(self, home_screen, profile_screen, chat_screen, other_profile_screen):
+    def add_screens(self, home_screen, profile_screen, other_profile_screen):
         self.home_screen = home_screen
         self.profile_screen = profile_screen
-        self.chat_screen = chat_screen
         self.other_profile_sceen = other_profile_screen

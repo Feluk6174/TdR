@@ -56,7 +56,7 @@ class MyApp (App):
             my_search_screen = search_screen.SearchScreen(connection, name = "search")
             my_chat_screen = chat_screen.ChatScreen(connection, name = "chat")
             other_profile_screen = other_user_profile_screen.OtherProfileScreen(connection, name = "other_profile")
-            sm.add_widget(home_screen.MainScreen(connection, my_profile_screen, my_search_screen, my_chat_screen, other_profile_screen, name = "main"))
+            sm.add_widget(home_screen.MainScreen(connection, my_profile_screen, my_search_screen, other_profile_screen, name = "main"))
             sm.add_widget(my_chat_screen)
             sm.add_widget(my_search_screen)
             sm.add_widget(create_post_screen.PostUserScreen(connection, name = "create"))
@@ -79,7 +79,7 @@ if __name__ == "__main__":
 #functions clicking posts
 
 #flags
-#chat subjects: art, programation, videogames, philosophy, politic, sport, books, 
+#chat subjects: art, programation, videogames, philosophy, politic, sport, books
 
 
 #textbox with background text

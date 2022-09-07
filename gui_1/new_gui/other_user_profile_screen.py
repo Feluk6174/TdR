@@ -32,6 +32,8 @@ import access_my_info, home_screen, search_screen, profile_screen, functions, ch
 class OtherProfileScreen (Screen):
     def __init__(self, conn, **kwargs):
         super(OtherProfileScreen, self).__init__(**kwargs)
+        print(6)
+
         self.connection = conn
 
         self.main_all_box = BoxLayout(orientation = "vertical")
@@ -106,6 +108,8 @@ class OtherProfileScreen (Screen):
         self.user_profile_btn = Button (text = ("U"))
         self.ground_box.add_widget(self.user_profile_btn)
         self.user_profile_btn.bind(on_release = self.press_user_profile_btn)
+
+        print(60)
 
     
     def user_description_press(self, instance):

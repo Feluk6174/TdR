@@ -32,7 +32,8 @@ import access_my_info, home_screen, search_screen, profile_screen
 class PostUserScreen (Screen):
     def __init__(self, conn, **kwargs):
         super(PostUserScreen, self).__init__(**kwargs)
-        
+        print(4)
+
         self.connection = conn
 
         self.main_all_box = BoxLayout(orientation = "vertical")
@@ -116,6 +117,8 @@ class PostUserScreen (Screen):
         self.ground_box.add_widget(self.user_profile_btn)
         self.user_profile_btn.bind(on_release = self.press_user_profile_btn)
 
+        print(40)
+
 
     def header_btn_press(self, instance):
         pass
@@ -149,18 +152,19 @@ class PostUserScreen (Screen):
         conn.send_post(text_content, post_id, post_flags, user_name, private_key)    
 
     def press_chat_btn(self, instance):
-        #chat_screen.create_my_chats
         self.manager.transition = SlideTransition()
         self.manager.current = "chat"
         self.manager.transition.direction = "right"
 
     def press_search_btn(self, instance):
+        search_screen = self.search_screen
         search_screen.popular_posts_header_press(0)
         self.manager.transition = SlideTransition()
         self.manager.current = "search"
         self.manager.transition.direction = "right"
 
     def press_home_btn(self, instance):
+        home_screen = self.home_screen
         home_screen.get_my_posts(0)
         self.manager.transition = SlideTransition()
         self.manager.current = "last"
@@ -170,7 +174,14 @@ class PostUserScreen (Screen):
     #    pass
 
     def press_user_profile_btn(self, instance):
+        profile_screen = self.profile_screen
         profile_screen.refresh_profile_screen(profile_screen)
         self.manager.transition = SlideTransition()
         self.manager.current = "profile"
         self.manager.transition.direction = "left"
+    
+    def add_screens(self, home_screen, profile_screen, search_screen, other_profile_screen):
+        self.home_screen = home_screen
+        self.profile_screen = profile_screen
+        self.search_screen = search_screen
+        self.other_profile_screen = other_profile_screen

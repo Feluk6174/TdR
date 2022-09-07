@@ -51,9 +51,12 @@ class Connection():
         #return format: {'id': 'str(23)', 'user_id': 'str(16)', 'content': 'str(255)', 'flags': 'str(10)', 'time_posted': int}
         posts = []
         msg = "{"+f'"type": "ACTION", "action": "GET POSTS", "user_name": "{user_name}"'+"}"
+        print(500)
         self.send(msg)
+        print(501)
         num = int(self.recv())
         self.send('{"type": "RESPONSE", "response": "OK"}')
+        print(502)
         if not num == 0: 
             for _ in range(num):
                 posts.append(json.loads(self.recv()))

@@ -28,7 +28,7 @@ from datetime import datetime
 from kivy.graphics import BorderImage
 from kivy.lang import Builder
 
-import user_image_register_screen, auth, home_screen, search_screen, chat_screen, create_post_screen, profile_screen, user_image_screen, access_my_info
+import user_image_register_screen, auth, home_screen, search_screen, chat_screen, create_post_screen, profile_screen, user_image_screen, access_my_info, other_user_profile_screen
 
 
 def check_my_info_exists():
@@ -245,7 +245,8 @@ class RegisterScreen (Screen):
         my_profile_screen = profile_screen.ProfileScreen(con, name = "profile")
         my_search_screen = search_screen.SearchScreen(con, name = "search")
         my_chat_screen = chat_screen.ChatScreen(con, name = "chat")
-        self.manager.add_widget(home_screen.MainScreen(con, my_profile_screen, my_search_screen, my_chat_screen, name = "main"))
+        other_profile_screen = other_user_profile_screen.OtherProfileScreen(con, name = "other_profile")
+        self.manager.add_widget(home_screen.MainScreen(con, my_profile_screen, my_search_screen, my_chat_screen, other_profile_screen, name = "main"))
         self.manager.add_widget(my_chat_screen)
         self.manager.add_widget(my_search_screen)
         self.manager.add_widget(create_post_screen.PostUserScreen(con, name = "create"))

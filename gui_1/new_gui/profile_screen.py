@@ -32,6 +32,7 @@ import access_my_info, functions, search_screen, home_screen, chat_screen
 class ProfileScreen (Screen):
     def __init__(self, connection, **kwargs):
         super(ProfileScreen, self).__init__(**kwargs)
+        print (5)
 
         self.connection = connection
 
@@ -126,6 +127,8 @@ class ProfileScreen (Screen):
 
         self.user_profile_label = Label (text = ("User"))
         self.ground_box.add_widget(self.user_profile_label)
+
+        print (50)
 
 
     def user_description_press(self, instance):
@@ -286,22 +289,20 @@ class ProfileScreen (Screen):
         pass
 
     def press_chat_btn(self, instance):
-        chat_scrn = self.chat_screen
-        chat_screen.generate_chats(chat_scrn)
         self.manager.transition = SlideTransition()
         self.manager.current = "chat"
         self.manager.transition.direction = "right"
 
     def press_search_btn(self, instance):
-        search_scrn = self.search_screen
-        search_screen.refresh_search_screen(search_scrn)
+        search_screen = self.search_screen
+        search_screen.refresh_search_screen(search_screen)
         self.manager.transition = SlideTransition()
         self.manager.current = "search"
         self.manager.transition.direction = "right"
 
     def press_home_btn(self, instance):
-        home_scrn = self.home_screen
-        home_screen.get_my_posts(home_scrn)
+        home_screen = self.home_screen
+        home_screen.get_my_posts(home_screen)
         self.manager.current = "home"
         self.manager.transition.direction = "right"
 
@@ -313,8 +314,7 @@ class ProfileScreen (Screen):
     #def press_user_profile_btn(self, instance):
         #pass
 
-    def add_screens(self, home_screen, chat_screen, search_screen, other_profile_screen):
+    def add_screens(self, home_screen, search_screen, other_profile_screen):
         self.home_screen = home_screen
-        self.chat_screen = chat_screen
         self.search_screen = search_screen
         self.other_profile_screen = other_profile_screen

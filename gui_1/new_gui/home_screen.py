@@ -31,19 +31,21 @@ import chat_screen, search_screen, profile_screen, functions, access_my_info
 
 
 class MainScreen (Screen):
-    def __init__(self, conn, my_profile_screen, my_search_screen, my_chat_screen, other_profile_screen, **kwargs):
+    def __init__(self, conn, my_profile_screen, my_search_screen, other_profile_screen, **kwargs):
         super(MainScreen, self).__init__(**kwargs)
+        print(3)
 
-        self.chat_screen = my_chat_screen
         self.profile_screen = my_profile_screen
         self.search_screen = my_search_screen
         self.other_profile_screen = other_profile_screen
 
-        self.chat_screen.add_screens(self, self.profile_screen, self.search_screen, self.other_profile_screen)
-        self.profile_screen.add_screens(self, self.chat_screen, self.search_screen, self.other_profile_screen)
-        self.search_screen.add_screens(self, self.profile_screen, self.chat_screen, self.other_profile_screen)
-        self.chat_screen.add_screens(self, self.profile_screen, self.search_screen, self.other_profile_screen)
-        self.other_profile_screen.add_screens(self, self.profile_screen, self.search_screen, self.chat_screen)
+        print(31)
+
+        self.profile_screen.add_screens(self, self.search_screen, self.other_profile_screen)
+        self.search_screen.add_screens(self, self.profile_screen, self.other_profile_screen)
+        self.other_profile_screen.add_screens(self, self.profile_screen, self.search_screen)
+
+        print(32)
 
         self.connection = conn
 
@@ -63,6 +65,7 @@ class MainScreen (Screen):
         self.header_box.add_widget(self.header_btn)
         self.header_btn.bind(on_release = self.header_btn_press)
         
+        print (33)
         
         self.content_box = BoxLayout (size_hint = (1, 0.9))
         self.main_all_box.add_widget(self.content_box)
@@ -81,8 +84,10 @@ class MainScreen (Screen):
         self.posts_grid.add_widget(self.posts_box)
 
         self.all_posts_i_get = []
+        print(34)
         self.get_my_posts(0)
 
+        print(35)
 
         self.ground_box = BoxLayout (size_hint_y = None, height = Window.size[0] / 5)
         self.main_all_box.add_widget(self.ground_box)
@@ -105,21 +110,21 @@ class MainScreen (Screen):
         self.user_profile_btn = Button (text = ("U"))
         self.ground_box.add_widget(self.user_profile_btn)
         self.user_profile_btn.bind(on_release = self.press_user_profile_btn)
+
+        print(30)
         
 
     def header_btn_press(self, instance):
         pass
 
     def press_chat_btn(self, instance):
-        chat_scrn = self.chat_screen
-        chat_screen.generate_chats(chat_scrn)
         self.manager.transition = SlideTransition()
         self.manager.current = "chat"
         self.manager.transition.direction = "right"
 
     def press_search_btn(self, instance):
-        search_scrn = self.search_screen
-        search_screen.refresh_search_screen(search_scrn)
+        search_screen = self.search_screen
+        search_screen.refresh_search_screen(search_screen)
         self.manager.transition = SlideTransition()
         self.manager.current = "search"
         self.manager.transition.direction = "right"
@@ -133,8 +138,8 @@ class MainScreen (Screen):
         self.manager.transition.direction = "left"
 
     def press_user_profile_btn(self, instance):
-        profile_scrn = self.profile_screen
-        profile_screen.refresh_profile_screen(profile_scrn)
+        profile_screen = self.profile_screen
+        profile_screen.refresh_profile_screen(profile_screen)
         self.manager.transition = SlideTransition()
         self.manager.current = "profile"
         self.manager.transition.direction = "left"
@@ -143,29 +148,44 @@ class MainScreen (Screen):
         self.all_posts_i_get = []
         self.posts_box.clear_widgets()
         self.posts_grid.remove_widget(self.posts_box)
+        print(37)
         self.all_posts_info = self.get_new_follower_posts(self.connection)
+        print(309)
         self.all_posts_info = functions.order_posts_by_timestamp(self.all_posts_info)
+        print(310)
         self.posts_box = BoxLayout(orientation = "vertical", size_hint_y = None, height = Window.size[0] / 1.61 * (len(self.all_posts_info)))
         self.posts_grid.add_widget(self.posts_box)
+        print(38)
         for p in range(len(self.all_posts_info)):
             self.post_btn = functions.make_post_btn(self.all_posts_info[p][0], self.all_posts_info[p][1], self.all_posts_info[p][2], self.all_posts_info[p][3], self.all_posts_info[p][4], self.all_posts_info[p][5], self.all_posts_info[p][6], self.all_posts_info[p][7], p)
             self.posts_box.add_widget(self.post_btn)
             self.all_posts_i_get.append((self.all_posts_info[p][6], self.post_btn, self.all_posts_info[p][7]))
         self.posts_grid.bind(minimum_height=self.posts_grid.setter('height'))
+        print(39)
 
     def get_new_follower_posts(self, connection):
         all_my_following = access_my_info.get_following()
+        print(301)
         my_liked_posts = access_my_info.get_liked_id()
+        print(302)
         all_posts = []
+        print(all_my_following)
         for following in all_my_following:
+            print(following)
             follower_posts = connection.get_user_posts(following)
+            print(303)
             follower_info = connection.get_user(following)
+            print(304)
             #0 none, 1 yes, 
             for post in follower_posts:
+                print(305)
                 for liked in my_liked_posts:
                         if liked == post["id"]:
+                            print(306)
                             actual_maybe_like = 1
             all_posts.append((following, follower_info["profile_picture"], post["flags"], post["content"], post["likes"], post["time_posted"],post["id"], actual_maybe_like))
+            print(307)
+        print(308)
         return all_posts
         
     def name_press(self, order_number,instance):
