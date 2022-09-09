@@ -1,0 +1,13 @@
+import socket
+import json
+import time
+import api
+
+api.register_user("joan", 6174, "caracaracara", "your mom is a pinnapple")
+
+api.post("Hello world!", "j1", "joan")
+api.post("Hey aixo ja funciona, sembla", "j2", "joan")
+api.post("I just wanted to save the world", "j3", "joan")
+api.post("ja no se que dir", "j4", "joan")
+
+print(api.get_posts("joan"))
