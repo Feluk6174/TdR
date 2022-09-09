@@ -206,8 +206,6 @@ class OtherProfileScreen (Screen):
         pass
 
     def press_chat_btn(self, instance):
-        chat_scrn = self.chat_sc
-        chat_screen.generate_chats(chat_scrn)
         self.manager.transition = SlideTransition()
         self.manager.current = "chat"
         self.manager.transition.direction = "right"
@@ -216,8 +214,8 @@ class OtherProfileScreen (Screen):
     #   pass
 
     def press_home_btn(self, instance):
-        home_scrn = self.home_screen
-        home_screen.get_my_posts(home_scrn)
+        home_screen = self.home_screen
+        home_screen.get_my_posts(0)
         self.manager.transition = SlideTransition()
         self.manager.current = "home"
         self.manager.transition.direction = "left"
@@ -228,14 +226,13 @@ class OtherProfileScreen (Screen):
         self.manager.transition.direction = "left"
 
     def press_user_profile_btn(self, instance):
-        profile_scrn = self.profile_screen
-        profile_screen.refresh_profile_screen(profile_scrn)
+        profile_screen = self.profile_screen
+        profile_screen.refresh_profile_screen()
         self.manager.transition = SlideTransition()
         self.manager.current = "profile"
         self.manager.transition.direction = "left"
     
-    def add_screens(self, home_screen, profile_screen, search_screen, chat_screen):
+    def add_screens(self, home_screen, profile_screen, search_screen):
         self.home_screen = home_screen
         self.profile_screen = profile_screen
         self.search_screen = search_screen
-        self.chat_screen = chat_screen

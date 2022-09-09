@@ -93,14 +93,14 @@ class ChatScreen (Screen):
 
     def press_search_btn(self, instance):
         search_screen = self.search_screen
-        search_screen.refresh_search_screen(search_screen)
+        search_screen.refresh_search_screen()
         self.manager.transition = SlideTransition()
         self.manager.current = "search"
         self.manager.transition.direction = "left"
 
     def press_home_btn(self, instance):
         home_screen = self.home_screen
-        home_screen.get_my_posts(home_screen)
+        home_screen.get_my_posts(0)
         self.manager.transition = SlideTransition()
         self.manager.current = "home"
         self.manager.transition.direction = "left"
@@ -112,7 +112,7 @@ class ChatScreen (Screen):
 
     def press_user_profile_btn(self, instance):
         profile_screen = self.profile_screen
-        profile_screen.refresh_profile_screen(profile_screen)
+        profile_screen.refresh_profile_screen()
         self.manager.transition = SlideTransition()
         self.manager.transition = SlideTransition()
         self.manager.current = "profile"

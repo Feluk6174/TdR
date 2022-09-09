@@ -55,6 +55,7 @@ class Connection():
         self.send(msg)
         print(501)
         num = int(self.recv())
+        print(566)
         self.send('{"type": "RESPONSE", "response": "OK"}')
         print(502)
         if not num == 0: 

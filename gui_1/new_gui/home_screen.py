@@ -27,23 +27,25 @@ from datetime import datetime
 from kivy.graphics import BorderImage
 from kivy.lang import Builder
 
-import chat_screen, search_screen, profile_screen, functions, access_my_info
-
+import chat_screen, search_screen, profile_screen, functions, access_my_info, other_user_profile_screen, create_post_screen
+import api
 
 class MainScreen (Screen):
-    def __init__(self, conn, my_profile_screen, my_search_screen, other_profile_screen, **kwargs):
+    def __init__(self, conn:api.Connection, my_profile_screen:profile_screen.ProfileScreen, my_search_screen:search_screen.SearchScreen, my_chat_screen:chat_screen.ChatScreen, my_post_screen:create_post_screen.PostUserScreen, my_other_profile_screen:other_user_profile_screen.OtherProfileScreen, **kwargs):
         super(MainScreen, self).__init__(**kwargs)
         print(3)
 
         self.profile_screen = my_profile_screen
         self.search_screen = my_search_screen
-        self.other_profile_screen = other_profile_screen
+        self.other_profile_screen = my_other_profile_screen
 
         print(31)
 
-        self.profile_screen.add_screens(self, self.search_screen, self.other_profile_screen)
-        self.search_screen.add_screens(self, self.profile_screen, self.other_profile_screen)
-        self.other_profile_screen.add_screens(self, self.profile_screen, self.search_screen)
+        my_profile_screen.add_screens(self, self.search_screen, self.other_profile_screen)
+        my_search_screen.add_screens(self, self.profile_screen, self.other_profile_screen)
+        my_other_profile_screen.add_screens(self, self.profile_screen, self.search_screen)
+        my_chat_screen.add_screens(self, self.profile_screen, self.search_screen, self.other_profile_screen)
+        my_post_screen.add_screens(self, self.profile_screen, self.search_screen, self.other_profile_screen)
 
         print(32)
 
@@ -85,7 +87,7 @@ class MainScreen (Screen):
 
         self.all_posts_i_get = []
         print(34)
-        self.get_my_posts(0)
+        #self.get_my_posts(0)
 
         print(35)
 
@@ -124,7 +126,7 @@ class MainScreen (Screen):
 
     def press_search_btn(self, instance):
         search_screen = self.search_screen
-        search_screen.refresh_search_screen(search_screen)
+        search_screen.refresh_search_screen()
         self.manager.transition = SlideTransition()
         self.manager.current = "search"
         self.manager.transition.direction = "right"
@@ -139,7 +141,7 @@ class MainScreen (Screen):
 
     def press_user_profile_btn(self, instance):
         profile_screen = self.profile_screen
-        profile_screen.refresh_profile_screen(profile_screen)
+        profile_screen.refresh_profile_screen()
         self.manager.transition = SlideTransition()
         self.manager.current = "profile"
         self.manager.transition.direction = "left"

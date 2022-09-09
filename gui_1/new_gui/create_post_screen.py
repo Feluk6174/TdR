@@ -74,7 +74,7 @@ class PostUserScreen (Screen):
         
         self.flag_grid_scroll = ScrollView ()
         self.flag_grid_scroll.add_widget (self.flag_grid)
-        self.flag_box.add_widget (self.scroll)
+        self.flag_box.add_widget (self.flag_grid_scroll)
 
         self.all_flags = [['images/check_verd.png'], ['images/age18.png'], ['images/blood.png'], ['images/fist.png'], ['images/soga.png'], ['images/white.png'], ['images/white.png'], ['images/white.png'], ['images/white.png'], ['images/white.png'], ['images/white.png']]
         for d in range(len(self.all_flags) - 1):
@@ -175,7 +175,7 @@ class PostUserScreen (Screen):
 
     def press_user_profile_btn(self, instance):
         profile_screen = self.profile_screen
-        profile_screen.refresh_profile_screen(profile_screen)
+        profile_screen.refresh_profile_screen()
         self.manager.transition = SlideTransition()
         self.manager.current = "profile"
         self.manager.transition.direction = "left"

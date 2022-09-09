@@ -39,14 +39,14 @@ class ImageScreen (Screen):
         self.add_widget(self.main_box)
 
         self.first_big_box = BoxLayout(size_hint_y = None, height = Window.size[0] * 0.7, orientation = "horizontal")
-        self.main_box.add_widget(self.black_box_1)
+        self.main_box.add_widget(self.first_big_box)
 
         #box to add space
         self.black_box_1_1 = BoxLayout()
         self.first_big_box.add_widget(self.black_box_1_1)
 
         self.image_grid = GridLayout(spacing = 5, cols = 8, size_hint = (None, None), size = (Window.size[0] * 0.7, Window.size[0] * 0.7))
-        self.first_big_box.add_widget(self.image_box)
+        self.first_big_box.add_widget(self.image_grid)
 
         self.my_color_list = access_my_info.get_profile_image()
 
@@ -82,7 +82,7 @@ class ImageScreen (Screen):
         self.all_colors = [("0", '#1B1A1A'), ("1", '#7e7e7e'), ("2", '#bebebe'), ("3", '#ffffff'), ("4", '#7e0000'), ("5", '#fe0000'), ("6", '#047e00'), ("7", '#06ff04'), ("8", '#7e7e00'), ("9", '#ffff04'), ("A", '#00007e'), ("B", '#0000ff'), ("C", '#7e007e'), ("D", '#fe00ff'), ("E", '#047e7e'), ("F", '#06ffff')]
 
         for x in range (len(self.all_colors)):
-            self.change_color_btn = Button(border = (0, 0, 0, 0), background_normal = '', font_size = 1, text = str(x), background_color = kivy.utils.get_color_from_hex(self.all_colors[x][1]), on_press = self.change_color_button_1)
+            self.change_color_btn = Button(border = (0, 0, 0, 0), background_normal = '', font_size = 1, text = str(x), background_color = kivy.utils.get_color_from_hex(self.all_colors[x][1]), on_press = self.change_color_button_2)
             self.change_color_grid.add_widget(self.change_color_btn)
 
         self.black_box_2_2 = BoxLayout()
