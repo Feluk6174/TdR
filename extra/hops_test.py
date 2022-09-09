@@ -1,6 +1,8 @@
 from decimal import DivisionByZero
 import math
 
+from psutil import net_connections
+
 class Node():
     def __init__(self, node_id):
         self.id = node_id
@@ -18,55 +20,71 @@ class Node():
     
 n = 6
 
+conn_groups = [] 
+
 def get_n_connections(n):
     l_n = math.log2(n)
     if int(l_n) == l_n:
         return l_n
     return int(l_n)+1
+
+n_connections = get_n_connections(n)
+print("n_connections: ", n_connections)
+
+zero = []
+first = []
+second = []
+third = []
+
+
+
+def finish(last:list, origin:int):
+    global n, n_connections
     
-conn_groups = []
+    final = []
+    for t in last:
+        if len(t) == 6:
+            pass
+        for i in range(1, n):
+            temp = [origin, i]
+            temp.sort()
+            num = 0
+            for val in t:
+                if val[1] == origin or val[0] == origin or val[1] == i or val[0] == i:
+                    num += 1
+            if not temp in t or not num >= n_connections:
+                final.append([*t, temp])
+    return final
 
-num_groups = 1
+for i in range(1, n):
+    temp = [0, i]
+    temp.sort()
+    first.append([temp])
 
-for i in range(get_n_connections(n)):
-    num_groups *= (n-3-i)
+for _ in range(n_connections-1):
+    first = finish(first, 0)
+
+for _ in range(n_connections-1):
+    first = finish(first, 1)    
     
-for i in range(num_groups):
-    conn_groups.append([Node(j) for j in range(n)])
-    
-def iter(n, conn_groups, depth):
-    if depth == 0:
-        return
+for _ in range(n_connections-1):
+    first = finish(first, 2)    
 
-    
+for _ in range(n_connections-1):
+    first = finish(first, 3)    
 
-    depth -= 1
-    iter(n, depth)
-    return
+#for _ in range(n_connections-1):
+#    first = finish(first, 4)    
 
-for group in conn_groups:
-    for i in range(n):
-        try:
-            group[i].set_connection(group[i].id-1)
-            group[i].set_connection(group[i].id+1)
-        except IndexError:
-            if i == 0:
-                group[i].set_connection(n-1)
-                group[i].set_connection(group[i].id+1)
-            elif i == n-1:
-                group[i].set_connection(group[i].id-1)
-                group[i].set_connection(0)
-                
-                
-for group in conn_groups:
-    for node in group:
-        for i in range(n-3):
-            l = i
-            res = False
-            while not res:
-                res = node.set_connection(i)
-                if not res:
-                    l += 1
-                if l > n:
-                    raise DivisionByZero
-        
+text = ""
+
+for temp in first:
+    for t in temp:
+        text += str(t)+"\n"
+    text += "\n"
+
+print(text)
+
+print(first[0])
+
+print(len(first), len(third))
