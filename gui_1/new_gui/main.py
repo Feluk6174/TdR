@@ -27,13 +27,16 @@ from datetime import datetime
 from kivy.graphics import BorderImage
 from kivy.lang import Builder
 
-import api, register_screen, user_image_register_screen, profile_screen, home_screen, chat_screen, search_screen, create_post_screen, user_image_screen, other_user_profile_screen
+import api
+connection = api.Connection()
+import register_screen, user_image_register_screen, profile_screen, home_screen, chat_screen, search_screen, create_post_screen, user_image_screen, other_user_profile_screen
 
 #optional. errase when doing apk
 Window.size = (400, 600)
 
-connection = api.Connection()
 
+if __name__ == "__main__":
+    print("halloooooooo")
 
 class MyApp (App):
     def build(self):
@@ -72,7 +75,7 @@ if __name__ == "__main__":
     MyApp().run()
 
 
-
+#change description api def
 #text_input a alçada de teclat
 #improve buttons to other screens
 #alarm symbol in chat button on ground box of other screens

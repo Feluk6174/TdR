@@ -30,7 +30,7 @@ if __name__ == "__main__":
 
     try:
         if sys.argv[2] == "-v":
-            logger = log.Logger("main_log", vervose = True)
+            logger = log.Logger(f"main_log_{PORT}", vervose = True)
         else:
             logger = log.Logger("main_log")
     except IndexError:

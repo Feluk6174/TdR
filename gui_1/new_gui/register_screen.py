@@ -243,15 +243,18 @@ class RegisterScreen (Screen):
         register(con)
         #create (add) the rest of the main screens
         my_profile_screen = profile_screen.ProfileScreen(con, name = "profile")
+        my_profile_screen = profile_screen.ProfileScreen(con, name = "profile")
         my_search_screen = search_screen.SearchScreen(con, name = "search")
         my_chat_screen = chat_screen.ChatScreen(con, name = "chat")
         other_profile_screen = other_user_profile_screen.OtherProfileScreen(con, name = "other_profile")
-        self.manager.add_widget(home_screen.MainScreen(con, my_profile_screen, my_search_screen, other_profile_screen, name = "main"))
+        create_post_scrn = create_post_screen.PostUserScreen(con, name = "create")
+        self.manager.add_widget(home_screen.MainScreen(con, my_profile_screen, my_search_screen, my_chat_screen, create_post_scrn, other_profile_screen, name = "main"))
         self.manager.add_widget(my_chat_screen)
         self.manager.add_widget(my_search_screen)
-        self.manager.add_widget(create_post_screen.PostUserScreen(con, name = "create"))
+        self.manager.add_widget(create_post_scrn)
         self.manager.add_widget(my_profile_screen)
         self.manager.add_widget(user_image_screen.ImageScreen(my_profile_screen, name = "image"))
+        self.manager.add_widget(other_profile_screen)
         self.manager.transition = FallOutTransition()
         self.manager.current = "main"
     

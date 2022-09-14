@@ -26,7 +26,10 @@ import kivy.utils
 import home_screen, access_my_info
 from datetime import datetime
 
-import home_screen, functions, chat_screen, profile_screen
+import functions
+
+if not __name__ == "home_screen":
+    import home_screen
 
 
 class SearchScreen (Screen):
@@ -42,7 +45,7 @@ class SearchScreen (Screen):
         self.header_box = BoxLayout (size_hint = (1, 0.1))
         self.main_all_box.add_widget(self.header_box)
 
-        self.logo = Button (border = (0, 0, 0, 0), size_hint = (None, None), size = ((Window.size[1] - Window.size[0] / 5) * 0.1, (Window.size[1] - Window.size[0] / 5) * 0.1), background_normal = 'images/logo.png', background_down = 'images/logo.png', on_release = self.press_home_btn)
+        self.logo = Button (border = (0, 0, 0, 0), size_hint = (None, None), size = ((Window.size[1] - Window.size[0] / 5) * 0.1, (Window.size[1] - Window.size[0] / 5) * 0.1), background_normal = 'images/logo.png', background_down = 'images/logo.png', on_release = self.refresh_search_screen)
         self.header_box.add_widget(self.logo)
         
         self.header_text = Label(text = "Small brother", size_hint = (2, 1))
@@ -79,7 +82,7 @@ class SearchScreen (Screen):
         #current: 1 = new, 2 = search
         self.current_posts = 0        
 
-        #self.refresh_search_screen()
+        self.refresh_search_screen(0)
 
 
         self.ground_box = BoxLayout (size_hint_y = None, height = Window.size[0] / 5)
@@ -144,7 +147,7 @@ class SearchScreen (Screen):
         self.flag_filter_scroll = ScrollView ()
         self.content_in_scroll_box.add_widget(self.flag_filter_scroll) 
 
-        self.flag_grid = GridLayout(rowss = 1, size_hint_x = None)
+        self.flag_grid = GridLayout(rows = 1, size_hint_x = None)
         self.flag_grid.bind(minimum_width = self.flag_grid.setter('width'))
         self.flag_filter_scroll.add_widget(self.flag_grid)
         
@@ -208,13 +211,13 @@ class SearchScreen (Screen):
                         actual_maybe_like = 1
             except KeyError:
                 pass
-            self.post_btn = functions.make_post_btn(self, self.all_newest_posts_info[t]["user_id"], user_post_info["profile_picture"], self.all_newest_posts_info[t]["flags"], self.all_newest_posts_info[t]["content"], 0, self.all_newest_posts_info[t]["time_posted"], self.all_newest_posts_info[t]["id"], actual_maybe_like, t)
+            self.post_btn = functions.make_post_btn(self, self.all_newest_posts_info[t]["user_id"], user_post_info["profile_picture"], self.all_newest_posts_info[t]["flags"], self.all_newest_posts_info[t]["content"], self.all_newest_posts_info[t]["time_posted"], self.all_newest_posts_info[t]["id"], actual_maybe_like, t)
             self.content_in_scroll_box.add_widget(self.post_btn)
             self.all_displayed_posts_list.append((self.all_newest_posts_info[t]["id"], self.post_btn, actual_maybe_like))
 
-    def refresh_search_screen(self):
+    def refresh_search_screen(self, instance):
         if self.current_posts == 0 or self.current_posts == 2:
-            self.new_posts_header_press(0)
+            self.search_header_press(0)
         
         elif self.current_posts == 1:
             self.search_header_press(0)
@@ -292,7 +295,7 @@ class SearchScreen (Screen):
         num = (num + 1) % 2
         if num == 1:
             instance.background_normal = 'images/heart2.png'
-            functions.add_liked_or_unliked_post(self.all_displayed_posts_list[order_number][0], 1)
+            access_my_info.add_or_remove_liked_post(self.all_displayed_posts_list[order_number][0], 1)
         if num == 0:
             instance.background_normal = 'images/heart.png'
             access_my_info.add_or_remove_liked_post(self.all_displayed_posts_list[order_number][0], 0)
@@ -307,10 +310,10 @@ class SearchScreen (Screen):
     #   pass
 
     def press_home_btn(self, instance):
-        home_screen = self.home_screen
-        home_screen.get_my_posts(home_screen)
+        #home_screen = self.home_screen
+        #home_screen.get_my_posts(home_screen)
         self.manager.transition = SlideTransition()
-        self.manager.current = "home"
+        self.manager.current = "main"
         self.manager.transition.direction = "left"
 
     def press_make_posts_btn(self, instance):
@@ -319,8 +322,8 @@ class SearchScreen (Screen):
         self.manager.transition.direction = "left"
 
     def press_user_profile_btn(self, instance):
-        profile_screen = self.profile_screen
-        profile_screen.refresh_profile_screen(profile_screen)
+        #profile_screen = self.profile_screen
+        #profile_screen.refresh_profile_screen(profile_screen)
         self.manager.transition = SlideTransition()
         self.manager.current = "profile"
         self.manager.transition.direction = "left"
