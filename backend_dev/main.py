@@ -7,7 +7,7 @@ import user_actions
 import conn
 
 
-if __name__ == "__main__":
+def main():
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.connect(("8.8.8.8", 80))
@@ -48,3 +48,6 @@ if __name__ == "__main__":
     thread = threading.Thread(target=managment.start)
     thread.start()
     managment.main()
+    
+if __name__ == "__main__":
+    main()

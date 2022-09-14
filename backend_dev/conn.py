@@ -59,17 +59,21 @@ class ClientConnection():
             except socket.error as e:
                 logger.log("[ERROR]" + str(e))
                 clients.remove(self)
+                self.queue.append("kill")
                 break
 
             except json.decoder.JSONDecodeError as e:
                 logger.log("[ERROR]" + str(e) + " " + str(msg))
-                connections.remove(self)
-                clients
+                clients.remove(self)
+                self.queue.append("kill")
+                break
 
     def process_queue(self):
         global logger
         logger.log("client queue")
         while True:
+            if "kill" in self.queue:
+                break
             if not len(self.queue) == 0:
                 msg_info = self.queue[0]
                 logger.log(f"recived: {msg_info} {type(msg_info)}")
