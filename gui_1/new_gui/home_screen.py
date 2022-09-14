@@ -41,12 +41,14 @@ class MainScreen (Screen):
 
         print(31)
 
-        my_profile_screen.add_screens(self, self.search_screen, self.other_profile_screen)
-        my_search_screen.add_screens(self, self.profile_screen, self.other_profile_screen)
-        my_other_profile_screen.add_screens(self, self.profile_screen, self.search_screen)
-        my_chat_screen.add_screens(self, self.profile_screen, self.search_screen, self.other_profile_screen)
-        my_post_screen.add_screens(self, self.profile_screen, self.search_screen, self.other_profile_screen)
+        #my_profile_screen.add_screens(self, self.search_screen, self.other_profile_screen)
+        #my_search_screen.add_screens(self, self.profile_screen, self.other_profile_screen)
+        #my_other_profile_screen.add_screens(self, self.profile_screen, self.search_screen)
+        #my_chat_screen.add_screens(self, self.profile_screen, self.search_screen, self.other_profile_screen)
+        #my_post_screen.add_screens(self, self.profile_screen, self.search_screen, self.other_profile_screen)
 
+        my_search_screen.refresh_search_screen(0)
+        my_profile_screen.refresh_profile_screen(0)
         print(32)
 
         self.connection = conn
@@ -87,7 +89,7 @@ class MainScreen (Screen):
 
         self.all_posts_i_get = []
         print(34)
-        #self.get_my_posts(0)
+        self.get_my_posts(0)
 
         print(35)
 
@@ -125,8 +127,8 @@ class MainScreen (Screen):
         self.manager.transition.direction = "right"
 
     def press_search_btn(self, instance):
-        search_screen = self.search_screen
-        search_screen.refresh_search_screen()
+        #search_screen = self.search_screen
+        #search_screen.refresh_search_screen()
         self.manager.transition = SlideTransition()
         self.manager.current = "search"
         self.manager.transition.direction = "right"
@@ -136,12 +138,12 @@ class MainScreen (Screen):
 
     def press_make_posts_btn(self, instance):
         self.manager.transition = SlideTransition()
-        self.manager.current = "last"
+        self.manager.current = "create"
         self.manager.transition.direction = "left"
 
     def press_user_profile_btn(self, instance):
-        profile_screen = self.profile_screen
-        profile_screen.refresh_profile_screen()
+        #profile_screen = self.profile_screen
+        #profile_screen.refresh_profile_screen()
         self.manager.transition = SlideTransition()
         self.manager.current = "profile"
         self.manager.transition.direction = "left"
@@ -152,16 +154,14 @@ class MainScreen (Screen):
         self.posts_grid.remove_widget(self.posts_box)
         print(37)
         self.all_posts_info = self.get_new_follower_posts(self.connection)
-        print(309)
-        self.all_posts_info = functions.order_posts_by_timestamp(self.all_posts_info)
         print(310)
         self.posts_box = BoxLayout(orientation = "vertical", size_hint_y = None, height = Window.size[0] / 1.61 * (len(self.all_posts_info)))
         self.posts_grid.add_widget(self.posts_box)
         print(38)
         for p in range(len(self.all_posts_info)):
-            self.post_btn = functions.make_post_btn(self.all_posts_info[p][0], self.all_posts_info[p][1], self.all_posts_info[p][2], self.all_posts_info[p][3], self.all_posts_info[p][4], self.all_posts_info[p][5], self.all_posts_info[p][6], self.all_posts_info[p][7], p)
+            self.post_btn = functions.make_post_btn(self, self.all_posts_info[p][0], self.all_posts_info[p][1], self.all_posts_info[p][2], self.all_posts_info[p][3], self.all_posts_info[p][4], self.all_posts_info[p][5], self.all_posts_info[p][6], p)
             self.posts_box.add_widget(self.post_btn)
-            self.all_posts_i_get.append((self.all_posts_info[p][6], self.post_btn, self.all_posts_info[p][7]))
+            self.all_posts_i_get.append([self.all_posts_info[p][5], self.post_btn, self.all_posts_info[p][6]])
         self.posts_grid.bind(minimum_height=self.posts_grid.setter('height'))
         print(39)
 
@@ -170,22 +170,27 @@ class MainScreen (Screen):
         print(301)
         my_liked_posts = access_my_info.get_liked_id()
         print(302)
+        all_test_posts = []
         all_posts = []
         print(all_my_following)
         for following in all_my_following:
             print(following)
-            follower_posts = connection.get_user_posts(following)
-            print(303)
-            follower_info = connection.get_user(following)
-            print(304)
-            #0 none, 1 yes, 
+            follower_posts = connection.get_posts(user_name = following)
             for post in follower_posts:
-                print(305)
-                for liked in my_liked_posts:
-                        if liked == post["id"]:
-                            print(306)
-                            actual_maybe_like = 1
-            all_posts.append((following, follower_info["profile_picture"], post["flags"], post["content"], post["likes"], post["time_posted"],post["id"], actual_maybe_like))
+                all_test_posts.append(post)
+        all_test_posts = functions.order_posts_by_timestamp(all_test_posts)
+        for a in range(len(all_test_posts)):
+            user_info = connection.get_user(all_test_posts[a]["user_id"])
+            print(user_info)
+            print(304)
+            #0 none, 1 yes
+            actual_maybe_like = 0
+            print(305)
+            for liked in my_liked_posts:
+                    if liked == all_test_posts[a]["id"]:
+                        print(306)
+                        actual_maybe_like = 1
+            all_posts.append((following, user_info["profile_picture"], all_test_posts[a]["flags"], all_test_posts[a]["content"], all_test_posts[a]["time_posted"],all_test_posts[a]["id"], actual_maybe_like))
             print(307)
         print(308)
         return all_posts

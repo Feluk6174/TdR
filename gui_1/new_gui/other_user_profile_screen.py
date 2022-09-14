@@ -214,10 +214,10 @@ class OtherProfileScreen (Screen):
     #   pass
 
     def press_home_btn(self, instance):
-        home_screen = self.home_screen
-        home_screen.get_my_posts(0)
+        #home_screen = self.home_screen
+        #home_screen.get_my_posts(0)
         self.manager.transition = SlideTransition()
-        self.manager.current = "home"
+        self.manager.current = "main"
         self.manager.transition.direction = "left"
 
     def press_make_posts_btn(self, instance):
@@ -226,8 +226,8 @@ class OtherProfileScreen (Screen):
         self.manager.transition.direction = "left"
 
     def press_user_profile_btn(self, instance):
-        profile_screen = self.profile_screen
-        profile_screen.refresh_profile_screen()
+        #profile_screen = self.profile_screen
+        #profile_screen.refresh_profile_screen()
         self.manager.transition = SlideTransition()
         self.manager.current = "profile"
         self.manager.transition.direction = "left"

@@ -49,9 +49,9 @@ def change_my_description(description):
 def add_or_remove_liked_post(post_id, like):
     my_user_info = open_my_user_info()
     if like == 0:
-        my_user_info["semi_basic_info"]["liked_posts"].append(post_id)
+        my_user_info["semi_basic_info"]["liked_posts_id"].remove(post_id)
     elif like == 1:
-        my_user_info["semi_basic_info"]["liked_posts"].remove(post_id)
+        my_user_info["semi_basic_info"]["liked_posts_id"].append(post_id)
     file_my = open("my_info.json", "w")
     file_my.write(json.dumps(my_user_info))
     file_my.close()

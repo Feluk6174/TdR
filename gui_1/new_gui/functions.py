@@ -83,7 +83,7 @@ def build_image(screen, user_image, order_number, width):
 
 
 #def crear botó
-def make_post_btn(screen, user_name, user_image, post_flags, text_content, nlikes, date, post_id, like_self, order_number):
+def make_post_btn(screen, user_name, user_image, post_flags, text_content, date, post_id, like_self, order_number):
     post = BoxLayout(size_hint_y = None, height = Window.size[0] / 1.61, orientation = "vertical")
         
     post_like = int(like_self)
@@ -147,6 +147,8 @@ def order_posts_by_timestamp(posts_to_order):
         for b in range (length):
             #if posts_to_order[a]["time_stamp"] > posts_to_order[b]["time_stamp"]:
             #    how_big_list[a][1] = how_big_list[a][1] + 1
+            print(posts_to_order)
+            print(a, b, posts_to_order[a])
             if posts_to_order[a]["time_posted"] < posts_to_order[b]["time_posted"]:
                 how_big_list[a] = how_big_list[a] + 1
     for c in range (length):

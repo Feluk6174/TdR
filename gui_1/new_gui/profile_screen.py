@@ -42,7 +42,7 @@ class ProfileScreen (Screen):
         self.header_box = BoxLayout (size_hint = (1, 0.1))
         self.main_all_box.add_widget(self.header_box)
 
-        self.logo = Button (border = (0, 0, 0, 0), size_hint = (None, None), size = ((Window.size[1] - Window.size[0] / 5) * 0.1, (Window.size[1] - Window.size[0] / 5) * 0.1), background_normal = 'images/logo.png', background_down = 'images/logo.png', on_release = self.press_home_btn)
+        self.logo = Button (border = (0, 0, 0, 0), size_hint = (None, None), size = ((Window.size[1] - Window.size[0] / 5) * 0.1, (Window.size[1] - Window.size[0] / 5) * 0.1), background_normal = 'images/logo.png', background_down = 'images/logo.png', on_release = self.refresh_profile_screen)
         self.header_box.add_widget(self.logo)
         
         self.header_text = Label(text = "Small brother", size_hint = (2, 1))
@@ -61,15 +61,15 @@ class ProfileScreen (Screen):
 
         self.content_grid_scroll = ScrollView ()
         self.content_grid_scroll.add_widget (self.content_grid)
-        self.main_all_box.add_widget (self.content_grid_scroll)
+        self.content_box.add_widget (self.content_grid_scroll)
 
-        self.user_image_name_box = BoxLayout(size_hint_y = None, height = (Window.size[1]  - Window.size[0] / 5) * 0.9 / 5)
+        self.user_image_name_box = BoxLayout(orientation = "horizontal", size_hint_y = None, height = (Window.size[1]  - Window.size[0] / 5) * 0.9 / 5)
         self.content_grid.add_widget(self.user_image_name_box)
 
-        self.user_image_box = BoxLayout()
+        self.user_image_box = BoxLayout(size_hint_x = None, width = (Window.size[1]  - Window.size[0] / 5) * 0.9 / 5)
         self.user_image_name_box.add_widget(self.user_image_box)
         
-        self.user_image_grid = functions.build_image(self, access_my_info.get_profile_image(), 0, Window.size[0] / 1.61 / 6)
+        self.user_image_grid = functions.build_image(self, access_my_info.get_profile_image(), 0, (Window.size[1]  - Window.size[0] / 5) * 0.9 / 5)
         self.user_image_box.add_widget(self.user_image_grid)
 
         self.user_name_btn = Button(text = access_my_info.get_user_name())
@@ -80,7 +80,7 @@ class ProfileScreen (Screen):
         self.content_grid.add_widget(self.description_box)
 
         self.user_description_btn = Button(text = access_my_info.get_description(), size_hint_y = None, height = (Window.size[1] - Window.size[0] / 5) * 2 * 0.9 / 5)
-        self.content_grid.add_widget(self.user_description_btn)
+        self.description_box.add_widget(self.user_description_btn)
         self.user_description_btn.bind(on_release = self.user_description_press)
 
         self.user_following_btn = Button(text = "Following", size_hint_y = None, height = (Window.size[1] - Window.size[0] / 5) * 0.9 / 5)
@@ -148,10 +148,11 @@ class ProfileScreen (Screen):
         self.description_box.add_widget(self.user_description_btn)
 
     def user_following_press(self, instance):
-        #go to screen
-        pass
+        self.manager.transition = FallOutTransition()
+        self.manager.current = "other_profile"
+        
 
-    def refresh_profile_screen(self):
+    def refresh_profile_screen(self, instance):
         #self.user_image_box.clear_widgets()
 
         #self.user_image_grid = functions.build_image(self, access_my_info.get_image(), 0, Window.size[0] / 1.61 / 6)
@@ -165,7 +166,7 @@ class ProfileScreen (Screen):
 
     def user_posts_press(self, instance):
         conn = self.connection
-        self.my_posts_list = conn.get_posts(username = self.user_name_btn.text)
+        self.my_posts_list = conn.get_posts(user_name = self.user_name_btn.text)
         #self.my_posts_list = access_my_info.get_my_posts()
         #self.my_posts_list = []
         self.my_posts_list = functions.order_posts_by_timestamp(self.my_posts_list)
@@ -194,10 +195,11 @@ class ProfileScreen (Screen):
         #with connection or in phone memory
         self.my_liked_list_id = access_my_info.get_liked_id()
         self.my_liked_list = []
-        for id in self.my_liked_list_id:
-            self.my_liked_list.append(conn.get_post(id = id))
+        for post_id in self.my_liked_list_id:
+            posts_to_include = conn.get_post(post_id)
+            self.my_liked_list.append(posts_to_include)
         #self.my_liked_posts_list = []
-        self.my_liked_posts_list = functions.order_posts_by_timestamp(self.my_liked_posts_list)
+        self.my_liked_posts_list = functions.order_posts_by_timestamp(self.my_liked_list)
 
         if self.current_posts == 1:
             self.my_posts_box.clear_widgets()
@@ -235,9 +237,9 @@ class ProfileScreen (Screen):
                         actual_maybe_like = 1
             except KeyError:
                 pass
-            self.post_btn = functions.make_post_btn(self.my_posts_list[a]["user_id"], my_image, self.my_posts_list[a]["flags"], self.my_posts_list[a]["content"], 0, self.my_posts_list[a]["time_posted"], self.my_posts_list[a]["id"], actual_maybe_like, a)
+            self.post_btn = functions.make_post_btn(self, self.my_posts_list[a]["user_id"], my_image, self.my_posts_list[a]["flags"], self.my_posts_list[a]["content"], self.my_posts_list[a]["time_posted"], self.my_posts_list[a]["id"], actual_maybe_like, a)
             self.my_posts_box.add_widget(self.post_btn)
-            self.all_displayed_posts_list.append(self.my_posts_list[a]["id"], self.post_btn, actual_maybe_like)
+            self.all_displayed_posts_list.append([self.my_posts_list[a]["id"], self.post_btn, actual_maybe_like])
 
         self.content_grid.bind(minimum_height=self.content_grid.setter('height'))
     
@@ -250,9 +252,9 @@ class ProfileScreen (Screen):
         actual_maybe_like = 1
         for b in range (len(self.my_liked_posts_list)):
             user_liked_info = conn.get_user(self.my_liked_posts_list[b]["user_id"])        
-            self.post_btn = functions.make_post_btn(self.my_liked_posts_list[b]["user_id"], user_liked_info["profile_picture"], self.my_liked_posts_list[b]["flags"], self.my_liked_posts_list[b]["content"], self.my_liked_posts_list[b]["likes"], self.my_liked_posts_list[b]["time_posted"], self.my_liked_posts_list[b]["id"], actual_maybe_like, b)
-            self.my_posts_box.add_widget(self.post_btn)
-            self.all_displayed_posts_list.append(self.my_liked_posts_list[b]["id"], self.post_btn, actual_maybe_like)
+            self.post_btn = functions.make_post_btn(self, self.my_liked_posts_list[b]["user_id"], user_liked_info["profile_picture"], self.my_liked_posts_list[b]["flags"], self.my_liked_posts_list[b]["content"], self.my_liked_posts_list[b]["time_posted"], self.my_liked_posts_list[b]["id"], actual_maybe_like, b)
+            self.favourite_posts_box.add_widget(self.post_btn)
+            self.all_displayed_posts_list.append([self.my_liked_posts_list[b]["id"], self.post_btn, actual_maybe_like])
         
         self.content_grid.bind(minimum_height=self.content_grid.setter('height'))
     
@@ -266,10 +268,10 @@ class ProfileScreen (Screen):
         like = (self.all_displayed_posts_list[num][2] + 1) % 2
         if like == 1:
             instance.background_normal = 'images/heart2.png'
-            functions.add_liked_or_unliked_post(self.all_displayed_posts_list[num][0], like)
+            access_my_info.add_or_remove_liked_post(self.all_displayed_posts_list[num][0], like)
         if like == 0:
             instance.background_normal = 'images/heart.png'
-            functions.add_liked_or_unliked_post(self.all_displayed_posts_list[num][0], like)
+            access_my_info.add_or_remove_liked_post(self.all_displayed_posts_list[num][0], like)
         
         self.all_displayed_posts_list[num][2] = like
 
@@ -294,16 +296,17 @@ class ProfileScreen (Screen):
         self.manager.transition.direction = "right"
 
     def press_search_btn(self, instance):
-        search_screen = self.search_screen
-        search_screen.refresh_search_screen()
+        #search_screen = self.search_screen
+        #search_screen.refresh_search_screen()
         self.manager.transition = SlideTransition()
         self.manager.current = "search"
         self.manager.transition.direction = "right"
 
     def press_home_btn(self, instance):
-        home_screen = self.home_screen
-        home_screen.get_my_posts(0)
-        self.manager.current = "home"
+        #home_screen = self.home_screen
+        #home_screen.get_my_posts(0)
+        self.manager.transition = SlideTransition()
+        self.manager.current = "main"
         self.manager.transition.direction = "right"
 
     def press_make_posts_btn(self, instance):

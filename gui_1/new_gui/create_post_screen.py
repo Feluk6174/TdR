@@ -87,7 +87,7 @@ class PostUserScreen (Screen):
             self.flag_grid.add_widget(self.flag_btn)
             
         self.send_post_btn = Button (text = "Publish", size_hint = (1, 1))
-        self.content_box.add_widget(self.send_post_btn)
+        self.content_grid.add_widget(self.send_post_btn)
         self.send_post_btn.bind(on_press = self.send_post_press)
 
         #self.last = Button (text = "All your posts", size_hint = (1, 0.67))
@@ -149,7 +149,7 @@ class PostUserScreen (Screen):
         #post_likes = nlikes
         #date = int(time.time())
         post_id = abs(hash(str(text_content) + str(user_name) + str(post_flags) + str(time.time())))
-        conn.send_post(text_content, post_id, post_flags, user_name, private_key)    
+        conn.post(text_content, post_id, user_name, post_flags, private_key)    
 
     def press_chat_btn(self, instance):
         self.manager.transition = SlideTransition()
@@ -157,25 +157,25 @@ class PostUserScreen (Screen):
         self.manager.transition.direction = "right"
 
     def press_search_btn(self, instance):
-        search_screen = self.search_screen
-        search_screen.popular_posts_header_press(0)
+        #search_screen = self.search_screen
+        #search_screen.popular_posts_header_press(0)
         self.manager.transition = SlideTransition()
         self.manager.current = "search"
         self.manager.transition.direction = "right"
 
     def press_home_btn(self, instance):
-        home_screen = self.home_screen
-        home_screen.get_my_posts(0)
+        #home_screen = self.home_screen
+        #home_screen.get_my_posts(0)
         self.manager.transition = SlideTransition()
-        self.manager.current = "last"
+        self.manager.current = "main"
         self.manager.transition.direction = "right"
 
     #def press_make_posts_btn(self, instance):
     #    pass
 
     def press_user_profile_btn(self, instance):
-        profile_screen = self.profile_screen
-        profile_screen.refresh_profile_screen()
+        #profile_screen = self.profile_screen
+        #profile_screen.refresh_profile_screen()
         self.manager.transition = SlideTransition()
         self.manager.current = "profile"
         self.manager.transition.direction = "left"

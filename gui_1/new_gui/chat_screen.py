@@ -23,10 +23,7 @@ from kivy.clock import Clock
 from kivy.uix.screenmanager import FallOutTransition
 from kivy.uix.screenmanager import SlideTransition
 import kivy.utils
-import home_screen, access_my_info
 from datetime import datetime
-
-import search_screen, functions, profile_screen
 
 
 class ChatScreen (Screen):
@@ -92,17 +89,17 @@ class ChatScreen (Screen):
         #pass
 
     def press_search_btn(self, instance):
-        search_screen = self.search_screen
-        search_screen.refresh_search_screen()
+        #search_screen = self.search_screen
+        #search_screen.refresh_search_screen()
         self.manager.transition = SlideTransition()
         self.manager.current = "search"
         self.manager.transition.direction = "left"
 
     def press_home_btn(self, instance):
-        home_screen = self.home_screen
-        home_screen.get_my_posts(0)
+        #home_screen = self.home_screen
+        #home_screen.get_my_posts(0)
         self.manager.transition = SlideTransition()
-        self.manager.current = "home"
+        self.manager.current = "main"
         self.manager.transition.direction = "left"
 
     def press_make_posts_btn(self, instance):
@@ -111,8 +108,8 @@ class ChatScreen (Screen):
         self.manager.transition.direction = "left"
 
     def press_user_profile_btn(self, instance):
-        profile_screen = self.profile_screen
-        profile_screen.refresh_profile_screen()
+        #profile_screen = self.profile_screen
+        #profile_screen.refresh_profile_screen()
         self.manager.transition = SlideTransition()
         self.manager.transition = SlideTransition()
         self.manager.current = "profile"
