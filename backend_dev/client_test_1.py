@@ -38,6 +38,7 @@ print(conn.get_posts(num=2))
 print(12.1)
 print(conn.get_post("1"))
 print(13.1)
+<<<<<<< HEAD
 print(conn.get_user(user_name))
 
 #b65672e9397175e9c099e86c608f2c5c10e48680172cd126e9ac14dfa3df534a
@@ -51,3 +52,6 @@ print(conn.get_user(user_name))
 
 #while True:
 #    command = input("Command: ")
+=======
+print(conn.get_user("Feluk6174"))
+>>>>>>> 53f262aa13ba0c585eb62cec2fbf1be2efc3c0f7
