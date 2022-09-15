@@ -139,8 +139,10 @@ def main():
             manage_new_client(connection, conn_info)
 
 def start():
+    global get_suposed_connected, db
     time.sleep(10)
-    connect_to_new_node()
+    for i in range(get_suposed_connected(len(db.querry("SELECT * fROM ips;")))):
+        connect_to_new_node()
 
 def init(get_logger:log.Logger, get_clients:list, get_connections:list, get_db:database.Database, get_HOST:str, get_IP:str, get_PORT:str, get_server:socket.socket):
     # sets global variables
