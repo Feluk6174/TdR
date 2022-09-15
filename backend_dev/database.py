@@ -26,7 +26,7 @@ def is_safe(*args, logger = None):
 
 
 class Database():
-    def __init__(self, logger:log_lib.Logger=None):
+    def __init__(self, logger:log.Logger=None):
         self.connect()
         self.queue = []
         self.return_response = []
