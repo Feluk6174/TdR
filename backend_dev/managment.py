@@ -38,13 +38,13 @@ def broadcast_ip(ip:str, node_ip:str):
             connection.queue.append(json.loads("{"+f'"type": "ACTION", "action": "SEND", "msg": {json.dumps(msg_content)}'+"}"))
 
 def manage_ip(msg_info:dict, node_ip:str):
-    global IP, db
+    global IP, db, clock_time
     ip = msg_info["ip"]
     if ip == IP:
         return
 
-    seconds_to_delete = 60
-    seconds_to_update = 30
+    seconds_to_delete = clock_time * 2
+    seconds_to_update = clock_time
 
     db.execute(f"DELETE FROM ips WHERE time_connected <= {int(time.time()) - seconds_to_delete}")
     res = db.querry(f"SELECT * FROM ips WHERE ip = '{ip}';")
@@ -70,7 +70,7 @@ def check_if_connected(ip:str):
 
 def connect_to_new_node():
     global server_info, db, get_suposed_connected, connections
-    n_nodes = len("SELECT * FROM ips;")
+    n_nodes = len(db.querry("SELECT * FROM ips;"))
     n_suposed_connections = get_suposed_connected(n_nodes)
     n_connected = len(connections)
     if n_suposed_connections < n_connected:
@@ -110,7 +110,7 @@ def manage_new_node(connection, address, conn_info):
         thread.start()
 
 def clock():
-    global connections, clients, db, IP, logger
+    global connections, clients, db, IP, logger, clock_time
     while True:
         logger.log("num of connected clients: " + str(len(clients)))
         logger.log("num of connections: " + str(len(connections)))
@@ -121,7 +121,7 @@ def clock():
         for ip in res:
             logger.log(f"    {ip[0]}")
         broadcast_ip(IP, IP)
-        time.sleep(30)
+        time.sleep(clock_time)
 
 def main():
     global server, logger
@@ -177,3 +177,4 @@ get_suposed_connected = lambda n: 3
 server_info = {}
 max_clients = 0
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+clock_time = 86400
