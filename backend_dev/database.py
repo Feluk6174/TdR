@@ -2,10 +2,10 @@ import mysql.connector
 import random
 import threading
 import time
-import log
+import log as log_lib
 
 
-def log(*message, logger:log.Logger = None):
+def log(*message, logger:log_lib.Logger = None):
     if not logger == None:
         logger.log(*message)
     else:
@@ -26,7 +26,7 @@ def is_safe(*args, logger = None):
 
 
 class Database():
-    def __init__(self, logger:log.Logger=None):
+    def __init__(self, logger:log_lib.Logger=None):
         self.connect()
         self.queue = []
         self.return_response = []
