@@ -2,9 +2,10 @@ import mysql.connector
 import random
 import threading
 import time
-import log as log_lib
+import log
 
-def log(*message, logger:log_lib.Logger = None):
+
+def log(*message, logger:log.Logger = None):
     if not logger == None:
         logger.log(*message)
     else:
