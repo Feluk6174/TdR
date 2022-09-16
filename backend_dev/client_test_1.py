@@ -9,7 +9,7 @@ priv_key, pub_key = auth.get_keys("Hola")
 
 print(priv_key.export_key())
 
-user_name = "test"
+user_name = "dev_test"
 
 with open("rsa_key.bin", "r") as f:
     keys_file = f.read()
