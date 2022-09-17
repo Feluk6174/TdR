@@ -2,7 +2,7 @@ import socket
 import json
 import auth
 import time
-from Cryptodome.Hash import SHA256
+from Crypto.Hash import SHA256
 from typing import Union
 
 
