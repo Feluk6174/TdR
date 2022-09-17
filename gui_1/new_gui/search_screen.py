@@ -56,20 +56,22 @@ class SearchScreen (Screen):
         self.header_btn.bind(on_release = self.header_btn_press)
         
 
-        self.content_box = BoxLayout (size_hint = (1, 0.9))
+        self.content_box = BoxLayout (size_hint = (1, 0.9), orientation = "vertical")
         self.main_all_box.add_widget(self.content_box)
         
         self.content_box_scroll = ScrollView ()
         self.content_box.add_widget (self.content_box_scroll) 
 
         self.content_grid = GridLayout(cols = 1, size_hint_y = None)
-        self.content_grid.bind(minimum_height=self.content_grid.setter('height'))
         self.content_box_scroll.add_widget (self.content_grid)
+        self.content_grid.bind(minimum_height=self.content_grid.setter('height'))
+
+        #self.content_grid.add_widget(Button(text = "a", size_hint_y = None, height = 100))
         
         self.display_header_box = BoxLayout(size_hint_y = None, height = Window.size[1] / 8)
         self.content_grid.add_widget(self.display_header_box)
 
-        self.content_in_scroll_box = BoxLayout(orientation = 'vertical')
+        self.content_in_scroll_box = BoxLayout(orientation = 'vertical', size_hint_y = None)
         self.content_grid.add_widget(self.content_in_scroll_box)
 
         self.all_flags = [['images/check_verd.png'], ['images/red_cross.png'], ['images/age18.png'], ['images/blood.png'], ['images/fist.png'], ['images/soga.png'], ['images/white.png'], ['images/white.png'], ['images/white.png'], ['images/white.png'], ['images/white.png'], ['images/white.png']]
@@ -82,7 +84,7 @@ class SearchScreen (Screen):
         #current: 1 = new, 2 = search
         self.current_posts = 0        
 
-        self.refresh_search_screen(0)
+        #self.new_posts_header_press(0)
 
 
         self.ground_box = BoxLayout (size_hint_y = None, height = Window.size[0] / 5)
@@ -127,12 +129,15 @@ class SearchScreen (Screen):
 
         self.display_header_box.clear_widgets()
 
+        for x in range (len(self.all_flags) - 2):
+            self.all_flags[x + 2][2] = 0
+
 
         self.new_posts_header_display_btn = Button(text = "New")
         self.display_header_box.add_widget(self.new_posts_header_display_btn)
         self.new_posts_header_display_btn.bind(on_release = self.new_posts_header_press)
 
-        self.search_header_display_label = Button (text = "For You")
+        self.search_header_display_label = Label (text = "Search")
         self.display_header_box.add_widget(self.search_header_display_label)
 
 
@@ -144,10 +149,10 @@ class SearchScreen (Screen):
         self.content_in_scroll_box.add_widget(self.search_post_hastags_input)
         #self.search_post_hastags.bind(on_text_validate = self.search_hastags_def)
    
-        self.flag_filter_scroll = ScrollView ()
+        self.flag_filter_scroll = ScrollView (size_hint_y = None, height = (Window.size[1] - Window.size[0] / 5) * 0.9 / 12)
         self.content_in_scroll_box.add_widget(self.flag_filter_scroll) 
 
-        self.flag_grid = GridLayout(rows = 1, size_hint_x = None)
+        self.flag_grid = GridLayout(rows = 1, size_hint_x = None, size_hint_y = None, height = (Window.size[1] - Window.size[0] / 5) * 0.9 / 12)
         self.flag_grid.bind(minimum_width = self.flag_grid.setter('width'))
         self.flag_filter_scroll.add_widget(self.flag_grid)
         
@@ -155,24 +160,26 @@ class SearchScreen (Screen):
             self.flag_btn = Button(border = (0, 0, 0, 0), font_size = 1, size_hint_x = None, width = (Window.size[1] - Window.size[0] / 5) * 0.9 / 12, text = str(self.all_flags[x + 2][1]), on_release = self.flag_press, background_normal = self.all_flags[x + 2][0])
             self.all_flags[x + 2].append(self.flag_btn)
             self.flag_grid.add_widget(self.flag_btn)
+        self.flag_grid.bind(minimum_width = self.flag_grid.setter('width'))
+
         
-        self.search_btn = Button(size_hint_y = None, height = Window.size[1] / 6, on_release = self.search_def, border = (0, 0, 0, 0), text = "Clear")
+        self.search_btn = Button(size_hint_y = None, height = Window.size[1] / 6, on_release = self.search_def, border = (0, 0, 0, 0), text = "Search")
         self.content_in_scroll_box.add_widget(self.search_btn)
 
         self.clear_search_btn = Button(size_hint_y = None, height = Window.size[1] / 8, on_release = self.clear_search_def, border = (0, 0, 0, 0), text = "Clear")
         self.content_in_scroll_box.add_widget(self.clear_search_btn)
 
-        self.searched_box = BoxLayout(size_hint_y = None, height = 0)
+        self.searched_box = BoxLayout(size_hint_y = None, height = 0, orientation = "vertical")
         self.content_in_scroll_box.add_widget(self.searched_box)
 
 
+        self.content_in_scroll_box.height = Window.size[1] / 8 + Window.size[1] / 6 + (Window.size[1] - Window.size[0] / 5) * 0.9 / 12 + Window.size[1] * 2 / 15
         self.content_grid.bind(minimum_height=self.content_grid.setter('height'))
         self.current_posts = 2
 
     def new_posts_header_press(self, instance):
         connection = self.connection
-        self.all_new_posts_info = connection.get_posts(sort_by = "time_posted", sort_order = "desc", num = 20, exclude_flags = self.get_filter_flags())
-        print(self.all_new_posts_info)
+        self.all_new_posts_info = connection.get_posts(sort_by = "time_posted", sort_order = "desc", num = 20)
         self.all_newest_posts_info = functions.order_posts_by_timestamp(self.all_new_posts_info)
         print(self.all_newest_posts_info)
 
@@ -213,11 +220,12 @@ class SearchScreen (Screen):
                 pass
             self.post_btn = functions.make_post_btn(self, self.all_newest_posts_info[t]["user_id"], user_post_info["profile_picture"], self.all_newest_posts_info[t]["flags"], self.all_newest_posts_info[t]["content"], self.all_newest_posts_info[t]["time_posted"], self.all_newest_posts_info[t]["id"], actual_maybe_like, t)
             self.content_in_scroll_box.add_widget(self.post_btn)
-            self.all_displayed_posts_list.append((self.all_newest_posts_info[t]["id"], self.post_btn, actual_maybe_like))
+            self.all_displayed_posts_list.append([self.all_newest_posts_info[t]["id"], self.post_btn, actual_maybe_like])
+        self.content_grid.bind(minimum_height=self.content_grid.setter('height'))
 
     def refresh_search_screen(self, instance):
         if self.current_posts == 0 or self.current_posts == 2:
-            self.search_header_press(0)
+            self.new_posts_header_press(0)
         
         elif self.current_posts == 1:
             self.search_header_press(0)
@@ -247,13 +255,18 @@ class SearchScreen (Screen):
 
     def search_def(self, instance):
         conn = self.connection
-        self.searched_box.clear_widgets()
-        if self.search_post_hastags_input.text != "" or self.get_filter_flags != "0000000000":
-            searched_posts = conn.get_posts()
+        #self.searched_box.clear_widgets()
+        print("---")
+        print(self.search_post_hastags_input.text)
+        print(self.get_filter_flags())
+        print(self.search_user_input.text)
+        if self.search_post_hastags_input.text != "" or self.get_filter_flags() != "0000000000":
+            print(1)
+            searched_posts = conn.get_posts(hashtag = self.search_post_hastags_input.text, exclude_flags = self.get_filter_flags())
             if searched_posts != ():
                 self.all_displayed_posts_list = []
                 my_liked_posts_id = access_my_info.get_liked_id()
-                for t in len(searched_posts):
+                for t in range(len(searched_posts)):
                     user_post_info = conn.get_user(searched_posts[t]["user_id"])
                     actual_maybe_like = 0
                     try:
@@ -262,20 +275,26 @@ class SearchScreen (Screen):
                                 actual_maybe_like = 1
                     except KeyError:
                         pass
-                    self.post_btn = functions.make_post_btn(self, searched_posts[t]["user_id"], user_post_info["profile_picture"], searched_posts[t]["flags"], searched_posts[t]["content"], 0, searched_posts[t]["time_posted"], searched_posts[t]["id"], actual_maybe_like, t)
+                    self.post_btn = functions.make_post_btn(self, searched_posts[t]["user_id"], user_post_info["profile_picture"], searched_posts[t]["flags"], searched_posts[t]["content"], searched_posts[t]["time_posted"], searched_posts[t]["id"], actual_maybe_like, t)
                     self.searched_box.add_widget(self.post_btn)
-                    self.all_displayed_posts_list.append((searched_posts[t]["id"], self.post_btn, actual_maybe_like))
+                    self.all_displayed_posts_list.append([searched_posts[t]["id"], self.post_btn, actual_maybe_like])
                 self.searched_box.height = Window.size[0]/1.61 * len(searched_posts)
+                self.content_in_scroll_box.height = self.content_in_scroll_box.height + self.searched_box.height
+
             elif searched_posts == ():
                 self.not_found_label = Label(text = "Nothing found", size_hint_y = None, height = Window.size[1]/8)
                 self.searched_box.add_widget(self.not_found_label)
                 self.searched_box.height = Window.size[1]/8
-        elif self.search_post_hastags_input.text == "" and self.get_filter_flags == "0000000000" and self.search_user_input.text != "":
+                self.content_in_scroll_box.height = self.content_in_scroll_box.height + self.searched_box.height
+        elif self.search_post_hastags_input.text == "" and self.get_filter_flags() == "0000000000" and self.search_user_input.text != "":
+            print(2)
             searched_user = conn.get_user(self.search_user_input.text)
+            print(searched_user)
             if searched_user == {}:
                 self.not_found_label = Label(text = "Nothing found", size_hint_y = None, height = Window.size[1]/8)
                 self.searched_box.add_widget(self.not_found_label)
                 self.searched_box.height = Window.size[1]/8
+                self.content_in_scroll_box.height = self.content_in_scroll_box.height + self.searched_box.height
             elif searched_user != {}:
                 self.searched_user_box = BoxLayout(orientation = 'horizontal', size_hint_y = None, height = Window.size[1]/6)
                 self.searched_box.add_widget(self.searched_user_box)
@@ -283,10 +302,11 @@ class SearchScreen (Screen):
                 self.searched_user_image_grid = functions.build_image(self, searched_user["profile_picture"], 0, Window.size[1]/6)
                 self.searched_user_box.add_widget(self.searched_user_image_grid)
 
-                self.searched_user_name_btn = Button(text = searched_user["user_id"], on_release = partial(self.name_press, 0))
+                self.searched_user_name_btn = Button(text = searched_user["user_name"], on_release = partial(self.name_press, 0))
                 self.searched_user_box.add_widget(self.searched_user_name_btn)
 
                 self.searched_box.height = Window.size[1]/6
+                self.content_in_scroll_box.height = self.content_in_scroll_box.height + self.searched_box.height
 
         self.content_grid.bind(minimum_height=self.content_grid.setter('height'))
 
