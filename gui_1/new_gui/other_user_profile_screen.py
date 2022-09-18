@@ -25,6 +25,8 @@ from kivy.uix.screenmanager import SlideTransition
 import kivy.utils
 from datetime import datetime
 
+from pyparsing import FollowedBy
+
 import access_my_info, home_screen, search_screen, profile_screen, functions, chat_screen
 
 #profile_screen inport screen
@@ -44,10 +46,10 @@ class OtherProfileScreen (Screen):
 
         self.logo = Button (border = (0, 0, 0, 0), size_hint = (None, None), size = ((Window.size[1] - Window.size[0] / 5) * 0.1, (Window.size[1] - Window.size[0] / 5) * 0.1), background_normal = 'images/logo.png', background_down = 'images/logo.png', on_release = self.press_home_btn)
         self.header_box.add_widget(self.logo)
-        
+
         self.header_text = Label(text = "Small brother", size_hint = (2, 1))
         self.header_box.add_widget(self.header_text)
-        
+
         self.header_btn = Button(border = (0, 0, 0, 0), size_hint = (None, None), size = ((Window.size[1] - Window.size[0] / 5) * 0.1, (Window.size[1] - Window.size[0] / 5) * 0.1), background_normal = 'images/settings1.png', background_down = 'images/settings2.png')
         self.header_box.add_widget(self.header_btn)
         self.header_btn.bind(on_release = self.header_btn_press)
@@ -61,7 +63,7 @@ class OtherProfileScreen (Screen):
 
         self.content_grid_scroll = ScrollView ()
         self.content_grid_scroll.add_widget (self.content_grid)
-        self.main_all_box.add_widget (self.content_grid_scroll)
+        self.content_box.add_widget (self.content_grid_scroll)
 
         self.user_image_name_box = BoxLayout(size_hint_y = None, height = (Window.size[1]  - Window.size[0] / 5) * 0.9 / 5)
         self.content_grid.add_widget(self.user_image_name_box)
@@ -69,6 +71,8 @@ class OtherProfileScreen (Screen):
         self.user_image_box = BoxLayout()
         self.user_image_name_box.add_widget(self.user_image_box)
 
+        self.user_name_box =BoxLayout()
+        self.user_image_name_box.add_widget(self.user_name_box)
         #
 
         self.description_box = BoxLayout(size_hint_y = None, height = (Window.size[1] - Window.size[0] / 5) * 2 * 0.9 / 5)
@@ -76,10 +80,11 @@ class OtherProfileScreen (Screen):
 
         #
 
-        self.posts_header_btn = Button(border = (0, 0, 0, 0), text = "Posts", size_hint_y = None, height = Window.size[0] / 1.61 / 3)
-
         self.following_box = BoxLayout()
         self.content_grid.add_widget(self.following_box)
+
+        self.posts_header_btn = Button(border = (0, 0, 0, 0), text = "Posts", size_hint_y = None, height = Window.size[0] / 1.61 / 3)
+        self.content_grid.add_widget(self.posts_header_btn)
 
         #
 
@@ -124,40 +129,56 @@ class OtherProfileScreen (Screen):
         con = self.connection
         self.user_id = user_id
         self.user_info = con.get_user(self.user_id)
+        print("--")
+        print(self.user_info)
+        print("--")
         self.following_user = 0
         self.my_following = access_my_info.get_following()
+        print(1, self.my_following)
         for following in self.my_following:
             if following == self.user_id:
                 self.following_user = 1
+        print(2, self.following_user)
 
-
+        self.user_image_box.clear_widgets()
         self.user_image_grid = functions.build_image(self, self.user_info["profile_picture"], 0, Window.size[0] / 1.61 / 6)
         self.user_image_box.add_widget(self.user_image_grid)
 
+        self.user_name_box.clear_widgets()
         self.user_name_btn = Button(text = self.user_id)
-        self.user_image_name_box.add_widget(self.user_name_btn)
+        self.user_name_box.add_widget(self.user_name_btn)
         #self.user_name_btn.bind(on_release = self.user_name_press)
 
-        self.user_description_btn = Button(text = self.user_info["description"], size_hint_y = None, height = (Window.size[1] - Window.size[0] / 5) * 2 * 0.9 / 5)
-        self.content_grid.add_widget(self.user_description_btn)
+        self.description_box.clear_widgets()
+        self.user_description_btn = Button(text = self.user_info["info"], size_hint_y = None, height = (Window.size[1] - Window.size[0] / 5) * 2 * 0.9 / 5)
+        self.description_box.add_widget(self.user_description_btn)
         self.user_description_btn.bind(on_release = self.user_description_press)
 
         if self.following_user == 0:
-            self.user_following_btn = Button(text = "Unfollow", size_hint_y = None, height = (Window.size[1] - Window.size[0] / 5) * 0.9 / 5)
-        elif self.following_user == 1:
             self.user_following_btn = Button(text = "Follow", size_hint_y = None, height = (Window.size[1] - Window.size[0] / 5) * 0.9 / 5)
+        elif self.following_user == 1:
+            self.user_following_btn = Button(text = "Unfollow", size_hint_y = None, height = (Window.size[1] - Window.size[0] / 5) * 0.9 / 5)
+        self.following_box.clear_widgets()
         self.following_box.add_widget(self.user_following_btn)
         self.user_following_btn.bind(on_release = self.user_following_press)
 
+        self.user_posts_box.clear_widgets()
+        self.create_posts()
+        print(10)
+
     def create_posts(self):
+        print(11)
         conn = self.connection
-        self.posts_list = conn.get_posts(self.user_id)
+        self.posts_list = conn.get_posts(user_name = self.user_id)
+        print(124)
         #self.my_posts_list = []
         self.posts_list = functions.order_posts_by_timestamp(self.posts_list)
 
+        print(125)
         self.user_posts_box.clear_widgets()
-        self.user_posts_box.height = len(self.my_posts_list) * Window.size[0] / 1.61
+        self.user_posts_box.height = len(self.posts_list) * Window.size[0] / 1.61
 
+        print(12)
         my_liked_posts_id = access_my_info.get_liked_id()
         self.all_displayed_posts_list = []
         user_image = access_my_info.get_profile_image()
@@ -169,13 +190,15 @@ class OtherProfileScreen (Screen):
                         actual_maybe_like = 1
             except KeyError:
                 pass
-            self.post_btn = functions.make_post_btn(self.posts_list[a]["user_id"], user_image, self.posts_list[a]["flags"], self.posts_list[a]["content"], 0, self.posts_list[a]["time_posted"], self.posts_list[a]["id"], actual_maybe_like, a)
+            self.post_btn = functions.make_post_btn(self, self.posts_list[a]["user_id"], user_image, self.posts_list[a]["flags"], self.posts_list[a]["content"], self.posts_list[a]["time_posted"], self.posts_list[a]["id"], actual_maybe_like, a)
             self.user_posts_box.add_widget(self.post_btn)
-            self.all_displayed_posts_list.append(self.posts_list[a]["id"], self.post_btn, actual_maybe_like)
+            self.all_displayed_posts_list.append([self.posts_list[a]["id"], self.post_btn, actual_maybe_like])
 
+        self.user_posts_box.height = len(self.all_displayed_posts_list) * Window.size[0] / 1.61
         self.content_grid.bind(minimum_height=self.content_grid.setter('height'))
+        print(13)
 
-    def user_image_press(self, instance):
+    def image_press(self, order_number, instance):
         pass
 
     def like_press(self, order_number, instance):
@@ -185,11 +208,22 @@ class OtherProfileScreen (Screen):
         if like == 1:
             instance.background_normal = 'images/heart2.png'
             functions.add_liked_or_unliked_post(self.all_displayed_posts_list[num][0], like)
-        if like == 0:
+        elif like == 0:
             instance.background_normal = 'images/heart.png'
             functions.add_liked_or_unliked_post(self.all_displayed_posts_list[num][0], like)
         
         self.all_displayed_posts_list[num][2] = like
+    
+    def user_following_press(self, instance):
+        foll = (self.following_user + 1) % 2
+        if foll == 1:
+            instance.text = "Unfollow"
+            access_my_info.add_or_remove_following(self.user_id, foll)
+        elif foll == 0:
+            instance.text = "Follow"
+            access_my_info.add_or_remove_following(self.user_id, foll)
+        
+        self.following_user = foll
 
     def name_press(self, order_number,instance):
         pass

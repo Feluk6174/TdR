@@ -24,6 +24,7 @@ from kivy.uix.screenmanager import FallOutTransition
 from kivy.uix.screenmanager import SlideTransition
 import kivy.utils
 from datetime import datetime
+import pyperclip
 
 import access_my_info, functions, search_screen, home_screen, chat_screen
 
@@ -69,7 +70,7 @@ class ProfileScreen (Screen):
         self.user_image_box = BoxLayout(size_hint_x = None, width = (Window.size[1]  - Window.size[0] / 5) * 0.9 / 5)
         self.user_image_name_box.add_widget(self.user_image_box)
         
-        self.user_image_grid = functions.build_image(self, access_my_info.get_profile_image(), 0, (Window.size[1]  - Window.size[0] / 5) * 0.9 / 5)
+        self.user_image_grid = functions.build_image(self, access_my_info.get_profile_image(), -1, (Window.size[1]  - Window.size[0] / 5) * 0.9 / 5)
         self.user_image_box.add_widget(self.user_image_grid)
 
         self.user_name_btn = Button(text = access_my_info.get_user_name())
@@ -259,9 +260,11 @@ class ProfileScreen (Screen):
         self.content_grid.bind(minimum_height=self.content_grid.setter('height'))
     
     def image_press(self, order_number, instance):
-        if order_number == 0:
+        if order_number == -1:
             self.manager.transition = FallOutTransition()
             self.manager.current = "image"
+        elif order_number >= 0:
+            self.go_to_user_profile(order_number)
 
     def like_press(self, order_number, instance):
         #num = int(instance.text)
@@ -276,17 +279,20 @@ class ProfileScreen (Screen):
         
         self.all_displayed_posts_list[num][2] = like
 
-    def name_press(self, order_number,instance):
-        #go to user screen (owner of post)
-        pass
+    def go_to_user_profile(self, order_number):
+        con = self.connection
+        other_user_profile_screen = self.other_profile_screen
+        user = con.get_user(self.all_displayed_posts_list[order_number][0])["user_name"]
+        other_user_profile_screen.refresh_profile_screen(user)
+        self.manager.transition = SlideTransition()
+        self.manager.current = "profile"
+        self.manager.transition.direction = "other_profile"
 
-    #def image_press(self, order_number, instance):
-        #go to user screen (owner of post)
-    #    pass
+    def name_press(self, order_number,instance):
+        self.go_to_user_profile(order_number)
 
     def content_post_press(self, order_number, instance):
-        #go to post screen (pressed)
-        pass
+        pyperclip.copy(instance.text)
 
     def header_btn_press(self, instance):
         pass

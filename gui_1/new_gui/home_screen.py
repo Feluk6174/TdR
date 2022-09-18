@@ -26,6 +26,7 @@ import random
 from datetime import datetime
 from kivy.graphics import BorderImage
 from kivy.lang import Builder
+import pyperclip
 
 import chat_screen, search_screen, profile_screen, functions, access_my_info, other_user_profile_screen, create_post_screen
 import api
@@ -41,11 +42,11 @@ class MainScreen (Screen):
 
         print(31)
 
-        #my_profile_screen.add_screens(self, self.search_screen, self.other_profile_screen)
-        #my_search_screen.add_screens(self, self.profile_screen, self.other_profile_screen)
-        #my_other_profile_screen.add_screens(self, self.profile_screen, self.search_screen)
-        #my_chat_screen.add_screens(self, self.profile_screen, self.search_screen, self.other_profile_screen)
-        #my_post_screen.add_screens(self, self.profile_screen, self.search_screen, self.other_profile_screen)
+        my_profile_screen.add_screens(self, self.search_screen, self.other_profile_screen)
+        my_search_screen.add_screens(self, self.profile_screen, self.other_profile_screen)
+        my_other_profile_screen.add_screens(self, self.profile_screen, self.search_screen)
+        my_chat_screen.add_screens(self, self.profile_screen, self.search_screen, self.other_profile_screen)
+        my_post_screen.add_screens(self, self.profile_screen, self.search_screen, self.other_profile_screen)
 
         my_search_screen.refresh_search_screen(0)
         my_profile_screen.refresh_profile_screen(0)
@@ -196,16 +197,24 @@ class MainScreen (Screen):
         return all_posts
         
     def name_press(self, order_number,instance):
-        #go to user screen (owner of post)
-        pass
+        self.go_to_user_profile(order_number)
+
+    def go_to_user_profile(self, order_number):
+        con = self.connection
+        other_user_profile_screen = self.other_profile_screen
+        user = con.get_user(self.all_posts_i_get[order_number][0])["user_name"]
+        other_user_profile_screen.refresh_profile_screen(user)
+        self.manager.transition = SlideTransition()
+        self.manager.current = "profile"
+        self.manager.transition.direction = "other_profile"
 
     def image_press(self, order_number, instance):
-        #go to user screen (owner of post)
-        pass
+        self.go_to_user_profile(order_number)
 
     def content_post_press(self, order_number, instance):
-        #copy post (mantain pressed)
-        pass
+        #con = self.connection
+        #text = con.get_user(self.all_posts_i_get[order_number][0])["content"]
+        pyperclip.copy(instance.text)
 
     def like_press(self, order_number, instance):
         num = self.all_posts_i_get[order_number][2]

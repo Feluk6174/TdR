@@ -25,6 +25,7 @@ from kivy.uix.screenmanager import SlideTransition
 import kivy.utils
 import home_screen, access_my_info
 from datetime import datetime
+import pyperclip
 
 import functions
 
@@ -238,16 +239,35 @@ class SearchScreen (Screen):
         return self.flag_list
 
     def name_press(self, order_number,instance):
-        #go to user screen (owner of post)
-        pass
+        self.go_to_user_profile(order_number)
+        
 
     def image_press(self, order_number, instance):
-        #go to user screen (owner of post)
-        pass
+        if order_number == -1:
+            other_user_profile_screen = self.other_profile_screen
+            other_user_profile_screen.refresh_profile_screen(self.actual_user)
+            self.manager.transition = SlideTransition()
+            self.manager.current = "profile"
+            self.manager.transition.direction = "other_profile"
+        elif order_number >= 0:
+            self.go_to_user_profile(order_number)
+    
+    def go_to_user_profile(self, order_number):
+        con = self.connection
+        other_user_profile_screen = self.other_profile_screen
+        user = self.all_displayed_posts_list[order_number][0]
+        print(user)
+        user = con.get_post(user)
+        print(user)
+        user = user["user_id"]
+        print(user)
+        other_user_profile_screen.refresh_profile_screen(user)
+        self.manager.transition = SlideTransition()
+        self.manager.current = "other_profile"
+        self.manager.transition.direction = "right"
 
     def content_post_press(self, order_number, instance):
-        #go to post screen (pressed)
-        pass
+        pyperclip.copy(instance.text)
     
     def clear_search_def(self, instance):
         self.new_posts_header_press(0)
@@ -280,7 +300,6 @@ class SearchScreen (Screen):
                     self.all_displayed_posts_list.append([searched_posts[t]["id"], self.post_btn, actual_maybe_like])
                 self.searched_box.height = Window.size[0]/1.61 * len(searched_posts)
                 self.content_in_scroll_box.height = self.content_in_scroll_box.height + self.searched_box.height
-
             elif searched_posts == ():
                 self.not_found_label = Label(text = "Nothing found", size_hint_y = None, height = Window.size[1]/8)
                 self.searched_box.add_widget(self.not_found_label)
@@ -299,7 +318,7 @@ class SearchScreen (Screen):
                 self.searched_user_box = BoxLayout(orientation = 'horizontal', size_hint_y = None, height = Window.size[1]/6)
                 self.searched_box.add_widget(self.searched_user_box)
 
-                self.searched_user_image_grid = functions.build_image(self, searched_user["profile_picture"], 0, Window.size[1]/6)
+                self.searched_user_image_grid = functions.build_image(self, searched_user["profile_picture"], -1, Window.size[1]/6)
                 self.searched_user_box.add_widget(self.searched_user_image_grid)
 
                 self.searched_user_name_btn = Button(text = searched_user["user_name"], on_release = partial(self.name_press, 0))
@@ -307,6 +326,8 @@ class SearchScreen (Screen):
 
                 self.searched_box.height = Window.size[1]/6
                 self.content_in_scroll_box.height = self.content_in_scroll_box.height + self.searched_box.height
+
+                self.actual_user = searched_user["user_name"]
 
         self.content_grid.bind(minimum_height=self.content_grid.setter('height'))
 
@@ -351,4 +372,4 @@ class SearchScreen (Screen):
     def add_screens(self, home_screen, profile_screen, other_profile_screen):
         self.home_screen = home_screen
         self.profile_screen = profile_screen
-        self.other_profile_sceen = other_profile_screen
+        self.other_profile_screen = other_profile_screen
