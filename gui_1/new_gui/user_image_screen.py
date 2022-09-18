@@ -98,13 +98,15 @@ class ImageScreen (Screen):
         functions.change_my_profile_image(color_str)
         
         prof_screen = self.profile_screen
-        prof_screen.refresh_profile_screen()
+        prof_screen.user_image_box.clear_widgets()
+        prof_screen.user_image_grid = functions.build_image(prof_screen, access_my_info.get_profile_image(), 0, (Window.size[1]  - Window.size[0] / 5) * 0.9 / 5)
+        prof_screen.user_image_box.add_widget(prof_screen.user_image_grid)
         self.manager.transition = FallOutTransition()
         self.manager.current = "profile"
 
     def my_image_button_1(self, instance):
         instance.background_color = self.actual_on_press_change_btn.background_color
-        self.color_list[int(instance.text)] = self.all_colors[int(self.actual_on_press_change_btn.text)][0]
+        self.color_number_list[int(instance.text)] = self.all_colors[int(self.actual_on_press_change_btn.text)][0]
 
     def change_color_button_2(self, instance):
         self.actual_on_press_change_btn.background_normal = ""

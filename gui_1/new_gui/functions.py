@@ -91,7 +91,7 @@ def make_post_btn(screen, user_name, user_image, post_flags, text_content, date,
     first_box = BoxLayout(orientation = "horizontal", size_hint = (1, 0.5))
     post.add_widget(first_box)
             
-    image_grid = build_image(screen, user_image, order_number, (Window.size[1]  - Window.size[0] / 5) * 0.9 / 5)
+    image_grid = build_image(screen, user_image, order_number, Window.size[0] / 1.61 / 6)
     first_box.add_widget(image_grid)
         
     post_user_name = Button(text = user_name)
@@ -121,7 +121,7 @@ def make_post_btn(screen, user_name, user_image, post_flags, text_content, date,
             #all_flags[x + 1].append(0)
             flags_box.add_widget(flag_btn)
 
-    likes_box = BoxLayout(size_hint = (None, 1), width = Window.size[0] / 1.61 / 3)
+    likes_box = BoxLayout(size_hint = (None, 1), width = Window.size[0] / 1.61 / 6)
     third_box.add_widget(likes_box)
 
     like_heart = Button(border = (0, 0, 0, 0))
@@ -149,7 +149,7 @@ def order_posts_by_timestamp(posts_to_order):
             #    how_big_list[a][1] = how_big_list[a][1] + 1
             print(posts_to_order)
             print(a, b, posts_to_order[a])
-            if posts_to_order[a]["time_posted"] < posts_to_order[b]["time_posted"]:
+            if posts_to_order[a]["time_posted"] > posts_to_order[b]["time_posted"]:
                 how_big_list[a] = how_big_list[a] + 1
     for c in range (length):
         for d in range (length):

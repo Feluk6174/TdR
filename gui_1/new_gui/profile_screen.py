@@ -258,9 +258,10 @@ class ProfileScreen (Screen):
         
         self.content_grid.bind(minimum_height=self.content_grid.setter('height'))
     
-    def user_image_press(self, instance):
-        self.manager.transition = FallOutTransition()
-        self.manager.current = "image"
+    def image_press(self, order_number, instance):
+        if order_number == 0:
+            self.manager.transition = FallOutTransition()
+            self.manager.current = "image"
 
     def like_press(self, order_number, instance):
         #num = int(instance.text)
@@ -279,9 +280,9 @@ class ProfileScreen (Screen):
         #go to user screen (owner of post)
         pass
 
-    def image_press(self, order_number, instance):
+    #def image_press(self, order_number, instance):
         #go to user screen (owner of post)
-        pass
+    #    pass
 
     def content_post_press(self, order_number, instance):
         #go to post screen (pressed)
