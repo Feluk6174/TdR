@@ -1,6 +1,5 @@
 import api
 import auth
-from Crypto.Hash import SHA256
 
 conn = api.Connection()
 
@@ -9,20 +8,20 @@ priv_key, pub_key = auth.get_keys("Hola")
 
 print(priv_key.export_key())
 
-user_name = "dev_test"
+user_name = "test13"
 
 with open("rsa_key.bin", "r") as f:
     keys_file = f.read()
 print(1.1)
 conn.register_user(user_name, pub_key, "rsa_key.bin", "13388273892FA83BCADE910D082AB6619403DACAAA789020DC73F61839AC7390", "your mom is a pinnapple")
 print(2.1)
-conn.post("Hello world!", "1", user_name, "0101101010", priv_key)
+conn.post("Welcome to small brother!", "1", user_name, "0101101010", priv_key)
 print(3.1)
-conn.post("Hey aixo ja funciona, sembla", "2", user_name, "0100010101", priv_key)
+conn.change_profile_picture(user_name, "0"*64, priv_key)
 print(4.1)
-conn.post("I just wanted to save the world", "3", user_name, "0101010101", priv_key)
+conn.change_info(user_name, "a"*128, priv_key)
 print(5.1)
-conn.post("ja no se que dir", "4", user_name, "0101010101", priv_key)
+print(conn.get_user(user_name))
 print(6.1)
 print(conn.get_posts(user_name=user_name))
 print(7.1)

@@ -17,7 +17,7 @@ def get_keys(passphrase):
     with open("rsa_key.bin", "rb") as f:
         encoded_key = f.read()
         key = RSA.import_key(encoded_key, passphrase=passphrase)
-        pub_key = key.public_key()
+        pub_key = key.publickey()
         return key, pub_key
 
 def gen_hash(*args):

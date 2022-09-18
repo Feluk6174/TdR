@@ -118,6 +118,12 @@ class ClientConnection():
 
                 elif msg_info["action"] == "GET POST":
                     user_actions.get_post(msg_info, self)
+                
+                elif msg_info["action"] == "UPDATE PROFILE PICTURE":
+                    user_actions.change_profile_picture(msg_info, self)
+
+                elif msg_info["action"] == "UPDATE INFO":
+                    user_actions.change_info(msg_info, self)
 
                 elif msg_info["action"] == "SEND":
                     self.send(msg_info["msg"])
@@ -268,6 +274,12 @@ class NodeConnection():
 
                 if msg_info["action"] == "POST":
                     user_actions.new_post(msg_info, self, ip=self.ip)
+
+                elif msg_info["action"] == "UPDATE PROFILE PICTURE":
+                    user_actions.change_profile_picture(msg_info, self, ip=self.ip)
+
+                elif msg_info["action"] == "UPDATE INFO":
+                    user_actions.change_info(msg_info, self, ip=self.ip)
 
                 if msg_info["action"] == "SEND":
                     self.send(msg_info["msg"])

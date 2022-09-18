@@ -61,6 +61,61 @@ def register_user(msg_info:dict, connection:Union[ClientConnection, NodeConnecti
     elif ip == None:
         connection.send("ALREADY EXISTS")
 
+def change_profile_picture(msg_info:dict, connection:Union[ClientConnection, NodeConnection], ip:str=None):
+    global db, logger
+    logger.log(f"changing pp: {msg_info} {ip}")
+    if not database.is_safe(msg_info["profile_picture"], msg_info["user_name"]):
+        connection.send("WRONG CHARS")
+        return
+
+    pub_key = db.querry(f"SELECT public_key FROM users WHERE user_name = '{msg_info['user_name']}'")
+    pub_key = RSA.import_key(auth.reconstruct_key(pub_key[0][0], key_type="pub"))
+
+    if not auth.verify(pub_key, msg_info["signature"], msg_info["user_name"], msg_info["profile_picture"], msg_info["time"]):
+        connection.send("WRONG SIGNATURE")
+        return
+    
+    res = db.querry(f"SELECT * FROM users WHERE user_name = '{msg_info['user_name']}' AND profile_picture = '{msg_info['profile_picture']}';")
+    if len(res) == 0:
+        sql = f"UPDATE users SET profile_picture = '{msg_info['profile_picture']}' WHERE user_name = '{msg_info['user_name']}';"
+        err = db.execute(sql)
+        if not err == "ERROR":
+            managment.broadcast(msg_info, ip)
+            if ip == None:
+                connection.send('OK')
+        elif ip == None:
+            connection.send('DATABASE ERROR')
+    elif ip == None:
+        connection.send("OK")
+
+def change_info(msg_info:dict, connection:Union[ClientConnection, NodeConnection], ip:str=None):
+    global db, logger
+    logger.log(f"changing info: {msg_info} {ip}")
+    if not database.is_safe(msg_info["info"], msg_info["user_name"]):
+        connection.send("WRONG CHARS")
+        return
+
+    pub_key = db.querry(f"SELECT public_key FROM users WHERE user_name = '{msg_info['user_name']}'")
+    pub_key = RSA.import_key(auth.reconstruct_key(pub_key[0][0], key_type="pub"))
+
+    if not auth.verify(pub_key, msg_info["signature"], msg_info["user_name"], msg_info["info"], msg_info["time"]):
+        connection.send("WRONG SIGNATURE")
+        return
+    
+    res = db.querry(f"SELECT * FROM users WHERE user_name = '{msg_info['user_name']}' AND info = '{msg_info['info']}';")
+    if len(res) == 0:
+        sql = f"UPDATE users SET info = '{msg_info['info']}' WHERE user_name = '{msg_info['user_name']}';"
+        err = db.execute(sql)
+        if not err == "ERROR":
+            managment.broadcast(msg_info, ip)
+            if ip == None:
+                connection.send('OK')
+        elif ip == None:
+            connection.send('DATABASE ERROR')
+    elif ip == None:
+        connection.send("OK")
+
+
 def get_user_posts(msg_info:dict, connection:ClientConnection):
     global db, logger
     logger.log(f"geting posts: {msg_info}")
