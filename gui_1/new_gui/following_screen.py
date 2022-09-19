@@ -60,7 +60,7 @@ class FollowingScreen (Screen):
 
         self.content_grid_scroll = ScrollView ()
         self.content_grid_scroll.add_widget (self.content_grid)
-        self.main_all_box.add_widget (self.content_grid_scroll)
+        self.content_box.add_widget (self.content_grid_scroll)
 
         #self.refresh_following()
 
@@ -71,16 +71,16 @@ class FollowingScreen (Screen):
         self.ground_box.add_widget(self.chat_btn)
         self.chat_btn.bind(on_release = self.press_chat_btn)
 
-        self.search_btn = Button (text = ("S"))
+        self.search_btn = Label (text = ("Search"))
         self.ground_box.add_widget(self.search_btn)
-        self.search_btn.bind(on_release = self.press_search_btn)
 
         self.home_btn = Button (text = ("H"))
         self.ground_box.add_widget(self.home_btn)
         self.home_btn.bind(on_release = self.press_home_btn)
 
-        self.make_posts_label = Label (text = ("Post"))
+        self.make_posts_label = Button (text = ("P"))
         self.ground_box.add_widget(self.make_posts_label)
+        self.make_posts_label.bind(on_release = self.press_user_profile_btn)
 
         self.user_profile_btn = Button (text = ("U"))
         self.ground_box.add_widget(self.user_profile_btn)
@@ -100,7 +100,7 @@ class FollowingScreen (Screen):
             self.image_grid = functions.build_image(self, user_info["profile_picture"], x, Window.size[0]/1.61/2)
             self.user_box.add_widget(self.image_grid)
 
-            self.user_name_btn = Button(text = user_info["user_id"], on_release = partial(self.go_to_user_profile_screen, x))
+            self.user_name_btn = Button(text = user_info["user_name"], on_release = partial(self.go_to_user_profile_screen, x))
             self.user_box.add_widget(self.user_name_btn)
 
             self.users_info_list.append([user_info, self.user_box])
@@ -108,8 +108,22 @@ class FollowingScreen (Screen):
     def header_btn_press(self, instance):
         pass
     
+    def go_to_user_profile(self, order_number):
+        con = self.connection
+        other_user_profile_screen = self.other_profile_screen
+        user = self.users_info_list[order_number][0]
+        print(user)
+        user = con.get_post(user)
+        print(user)
+        user = user["user_id"]
+        print(user)
+        other_user_profile_screen.refresh_profile_screen(user)
+        self.manager.transition = SlideTransition()
+        self.manager.current = "other_profile"
+        self.manager.transition.direction = "right"
+
     def image_press(self, order_number, instance):
-        self.go_to_user_screen(order_number, instance)
+        self.go_to_user_profile_screen(order_number, instance)
 
     def go_to_user_profile_screen(self, order_number, instance):
         pass
@@ -120,23 +134,29 @@ class FollowingScreen (Screen):
         self.manager.current = "chat"
         self.manager.transition.direction = "right"
 
-    def press_search_btn(self, instance):
-        search_screen.popular_posts_header_press(0)
-        self.manager.transition = SlideTransition()
-        self.manager.current = "search"
-        self.manager.transition.direction = "right"
+    #def press_search_btn(self, instance):
+        #self.manager.transition = SlideTransition()
+        #self.manager.current = "search"
+        #self.manager.transition.direction = "right"
 
     def press_home_btn(self, instance):
-        home_screen.get_my_posts(0)
+        #home_screen.get_my_posts(0)
         self.manager.transition = SlideTransition()
-        self.manager.current = "last"
+        self.manager.current = "main"
         self.manager.transition.direction = "right"
 
-    #def press_make_posts_btn(self, instance):
-    #    pass
+    def press_make_posts_btn(self, instance):
+        self.manager.transition = SlideTransition()
+        self.manager.current = "create"
+        self.manager.transition.direction = "left"
 
     def press_user_profile_btn(self, instance):
-        profile_screen.refresh_profile_screen(profile_screen)
+        #profile_screen.refresh_profile_screen(profile_screen)
         self.manager.transition = SlideTransition()
         self.manager.current = "profile"
         self.manager.transition.direction = "left"
+
+    def add_screens(self, home_screen, profile_screen, other_profile_screen):
+        self.home_screen = home_screen
+        self.profile_screen = profile_screen
+        self.other_profile_screen = other_profile_screen

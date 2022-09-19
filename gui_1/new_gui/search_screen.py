@@ -163,9 +163,11 @@ class SearchScreen (Screen):
             self.flag_grid.add_widget(self.flag_btn)
         self.flag_grid.bind(minimum_width = self.flag_grid.setter('width'))
 
-        
-        self.search_btn = Button(size_hint_y = None, height = Window.size[1] / 6, on_release = self.search_def, border = (0, 0, 0, 0), text = "Search")
-        self.content_in_scroll_box.add_widget(self.search_btn)
+        self.search_btn_box = BoxLayout(size_hint_y = None, height = Window.size[1] / 6)
+        self.content_in_scroll_box.add_widget(self.search_btn_box)
+
+        self.search_btn = Button(on_release = self.search_def, border = (0, 0, 0, 0), text = "Search")
+        self.search_btn_box.add_widget(self.search_btn)
 
         self.clear_search_btn = Button(size_hint_y = None, height = Window.size[1] / 8, on_release = self.clear_search_def, border = (0, 0, 0, 0), text = "Clear")
         self.content_in_scroll_box.add_widget(self.clear_search_btn)
@@ -275,6 +277,10 @@ class SearchScreen (Screen):
 
     def search_def(self, instance):
         conn = self.connection
+
+        self.search_btn_box.clear_widgets()
+        self.search_label_no_press = Label(text = "Search")
+        self.search_btn_box.add_widget(self.search_label_no_press)
         #self.searched_box.clear_widgets()
         print("---")
         print(self.search_post_hastags_input.text)

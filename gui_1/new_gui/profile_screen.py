@@ -149,8 +149,10 @@ class ProfileScreen (Screen):
         self.description_box.add_widget(self.user_description_btn)
 
     def user_following_press(self, instance):
+        following_screen = self.following_screen
+        following_screen.refresh_following()
         self.manager.transition = FallOutTransition()
-        self.manager.current = "other_profile"
+        self.manager.current = "following"
         
 
     def refresh_profile_screen(self, instance):
@@ -324,7 +326,8 @@ class ProfileScreen (Screen):
     #def press_user_profile_btn(self, instance):
         #pass
 
-    def add_screens(self, home_screen, search_screen, other_profile_screen):
+    def add_screens(self, home_screen, search_screen, other_profile_screen, following_screen):
         self.home_screen = home_screen
         self.search_screen = search_screen
         self.other_profile_screen = other_profile_screen
+        self.following_screen = following_screen

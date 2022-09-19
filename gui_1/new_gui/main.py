@@ -29,7 +29,7 @@ from kivy.lang import Builder
 
 import api
 connection = api.Connection()
-import register_screen, user_image_register_screen, profile_screen, home_screen, chat_screen, search_screen, create_post_screen, user_image_screen, other_user_profile_screen
+import register_screen, user_image_register_screen, profile_screen, home_screen, chat_screen, search_screen, create_post_screen, user_image_screen, other_user_profile_screen, following_screen
 
 #optional. errase when doing apk
 Window.size = (400, 600)
@@ -60,13 +60,15 @@ class MyApp (App):
             my_chat_screen = chat_screen.ChatScreen(connection, name = "chat")
             other_profile_screen = other_user_profile_screen.OtherProfileScreen(connection, name = "other_profile")
             create_post_scrn = create_post_screen.PostUserScreen(connection, name = "create")
-            sm.add_widget(home_screen.MainScreen(connection, my_profile_screen, my_search_screen, my_chat_screen, create_post_scrn, other_profile_screen, name = "main"))
+            follow_screen = following_screen.FollowingScreen(connection, name = "following")
+            sm.add_widget(home_screen.MainScreen(connection, my_profile_screen, my_search_screen, my_chat_screen, create_post_scrn, other_profile_screen, follow_screen, name = "main"))
             sm.add_widget(my_chat_screen)
             sm.add_widget(my_search_screen)
             sm.add_widget(create_post_scrn)
             sm.add_widget(my_profile_screen)
             sm.add_widget(user_image_screen.ImageScreen(my_profile_screen, name = "image"))
             sm.add_widget(other_profile_screen)
+            sm.add_widget(follow_screen)
         return sm
 
 
