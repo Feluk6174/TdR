@@ -80,7 +80,7 @@ class ProfileScreen (Screen):
         self.description_box = BoxLayout(size_hint_y = None, height = (Window.size[1] - Window.size[0] / 5) * 2 * 0.9 / 5)
         self.content_grid.add_widget(self.description_box)
 
-        self.user_description_btn = Button(text = access_my_info.get_description(), size_hint_y = None, height = (Window.size[1] - Window.size[0] / 5) * 2 * 0.9 / 5)
+        self.user_description_btn = Button(text = functions.adapt_text_to_window(access_my_info.get_description(), 15, Window.size[0]), size_hint_y = None, height = (Window.size[1] - Window.size[0] / 5) * 2 * 0.9 / 5)
         self.description_box.add_widget(self.user_description_btn)
         self.user_description_btn.bind(on_release = self.user_description_press)
 
@@ -133,14 +133,15 @@ class ProfileScreen (Screen):
 
 
     def user_description_press(self, instance):
-        self.text_description = self.user_description_btn.text
+        self.text_description = functions.adapt_text_to_server(self.user_description_btn.text)
         self.description_box.clear_widgets()
 
         self.user_description_input = TextInput(text = self.text_description, multiline = False, on_text_validate = self.change_description)
         self.description_box.add_widget(self.user_description_input)
 
     def change_description(self, instance):
-        self.text_description = self.user_description_input.text
+        self.text_description = functions.adapt_text_to_window(self.user_description_input.text, 15, Window.size[0])
+        self.connection.change_info(access_my_info.get_user_name(), self.user_description_input.text, access_my_info.get_priv_key())
         self.description_box.clear_widgets()
 
         functions.change_my_description(self.text_description)
@@ -284,11 +285,11 @@ class ProfileScreen (Screen):
     def go_to_user_profile(self, order_number):
         con = self.connection
         other_user_profile_screen = self.other_profile_screen
-        user = con.get_user(self.all_displayed_posts_list[order_number][0])["user_name"]
+        user = con.get_post(self.all_displayed_posts_list[order_number][0])["user_id"]
         other_user_profile_screen.refresh_profile_screen(user)
         self.manager.transition = SlideTransition()
-        self.manager.current = "profile"
-        self.manager.transition.direction = "other_profile"
+        self.manager.current = "other_profile"
+        self.manager.transition.direction = "right"
 
     def name_press(self, order_number,instance):
         self.go_to_user_profile(order_number)

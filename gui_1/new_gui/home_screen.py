@@ -206,11 +206,17 @@ class MainScreen (Screen):
     def go_to_user_profile(self, order_number):
         con = self.connection
         other_user_profile_screen = self.other_profile_screen
-        user = con.get_user(self.all_posts_i_get[order_number][0])["user_name"]
+        print(self.all_posts_i_get)
+        user = self.all_posts_i_get[order_number][0]
+        print(user)
+        user = con.get_post(user)
+        print(user)
+        user = user["user_id"]
         other_user_profile_screen.refresh_profile_screen(user)
         self.manager.transition = SlideTransition()
-        self.manager.current = "profile"
-        self.manager.transition.direction = "other_profile"
+        self.manager.current = "other_profile"
+        self.manager.transition.direction = "right"
+
 
     def image_press(self, order_number, instance):
         self.go_to_user_profile(order_number)

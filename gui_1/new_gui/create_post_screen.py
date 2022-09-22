@@ -25,7 +25,7 @@ from kivy.uix.screenmanager import SlideTransition
 import kivy.utils
 from datetime import datetime
 
-import access_my_info, home_screen, search_screen, profile_screen
+import access_my_info, home_screen, search_screen, profile_screen, functions
 
 #profile_screen inport screen
 
@@ -135,7 +135,7 @@ class PostUserScreen (Screen):
         self.flag_list = ""
         for y in range (len(self.all_flags) - 1):
             self.flag_list = self.flag_list + str(self.all_flags[y + 1][3])
-        self.send_post_final(self.flag_list, str(self.main_post_content_input.text))
+        self.send_post_final(self.flag_list, functions.adapt_text_to_server(self.main_post_content_input.text))
         self.main_post_content_input.text = ""
         for y in range (len(self.all_flags) - 1):
             if self.all_flags[y + 1][3] == 1:

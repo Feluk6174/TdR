@@ -104,7 +104,7 @@ def make_post_btn(screen, user_name, user_image, post_flags, text_content, date,
     second_box = BoxLayout(size_hint = (1, 2))
     post.add_widget(second_box)
 
-    txt = Button (text = text_content, on_release = partial(screen.content_post_press, order_number))
+    txt = Button (text = adapt_text_to_window(text_content, 15, Window.size[0]), on_release = partial(screen.content_post_press, order_number))
     second_box.add_widget(txt)
 
     third_box = BoxLayout(size_hint = (1, 0.5))
@@ -169,15 +169,72 @@ def change_my_profile_image(color_string):
     access_my_info.change_my_image(color_string)
     #enviar a conn
 
+def adapt_text_to_server(text:str):
+    text = text.split("\n")
+    text = " ".join(text)
+    return text
 
-def adapt_text_to_window(text, text_size, window_size):
+def adapt_text_to_window(text:str, text_size, window_size):
     text_to_cut_lenght = len(text)
-    letters_per_line = window_size / text_size
+    letters_per_line = int(window_size / text_size)
     jump_done = 0
+
+    final_text = []
+
+    words = text.split(" ")
+    i = 0
+    while i < len(words):
+        if len(words[i]) >= letters_per_line:
+            final_text.append(words[i])
+            i += 1
+        else:
+            working_words = words[i]
+            j = 1
+            while not len(working_words) >= letters_per_line:
+                try:
+                    working_words += " " + words[i+j]
+                except IndexError:
+                    final_text.append(working_words)
+                    i = len(words)
+                    break
+                j += 1
+            else:
+                final_text.append(working_words)
+                i += j
+            
+    print("f_t", final_text)
+    final_text = "\n".join(final_text)
+    print("f_t", final_text)
+    return final_text
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def no(letters_per_line):
     while text_to_cut_lenght > letters_per_line:
+        print(letters_per_line, text_to_cut_lenght, len(text))
         for x in range (letters_per_line):
             if text[len(text) - text_to_cut_lenght + letters_per_line - x -1] == " ":
                 if jump_done == 0:
                     jump_done = 1
-                    text[letters_per_line - x -1] = "\n"
+                    l = [text[i] for i in range(len(text))]
+                    l[letters_per_line - x -1] = "\n"
                     text_to_cut_lenght = text_to_cut_lenght - letters_per_line - x -1
+                    text = "".join(l)
+
+    return text

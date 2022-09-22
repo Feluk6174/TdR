@@ -66,7 +66,7 @@ class MyApp (App):
             sm.add_widget(my_search_screen)
             sm.add_widget(create_post_scrn)
             sm.add_widget(my_profile_screen)
-            sm.add_widget(user_image_screen.ImageScreen(my_profile_screen, name = "image"))
+            sm.add_widget(user_image_screen.ImageScreen(my_profile_screen, connection, name = "image"))
             sm.add_widget(other_profile_screen)
             sm.add_widget(follow_screen)
         return sm

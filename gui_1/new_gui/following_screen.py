@@ -91,6 +91,7 @@ class FollowingScreen (Screen):
         conn = self.connection
         self.users_info_list = []
         following_users = access_my_info.get_following()
+        self.content_grid.clear_widgets()
         for x in range (len(following_users)):
             user_info = conn.get_user(following_users[x])
 
@@ -108,15 +109,10 @@ class FollowingScreen (Screen):
     def header_btn_press(self, instance):
         pass
     
-    def go_to_user_profile(self, order_number):
+    def go_to_user_profile_screen(self, order_number, instance):
         con = self.connection
         other_user_profile_screen = self.other_profile_screen
-        user = self.users_info_list[order_number][0]
-        print(user)
-        user = con.get_post(user)
-        print(user)
-        user = user["user_id"]
-        print(user)
+        user = self.users_info_list[order_number][0]["user_name"]
         other_user_profile_screen.refresh_profile_screen(user)
         self.manager.transition = SlideTransition()
         self.manager.current = "other_profile"
@@ -124,9 +120,6 @@ class FollowingScreen (Screen):
 
     def image_press(self, order_number, instance):
         self.go_to_user_profile_screen(order_number, instance)
-
-    def go_to_user_profile_screen(self, order_number, instance):
-        pass
 
     def press_chat_btn(self, instance):
         #chat_screen.create_my_chats

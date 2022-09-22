@@ -141,12 +141,17 @@ class SearchScreen (Screen):
         self.search_header_display_label = Label (text = "Search")
         self.display_header_box.add_widget(self.search_header_display_label)
 
+        self.search_user_header_btn = Button(size_hint_y = None, height = Window.size[1] / 15 / 2, text = "Search user:")
+        self.content_in_scroll_box.add_widget(self.search_user_header_btn)
 
-        self.search_user_input = TextInput(multiline = False, background_normal = 'images/search_user.png', size_hint_y = None, height = Window.size[1] / 15)
+        self.search_user_input = TextInput(multiline = False, size_hint_y = None, height = Window.size[1] / 15)
         self.content_in_scroll_box.add_widget(self.search_user_input)
         #self.search_user_input.bind(on_text_validate = self.search_user_def)
 
-        self.search_post_hastags_input = TextInput(multiline = False, background_normal = 'images/search_hastag.png', size_hint_y = None, height = Window.size[1] / 15)
+        self.search_hastags_header_btn = Button(text = "Search hashtag:", size_hint_y = None, height = Window.size[1] / 15 / 2)
+        self.content_in_scroll_box.add_widget(self.search_hastags_header_btn)
+
+        self.search_post_hastags_input = TextInput(multiline = False, size_hint_y = None, height = Window.size[1] / 15)
         self.content_in_scroll_box.add_widget(self.search_post_hastags_input)
         #self.search_post_hastags.bind(on_text_validate = self.search_hastags_def)
    
@@ -176,7 +181,7 @@ class SearchScreen (Screen):
         self.content_in_scroll_box.add_widget(self.searched_box)
 
 
-        self.content_in_scroll_box.height = Window.size[1] / 8 + Window.size[1] / 6 + (Window.size[1] - Window.size[0] / 5) * 0.9 / 12 + Window.size[1] * 2 / 15
+        self.content_in_scroll_box.height = Window.size[1] / 8 + Window.size[1] / 6 + (Window.size[1] - Window.size[0] / 5) * 0.9 / 12 + Window.size[1] * 3 / 15
         self.content_grid.bind(minimum_height=self.content_grid.setter('height'))
         self.current_posts = 2
 
