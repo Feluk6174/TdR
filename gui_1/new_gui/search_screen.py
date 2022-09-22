@@ -75,7 +75,7 @@ class SearchScreen (Screen):
         self.content_in_scroll_box = BoxLayout(orientation = 'vertical', size_hint_y = None)
         self.content_grid.add_widget(self.content_in_scroll_box)
 
-        self.all_flags = [['images/check_verd.png'], ['images/red_cross.png'], ['images/age18.png'], ['images/blood.png'], ['images/fist.png'], ['images/soga.png'], ['images/white.png'], ['images/white.png'], ['images/white.png'], ['images/white.png'], ['images/white.png'], ['images/white.png']]
+        self.all_flags = [['images/check_verd.png'], ['images/red_cross.png'], ['images/age18.png'], ['images/blood.png'], ['images/fist.png'], ['images/soga.png'], ['images/art.png'], ['images/discuss.png'], ['images/politic.png'], ['images/sport.png'], ['images/videogame.png'], ['images/music.png']]
         for d in range(len(self.all_flags) - 2):
             self.all_flags[d + 2].append(str(d + 2))
         for x in range (len(self.all_flags) - 2):

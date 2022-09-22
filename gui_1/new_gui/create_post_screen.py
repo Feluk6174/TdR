@@ -76,7 +76,7 @@ class PostUserScreen (Screen):
         self.flag_grid_scroll.add_widget (self.flag_grid)
         self.flag_box.add_widget (self.flag_grid_scroll)
 
-        self.all_flags = [['images/check_verd.png'], ['images/age18.png'], ['images/blood.png'], ['images/fist.png'], ['images/soga.png'], ['images/white.png'], ['images/white.png'], ['images/white.png'], ['images/white.png'], ['images/white.png'], ['images/white.png']]
+        self.all_flags = [['images/check_verd.png'], ['images/age18.png'], ['images/blood.png'], ['images/fist.png'], ['images/soga.png'], ['images/art.png'], ['images/discuss.png'], ['images/politic.png'], ['images/sport.png'], ['images/videogame.png'], ['images/music.png']]
         for d in range(len(self.all_flags) - 1):
             self.all_flags[d + 1].append(str(d + 1))
         
