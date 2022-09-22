@@ -91,20 +91,23 @@ class FollowingScreen (Screen):
         conn = self.connection
         self.users_info_list = []
         following_users = access_my_info.get_following()
-        self.content_grid.clear_widgets()
-        for x in range (len(following_users)):
-            user_info = conn.get_user(following_users[x])
+        print(following_users)
+        if following_users != {}:
+            self.content_grid.clear_widgets()
+            for x in range (len(following_users)):
+                user_info = conn.get_user(following_users[x])
+                print(user_info)
 
-            self.user_box = BoxLayout(size_hint_y = None, height = Window.size[0]/1.61/2)
-            self.content_grid.add_widget(self.user_box)
+                self.user_box = BoxLayout(size_hint_y = None, height = Window.size[0]/1.61/2)
+                self.content_grid.add_widget(self.user_box)
 
-            self.image_grid = functions.build_image(self, user_info["profile_picture"], x, Window.size[0]/1.61/2)
-            self.user_box.add_widget(self.image_grid)
+                self.image_grid = functions.build_image(self, user_info["profile_picture"], x, Window.size[0]/1.61/2)
+                self.user_box.add_widget(self.image_grid)
 
-            self.user_name_btn = Button(text = user_info["user_name"], on_release = partial(self.go_to_user_profile_screen, x))
-            self.user_box.add_widget(self.user_name_btn)
+                self.user_name_btn = Button(text = user_info["user_name"], on_release = partial(self.go_to_user_profile_screen, x))
+                self.user_box.add_widget(self.user_name_btn)
 
-            self.users_info_list.append([user_info, self.user_box])
+                self.users_info_list.append([user_info, self.user_box])
 
     def header_btn_press(self, instance):
         pass
