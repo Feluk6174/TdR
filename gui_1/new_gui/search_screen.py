@@ -187,7 +187,7 @@ class SearchScreen (Screen):
 
     def new_posts_header_press(self, instance):
         connection = self.connection
-        self.all_new_posts_info = connection.get_posts(sort_by = "time_posted", sort_order = "desc", num = 20)
+        self.all_new_posts_info = connection.get_posts(sort_by = "time_posted", sort_order = "desc", num = 10)
         self.all_newest_posts_info = functions.order_posts_by_timestamp(self.all_new_posts_info)
         print(self.all_newest_posts_info)
 
@@ -293,7 +293,7 @@ class SearchScreen (Screen):
         print(self.search_user_input.text)
         if self.search_post_hastags_input.text != "" or self.get_filter_flags() != "0000000000":
             print(1)
-            searched_posts = conn.get_posts(hashtag = self.search_post_hastags_input.text, exclude_flags = self.get_filter_flags())
+            searched_posts = conn.get_posts(hashtag = self.search_post_hastags_input.text, exclude_flags = self.get_filter_flags(), num = 10)
             if searched_posts != ():
                 self.all_displayed_posts_list = []
                 my_liked_posts_id = access_my_info.get_liked_id()

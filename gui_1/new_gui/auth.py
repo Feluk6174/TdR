@@ -77,8 +77,9 @@ def verify(pub_key, signature, *args):
 
 def login(priv_key:str, password:str):
     priv_key = reconstruct_key(priv_key)
+    print(priv_key)
     try:
-        get_keys(password)
+        print(get_keys(password))
     except ValueError:
         return False
     with open("rsa_key.bin", "wb") as f:
