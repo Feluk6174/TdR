@@ -1,8 +1,8 @@
-from Cryptodome.PublicKey import RSA
-from Cryptodome.Random import get_random_bytes
+from Crypto.PublicKey import RSA
+from Crypto.Random import get_random_bytes
 import base64
-from Cryptodome.Signature import pss
-from Cryptodome.Hash import SHA256
+from Crypto.Signature import pss
+from Crypto.Hash import SHA256
 
 def gen_key(passphrase):
     key = RSA.generate(2048)
@@ -12,7 +12,6 @@ def gen_key(passphrase):
     with open("rsa_key.bin", "wb") as f:
         f.write(encrypted_key)
 
-    print(key.publickey().export_key())
 
 def get_keys(passphrase):
     with open("rsa_key.bin", "rb") as f:
@@ -27,7 +26,7 @@ def gen_hash(*args):
         message += str(arg)
     return SHA256.new(message.encode("utf-8"))
 
-def sanitize_key(key):
+def sanitize_key(key:str):
     clean_str = ""
     
     for i, line in enumerate(key.split("\n")):
@@ -76,10 +75,9 @@ def verify(pub_key, signature, *args):
         print("[ERROR]", e)
         return False
 
-if __name__ == "__main__":
-    gen_key("heyy")
-    rkey, pub = get_keys("heyy")
-    
-    key = pub.export_key()
-
-    print(verify(RSA.import_key(key), "skdfjhsd", "skdfjhsd"))
+def login(priv_key:str):
+    print("uwu", priv_key)
+    priv_key = reconstruct_key(priv_key)
+    print("uwu", priv_key)
+    with open("rsa_key.bin", "wb") as f:
+        f.write(priv_key.encode("utf-8"))
