@@ -21,7 +21,7 @@ def broadcast(msg, ip):
 
 def manage_new_client(connection, conn_info):
     global clients, max_clients, logger
-    logger.log(f"managing new client")
+    logger.log(f"managing new client", len(clients))
     conn_class = ClientConnection(connection, conn_info)
     if len(clients) <= max_clients:
         clients.append(conn_class)
@@ -177,6 +177,6 @@ PORT = ""
 
 get_suposed_connected = lambda n: 3
 server_info = {}
-max_clients = 0
+max_clients = math.inf
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 clock_time = 86400

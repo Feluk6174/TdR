@@ -46,6 +46,16 @@ def change_my_description(description):
     file_my.close()
     #cal enviar-ho
 
+def add_or_remove_following(id, foll):
+    my_user_info = open_my_user_info()
+    if foll == 0:
+        my_user_info["semi_basic_info"]["user_following"].remove(id)
+    elif foll == 1:
+        my_user_info["semi_basic_info"]["user_following"].append(id)
+    file_my = open("my_info.json", "w")
+    file_my.write(json.dumps(my_user_info))
+    file_my.close()
+
 def add_or_remove_liked_post(post_id, like):
     my_user_info = open_my_user_info()
     if like == 0:

@@ -24,6 +24,7 @@ from kivy.uix.screenmanager import FallOutTransition
 from kivy.uix.screenmanager import SlideTransition
 import kivy.utils
 from datetime import datetime
+import pyperclip
 
 import access_my_info, functions, search_screen, home_screen, chat_screen
 
@@ -69,7 +70,7 @@ class ProfileScreen (Screen):
         self.user_image_box = BoxLayout(size_hint_x = None, width = (Window.size[1]  - Window.size[0] / 5) * 0.9 / 5)
         self.user_image_name_box.add_widget(self.user_image_box)
         
-        self.user_image_grid = functions.build_image(self, access_my_info.get_profile_image(), 0, (Window.size[1]  - Window.size[0] / 5) * 0.9 / 5)
+        self.user_image_grid = functions.build_image(self, access_my_info.get_profile_image(), -1, (Window.size[1]  - Window.size[0] / 5) * 0.9 / 5)
         self.user_image_box.add_widget(self.user_image_grid)
 
         self.user_name_btn = Button(text = access_my_info.get_user_name())
@@ -79,7 +80,7 @@ class ProfileScreen (Screen):
         self.description_box = BoxLayout(size_hint_y = None, height = (Window.size[1] - Window.size[0] / 5) * 2 * 0.9 / 5)
         self.content_grid.add_widget(self.description_box)
 
-        self.user_description_btn = Button(text = access_my_info.get_description(), size_hint_y = None, height = (Window.size[1] - Window.size[0] / 5) * 2 * 0.9 / 5)
+        self.user_description_btn = Button(text = functions.adapt_text_to_window(access_my_info.get_description(), 15, Window.size[0]), size_hint_y = None, height = (Window.size[1] - Window.size[0] / 5) * 2 * 0.9 / 5)
         self.description_box.add_widget(self.user_description_btn)
         self.user_description_btn.bind(on_release = self.user_description_press)
 
@@ -132,14 +133,15 @@ class ProfileScreen (Screen):
 
 
     def user_description_press(self, instance):
-        self.text_description = self.user_description_btn.text
+        self.text_description = functions.adapt_text_to_server(self.user_description_btn.text)
         self.description_box.clear_widgets()
 
         self.user_description_input = TextInput(text = self.text_description, multiline = False, on_text_validate = self.change_description)
         self.description_box.add_widget(self.user_description_input)
 
     def change_description(self, instance):
-        self.text_description = self.user_description_input.text
+        self.text_description = functions.adapt_text_to_window(self.user_description_input.text, 15, Window.size[0])
+        self.connection.change_info(access_my_info.get_user_name(), self.user_description_input.text, access_my_info.get_priv_key())
         self.description_box.clear_widgets()
 
         functions.change_my_description(self.text_description)
@@ -148,8 +150,10 @@ class ProfileScreen (Screen):
         self.description_box.add_widget(self.user_description_btn)
 
     def user_following_press(self, instance):
+        following_screen = self.following_screen
+        following_screen.refresh_following()
         self.manager.transition = FallOutTransition()
-        self.manager.current = "other_profile"
+        self.manager.current = "following"
         
 
     def refresh_profile_screen(self, instance):
@@ -258,9 +262,12 @@ class ProfileScreen (Screen):
         
         self.content_grid.bind(minimum_height=self.content_grid.setter('height'))
     
-    def user_image_press(self, instance):
-        self.manager.transition = FallOutTransition()
-        self.manager.current = "image"
+    def image_press(self, order_number, instance):
+        if order_number == -1:
+            self.manager.transition = FallOutTransition()
+            self.manager.current = "image"
+        elif order_number >= 0:
+            self.go_to_user_profile(order_number)
 
     def like_press(self, order_number, instance):
         #num = int(instance.text)
@@ -275,17 +282,20 @@ class ProfileScreen (Screen):
         
         self.all_displayed_posts_list[num][2] = like
 
-    def name_press(self, order_number,instance):
-        #go to user screen (owner of post)
-        pass
+    def go_to_user_profile(self, order_number):
+        con = self.connection
+        other_user_profile_screen = self.other_profile_screen
+        user = con.get_post(self.all_displayed_posts_list[order_number][0])["user_id"]
+        other_user_profile_screen.refresh_profile_screen(user)
+        self.manager.transition = SlideTransition()
+        self.manager.current = "other_profile"
+        self.manager.transition.direction = "right"
 
-    def image_press(self, order_number, instance):
-        #go to user screen (owner of post)
-        pass
+    def name_press(self, order_number,instance):
+        self.go_to_user_profile(order_number)
 
     def content_post_press(self, order_number, instance):
-        #go to post screen (pressed)
-        pass
+        pyperclip.copy(instance.text)
 
     def header_btn_press(self, instance):
         pass
@@ -317,7 +327,8 @@ class ProfileScreen (Screen):
     #def press_user_profile_btn(self, instance):
         #pass
 
-    def add_screens(self, home_screen, search_screen, other_profile_screen):
+    def add_screens(self, home_screen, search_screen, other_profile_screen, following_screen):
         self.home_screen = home_screen
         self.search_screen = search_screen
         self.other_profile_screen = other_profile_screen
+        self.following_screen = following_screen

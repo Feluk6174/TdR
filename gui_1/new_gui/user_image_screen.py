@@ -30,10 +30,11 @@ from kivy.lang import Builder
 import access_my_info, functions
 
 class ImageScreen (Screen):
-    def __init__(self, profile_screen, **kwargs):
+    def __init__(self, profile_screen, connection, **kwargs):
         super(ImageScreen, self).__init__(**kwargs)
 
         self.profile_screen = profile_screen
+        self.connection = connection
 
         self.main_box = BoxLayout(orientation = "vertical")
         self.add_widget(self.main_box)
@@ -92,19 +93,24 @@ class ImageScreen (Screen):
         self.actual_on_press_change_btn = self.change_color_btn
     
     def go_back(self, instance):
+        conn = self.connection
         color_str = ""
         for a in range (len(self.color_number_list)):
             color_str = color_str + self.color_number_list[a]
-        functions.change_my_profile_image(color_str)
         
+        functions.change_my_profile_image(color_str)
+        conn.change_profile_picture(access_my_info.get_user_name(), color_str, access_my_info.get_priv_key())
+
         prof_screen = self.profile_screen
-        prof_screen.refresh_profile_screen()
+        prof_screen.user_image_box.clear_widgets()
+        prof_screen.user_image_grid = functions.build_image(prof_screen, access_my_info.get_profile_image(), 0, (Window.size[1]  - Window.size[0] / 5) * 0.9 / 5)
+        prof_screen.user_image_box.add_widget(prof_screen.user_image_grid)
         self.manager.transition = FallOutTransition()
         self.manager.current = "profile"
 
     def my_image_button_1(self, instance):
         instance.background_color = self.actual_on_press_change_btn.background_color
-        self.color_list[int(instance.text)] = self.all_colors[int(self.actual_on_press_change_btn.text)][0]
+        self.color_number_list[int(instance.text)] = self.all_colors[int(self.actual_on_press_change_btn.text)][0]
 
     def change_color_button_2(self, instance):
         self.actual_on_press_change_btn.background_normal = ""

@@ -26,26 +26,31 @@ import random
 from datetime import datetime
 from kivy.graphics import BorderImage
 from kivy.lang import Builder
+import pyperclip
 
-import chat_screen, search_screen, profile_screen, functions, access_my_info, other_user_profile_screen, create_post_screen
+import chat_screen, search_screen, profile_screen, functions, access_my_info, other_user_profile_screen, create_post_screen, following_screen
+#from gui_1.new_gui.following_screen import FollowingScreen
 import api
 
 class MainScreen (Screen):
-    def __init__(self, conn:api.Connection, my_profile_screen:profile_screen.ProfileScreen, my_search_screen:search_screen.SearchScreen, my_chat_screen:chat_screen.ChatScreen, my_post_screen:create_post_screen.PostUserScreen, my_other_profile_screen:other_user_profile_screen.OtherProfileScreen, **kwargs):
+    def __init__(self, conn:api.Connection, my_profile_screen:profile_screen.ProfileScreen, my_search_screen:search_screen.SearchScreen, my_chat_screen:chat_screen.ChatScreen, my_post_screen:create_post_screen.PostUserScreen, my_other_profile_screen:other_user_profile_screen.OtherProfileScreen, my_following_screen:following_screen.FollowingScreen, **kwargs):
         super(MainScreen, self).__init__(**kwargs)
         print(3)
 
         self.profile_screen = my_profile_screen
         self.search_screen = my_search_screen
         self.other_profile_screen = my_other_profile_screen
+        self.following_screen = my_following_screen
 
         print(31)
 
-        #my_profile_screen.add_screens(self, self.search_screen, self.other_profile_screen)
-        #my_search_screen.add_screens(self, self.profile_screen, self.other_profile_screen)
-        #my_other_profile_screen.add_screens(self, self.profile_screen, self.search_screen)
-        #my_chat_screen.add_screens(self, self.profile_screen, self.search_screen, self.other_profile_screen)
-        #my_post_screen.add_screens(self, self.profile_screen, self.search_screen, self.other_profile_screen)
+        my_profile_screen.add_screens(self, self.search_screen, self.other_profile_screen, self.following_screen)
+        my_search_screen.add_screens(self, self.profile_screen, self.other_profile_screen)
+        my_other_profile_screen.add_screens(self, self.profile_screen, self.search_screen)
+        my_chat_screen.add_screens(self, self.profile_screen, self.search_screen, self.other_profile_screen)
+        my_post_screen.add_screens(self, self.profile_screen, self.search_screen, self.other_profile_screen)
+        my_following_screen.add_screens(self, self.profile_screen, self.other_profile_screen)
+
 
         my_search_screen.refresh_search_screen(0)
         my_profile_screen.refresh_profile_screen(0)
@@ -170,15 +175,15 @@ class MainScreen (Screen):
         print(301)
         my_liked_posts = access_my_info.get_liked_id()
         print(302)
-        all_test_posts = []
+        all_test_posts_1 = []
         all_posts = []
         print(all_my_following)
         for following in all_my_following:
             print(following)
             follower_posts = connection.get_posts(user_name = following)
             for post in follower_posts:
-                all_test_posts.append(post)
-        all_test_posts = functions.order_posts_by_timestamp(all_test_posts)
+                all_test_posts_1.append(post)
+        all_test_posts = functions.order_posts_by_timestamp(all_test_posts_1)
         for a in range(len(all_test_posts)):
             user_info = connection.get_user(all_test_posts[a]["user_id"])
             print(user_info)
@@ -190,22 +195,36 @@ class MainScreen (Screen):
                     if liked == all_test_posts[a]["id"]:
                         print(306)
                         actual_maybe_like = 1
-            all_posts.append((following, user_info["profile_picture"], all_test_posts[a]["flags"], all_test_posts[a]["content"], all_test_posts[a]["time_posted"],all_test_posts[a]["id"], actual_maybe_like))
+            all_posts.append((all_test_posts[a]["user_id"], user_info["profile_picture"], all_test_posts[a]["flags"], all_test_posts[a]["content"], all_test_posts[a]["time_posted"],all_test_posts[a]["id"], actual_maybe_like))
             print(307)
         print(308)
         return all_posts
         
     def name_press(self, order_number,instance):
-        #go to user screen (owner of post)
-        pass
+        self.go_to_user_profile(order_number)
+
+    def go_to_user_profile(self, order_number):
+        con = self.connection
+        other_user_profile_screen = self.other_profile_screen
+        print(self.all_posts_i_get)
+        user = self.all_posts_i_get[order_number][0]
+        print(user)
+        user = con.get_post(user)
+        print(user)
+        user = user["user_id"]
+        other_user_profile_screen.refresh_profile_screen(user)
+        self.manager.transition = SlideTransition()
+        self.manager.current = "other_profile"
+        self.manager.transition.direction = "right"
+
 
     def image_press(self, order_number, instance):
-        #go to user screen (owner of post)
-        pass
+        self.go_to_user_profile(order_number)
 
     def content_post_press(self, order_number, instance):
-        #copy post (mantain pressed)
-        pass
+        #con = self.connection
+        #text = con.get_user(self.all_posts_i_get[order_number][0])["content"]
+        pyperclip.copy(instance.text)
 
     def like_press(self, order_number, instance):
         num = self.all_posts_i_get[order_number][2]

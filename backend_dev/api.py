@@ -47,6 +47,34 @@ class Connection():
             elif response == "DATABASE ERROR":
                 raise DatabaseError(msg)
 
+    def change_profile_picture(self, user_name:str, profile_picture:str, priv_key):
+        time_posted = int(time.time())
+        signature = auth.sign(priv_key, user_name, profile_picture, time_posted).decode("utf-8")
+        msg = "{"+f'"type": "ACTION", "action": "UPDATE PROFILE PICTURE", "user_name": "{user_name}", "profile_picture": "{profile_picture}", "time": {time_posted}, "signature": "{signature}"'+"}"
+        self.send(msg)
+        response = self.recv()
+        if not response == "OK":
+            if response == "WRONG CHARS":
+                raise WrongCaracters(user_name=user_name, profile_picture=profile_picture)
+            elif response == "WRONG SIGNATURE":
+                raise WrongSignature()
+            elif response == "DATABASE ERROR":
+                raise DatabaseError(msg)
+
+    def change_info(self, user_name:str, info:str, priv_key):
+        time_posted = int(time.time())
+        signature = auth.sign(priv_key, user_name, info, time_posted).decode("utf-8")
+        msg = "{"+f'"type": "ACTION", "action": "UPDATE INFO", "user_name": "{user_name}", "info": "{info}", "time": {time_posted}, "signature": "{signature}"'+"}"
+        self.send(msg)
+        response = self.recv()
+        if not response == "OK":
+            if response == "WRONG CHARS":
+                raise WrongCaracters(user_name=user_name, info=info)
+            elif response == "WRONG SIGNATURE":
+                raise WrongSignature()
+            elif response == "DATABASE ERROR":
+                raise DatabaseError(msg)
+
     def get_user_posts(self, user_name:str):
         #return format: {'id': 'str(23)', 'user_id': 'str(16)', 'content': 'str(255)', 'flags': 'str(10)', 'time_posted': int}
         posts = []

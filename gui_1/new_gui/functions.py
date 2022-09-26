@@ -91,7 +91,7 @@ def make_post_btn(screen, user_name, user_image, post_flags, text_content, date,
     first_box = BoxLayout(orientation = "horizontal", size_hint = (1, 0.5))
     post.add_widget(first_box)
             
-    image_grid = build_image(screen, user_image, order_number, (Window.size[1]  - Window.size[0] / 5) * 0.9 / 5)
+    image_grid = build_image(screen, user_image, order_number, Window.size[0] / 1.61 / 6)
     first_box.add_widget(image_grid)
         
     post_user_name = Button(text = user_name)
@@ -104,7 +104,7 @@ def make_post_btn(screen, user_name, user_image, post_flags, text_content, date,
     second_box = BoxLayout(size_hint = (1, 2))
     post.add_widget(second_box)
 
-    txt = Button (text = text_content, on_release = partial(screen.content_post_press, order_number))
+    txt = Button (text = adapt_text_to_window(text_content, 15, Window.size[0]), on_release = partial(screen.content_post_press, order_number))
     second_box.add_widget(txt)
 
     third_box = BoxLayout(size_hint = (1, 0.5))
@@ -113,7 +113,7 @@ def make_post_btn(screen, user_name, user_image, post_flags, text_content, date,
     flags_box = BoxLayout(size_hint = (1, 1))
     third_box.add_widget(flags_box)
 
-    all_flags = [['images/check_verd.png'], ['images/age18.png'], ['images/blood.png'], ['images/fist.png'], ['images/soga.png'], ['images/white.png'], ['images/white.png'], ['images/white.png'], ['images/white.png'], ['images/white.png'], ['images/white.png']]
+    all_flags = [['images/check_verd.png'], ['images/age18.png'], ['images/blood.png'], ['images/fist.png'], ['images/soga.png'], ['images/art.png'], ['images/discuss.png'], ['images/politic.png'], ['images/sport.png'], ['images/videogame.png'], ['images/music.png']]
     for x in range (len(all_flags) - 1):
         if post_flags[x] == "1":
             flag_btn = Button(border = (0, 0, 0, 0), size_hint_x = None, width = (Window.size[1] - Window.size[0] / 5) * 0.9 / 12, background_normal = all_flags[x + 1][0])
@@ -121,7 +121,7 @@ def make_post_btn(screen, user_name, user_image, post_flags, text_content, date,
             #all_flags[x + 1].append(0)
             flags_box.add_widget(flag_btn)
 
-    likes_box = BoxLayout(size_hint = (None, 1), width = Window.size[0] / 1.61 / 3)
+    likes_box = BoxLayout(size_hint = (None, 1), width = Window.size[0] / 1.61 / 6)
     third_box.add_widget(likes_box)
 
     like_heart = Button(border = (0, 0, 0, 0))
@@ -149,7 +149,7 @@ def order_posts_by_timestamp(posts_to_order):
             #    how_big_list[a][1] = how_big_list[a][1] + 1
             print(posts_to_order)
             print(a, b, posts_to_order[a])
-            if posts_to_order[a]["time_posted"] < posts_to_order[b]["time_posted"]:
+            if posts_to_order[a]["time_posted"] > posts_to_order[b]["time_posted"]:
                 how_big_list[a] = how_big_list[a] + 1
     for c in range (length):
         for d in range (length):
@@ -169,15 +169,43 @@ def change_my_profile_image(color_string):
     access_my_info.change_my_image(color_string)
     #enviar a conn
 
+def adapt_text_to_server(text:str):
+    text = text.split("\n")
+    text = " ".join(text)
+    return text
 
-def adapt_text_to_window(text, text_size, window_size):
+def adapt_text_to_window(text:str, text_size, window_size):
     text_to_cut_lenght = len(text)
-    letters_per_line = window_size / text_size
+    letters_per_line = int(window_size / text_size)
     jump_done = 0
-    while text_to_cut_lenght > letters_per_line:
-        for x in range (letters_per_line):
-            if text[len(text) - text_to_cut_lenght + letters_per_line - x -1] == " ":
-                if jump_done == 0:
-                    jump_done = 1
-                    text[letters_per_line - x -1] = "\n"
-                    text_to_cut_lenght = text_to_cut_lenght - letters_per_line - x -1
+
+    final_text = []
+
+    words = text.split(" ")
+    i = 0
+    while i < len(words):
+        if len(words[i]) >= letters_per_line:
+            final_text.append(words[i])
+            i += 1
+        else:
+            working_words = words[i]
+            j = 1
+            while not len(working_words) >= letters_per_line:
+                try:
+                    working_words += " " + words[i+j]
+                except IndexError:
+                    final_text.append(working_words)
+                    i = len(words)
+                    break
+                j += 1
+            else:
+                final_text.append(working_words)
+                i += j
+            
+    print("f_t", final_text)
+    final_text = "\n".join(final_text)
+    print("f_t", final_text)
+    return final_text
+
+
+

@@ -28,7 +28,7 @@ from datetime import datetime
 from kivy.graphics import BorderImage
 from kivy.lang import Builder
 
-import user_image_register_screen, auth, home_screen, search_screen, chat_screen, create_post_screen, profile_screen, user_image_screen, access_my_info, other_user_profile_screen
+import user_image_register_screen, auth, home_screen, search_screen, chat_screen, create_post_screen, profile_screen, user_image_screen, access_my_info, other_user_profile_screen, following_screen
 
 
 def check_my_info_exists():
@@ -248,13 +248,15 @@ class RegisterScreen (Screen):
         my_chat_screen = chat_screen.ChatScreen(con, name = "chat")
         other_profile_screen = other_user_profile_screen.OtherProfileScreen(con, name = "other_profile")
         create_post_scrn = create_post_screen.PostUserScreen(con, name = "create")
-        self.manager.add_widget(home_screen.MainScreen(con, my_profile_screen, my_search_screen, my_chat_screen, create_post_scrn, other_profile_screen, name = "main"))
+        follow_screen = following_screen.FollowingScreen(con, name = "following")
+        self.manager.add_widget(home_screen.MainScreen(con, my_profile_screen, my_search_screen, my_chat_screen, create_post_scrn, other_profile_screen, follow_screen, name = "main"))
         self.manager.add_widget(my_chat_screen)
         self.manager.add_widget(my_search_screen)
         self.manager.add_widget(create_post_scrn)
         self.manager.add_widget(my_profile_screen)
-        self.manager.add_widget(user_image_screen.ImageScreen(my_profile_screen, name = "image"))
+        self.manager.add_widget(user_image_screen.ImageScreen(my_profile_screen, con, name = "image"))
         self.manager.add_widget(other_profile_screen)
+        self.manager.add_widget(follow_screen)
         self.manager.transition = FallOutTransition()
         self.manager.current = "main"
     
