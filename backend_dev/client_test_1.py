@@ -10,7 +10,7 @@ priv_key, pub_key = auth.get_keys(password)
 
 print(priv_key.export_key())
 
-user_name = "login_10"
+user_name = "login_11"
 
 with open("rsa_key.bin", "r") as f:
     keys_file = f.read()
@@ -53,7 +53,7 @@ print(7.2)
 key = conn.get_user(user_name=user_name)["private_key"]
 print(key)
 print(7.3)
-auth.login(key, password)
+print(auth.login(key, "a"))
 priv_key, pub_key = auth.get_keys(password)
 print(8.1)
 conn.post("login?", user_name+"1", user_name, "0101010101", priv_key)
