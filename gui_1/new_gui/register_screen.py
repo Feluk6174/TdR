@@ -130,6 +130,10 @@ class RegisterScreen (Screen):
         #self.description_text_input.bind(keyboard_on_key_down = self.description_text_input_background_image_f)
         self.description_box.add_widget(self.description_text_input)
         
+        self.log_in_btn = Button(size_hint_y = 0.666666, text = "Log In, alredy registered", border = (0, 0, 0, 0), on_release = self.log_in_press)
+        self.main_box.add_widget(self.log_in_btn)
+
+        """
         self.following_box = BoxLayout(orientation = 'vertical')
         self.main_box.add_widget(self.following_box)
 
@@ -138,7 +142,7 @@ class RegisterScreen (Screen):
 
         self.following_text_input = TextInput(multiline = False)
         #self.following_text_input.bind(keyboard_on_key_down = self.following_text_input_background_image_f)
-        self.following_box.add_widget(self.following_text_input)
+        self.following_box.add_widget(self.following_text_input)"""
         
         self.register_btn = Button(size_hint = (1, 1), text = "Register")
         self.main_box.add_widget(self.register_btn)
@@ -148,39 +152,11 @@ class RegisterScreen (Screen):
     def to_image_making(self, instance):
         self.manager.transition = FallOutTransition()
         self.manager.current = "image_register"
-    
-    """
-    #funcions per que al deixar de seleccionar una casella hi hagi el fons corresponent
-    def following_text_input_background_image_f(self, instance):
-        if self.following_text_input.text != "":
-            self.following_text_input.background_normal = 'atlas://data/images/defaulttheme/textinput'
-        elif self.following_text_input.text == "":
-            self.following_text_input.background_normal = self.my_list_of_background_images[4]
-         
-    def description_text_input_background_image_f(self, instance):
-        if self.description_text_input.text != "":
-            self.description_text_input.background_normal = 'atlas://data/images/defaulttheme/textinput'
-        if self.description_text_input.text == "":
-            self.description_text_input.background_normal = self.my_list_of_background_images[3]
 
-    def repeat_password_text_input_background_image_f(self, instance):
-        if self.password_text_input.text != "":
-            self.password_text_input.background_normal = 'atlas://data/images/defaulttheme/textinput'
-        elif self.password_text_input.text == "":
-            self.password_text_input.background_normal = self.my_list_of_background_images[2]
-
-    def password_text_input_background_image_f(self, instance):
-        if self.password_text_input.text != "":
-            self.password_text_input.background_normal = 'atlas://data/images/defaulttheme/textinput'
-        elif self.password_text_input.text == "":
-            self.password_text_input.background_normal = self.my_list_of_background_images[1]
-
-    def username_text_input_background_image_f(self, instance):
-        if self.username_text_input.text != "":
-            self.username_text_input.background_normal = 'atlas://data/images/defaulttheme/textinput'
-        elif self.username_text_input.text == "":
-            self.username_text_input.background_normal = self.my_list_of_background_images[0]
-    """
+    #log_in def
+    def log_in_press(self, insance):
+        self.manager.transition = FallOutTransition()
+        self.manager.current = "log_in"
 
     #register user f
     def register(self, instance):
@@ -212,8 +188,8 @@ class RegisterScreen (Screen):
                 self.password_text = self.password_text_input.text
                 print("pwd", self.password_text)
                 self.description_text = self.description_text_input.text
-                self.following_text = self.following_text_input.text
-                self.following_list = self.following_text.split(", ")
+                #self.following_text = self.following_text_input.text
+                #self.following_list = self.following_text.split(", ")
 
                 #crear pantalla d'espera
                 self.clear_widgets()
@@ -271,7 +247,7 @@ class RegisterScreen (Screen):
         #dictionary["basic_info"]["user_key_storage"] = "rsa_key.bin"
         dictionary["semi_basic_info"]["profile_picture"] = self.image_str
         dictionary["semi_basic_info"]["description"] = self.description_text
-        dictionary["semi_basic_info"]["user_following"] = self.following_list
+        dictionary["semi_basic_info"]["user_following"] = []
         dictionary["semi_basic_info"]["liked_posts_id"] = []
         my_info_file = open("my_info.json", "w")
         my_info_file.write(json.dumps(dictionary))

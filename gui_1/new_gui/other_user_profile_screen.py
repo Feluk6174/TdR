@@ -59,7 +59,7 @@ class OtherProfileScreen (Screen):
         self.content_box = BoxLayout (size_hint = (1, 0.9), orientation = "vertical")
         self.main_all_box.add_widget(self.content_box)
 
-        self.content_grid = GridLayout(cols = 1, size_hint_y = None)
+        self.content_grid = GridLayout(cols = 1, size_hint_y = None, spacing = 20)
         self.content_grid.bind(minimum_height=self.content_grid.setter('height'))
 
         self.content_grid_scroll = ScrollView ()
