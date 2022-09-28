@@ -25,7 +25,7 @@ from kivy.uix.screenmanager import SlideTransition
 import kivy.utils
 import home_screen, access_my_info
 from datetime import datetime
-import pyperclip
+#import pyperclip
 
 import functions
 
@@ -274,7 +274,8 @@ class SearchScreen (Screen):
         self.manager.transition.direction = "right"
 
     def content_post_press(self, order_number, instance):
-        pyperclip.copy(instance.text)
+        #pyperclip.copy(instance.text)
+        pass
     
     def clear_search_def(self, instance):
         self.new_posts_header_press(0)

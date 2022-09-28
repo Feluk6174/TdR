@@ -26,7 +26,7 @@ import random
 from datetime import datetime
 from kivy.graphics import BorderImage
 from kivy.lang import Builder
-import pyperclip
+#import pyperclip
 
 import chat_screen, search_screen, profile_screen, functions, access_my_info, other_user_profile_screen, create_post_screen, following_screen
 #from gui_1.new_gui.following_screen import FollowingScreen
@@ -224,7 +224,8 @@ class MainScreen (Screen):
     def content_post_press(self, order_number, instance):
         #con = self.connection
         #text = con.get_user(self.all_posts_i_get[order_number][0])["content"]
-        pyperclip.copy(instance.text)
+        #pyperclip.copy(instance.text)
+        pass
 
     def like_press(self, order_number, instance):
         num = self.all_posts_i_get[order_number][2]
