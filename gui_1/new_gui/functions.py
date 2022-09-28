@@ -84,7 +84,7 @@ def build_image(screen, user_image, order_number, width):
 def filter_chars(text:str):
     invalid_chars = ["\\", "\'", "\"", "\n", "\t", "\r", "\0", "%", "\b", ";", "=", "\u259e"]
 
-    for char in enumerate(invalid_chars):
+    for char in invalid_chars:
         if char in text:
             text = text.split(char)
             text = "".join(text)
