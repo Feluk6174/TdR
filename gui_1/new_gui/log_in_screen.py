@@ -100,7 +100,7 @@ class LogInScreen (Screen):
         user_info = con.get_user(self.username_text_input.text)
         print(user_info)
         if user_info != {}:
-            reconstruct = auth.login(user_info["private_key"], self.password_text_input.text)
+            reconstruct = auth.login(user_info["private_key"], self.username_text_input.text+self.password_text_input.text)
             print(reconstruct)
             if reconstruct == True:
                 self.initiate(user_info)

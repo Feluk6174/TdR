@@ -4,6 +4,8 @@ import base64
 from Crypto.Signature import pss
 from Crypto.Hash import SHA256
 
+print("auth")
+
 def gen_key(passphrase):
     key = RSA.generate(2048)
     encrypted_key = key.export_key(passphrase=passphrase, pkcs=8,
