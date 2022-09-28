@@ -28,7 +28,7 @@ from datetime import datetime
 from kivy.graphics import BorderImage
 from kivy.lang import Builder
 
-import user_image_register_screen, auth, home_screen, search_screen, chat_screen, create_post_screen, profile_screen, user_image_screen, access_my_info, other_user_profile_screen, following_screen
+import user_image_register_screen, auth, home_screen, search_screen, chat_screen, create_post_screen, profile_screen, user_image_screen, access_my_info, other_user_profile_screen, following_screen, functions
 
 
 def check_my_info_exists():
@@ -76,7 +76,7 @@ class RegisterScreen (Screen):
         self.add_widget(self.main_box)
 
         #titel
-        self.title_box = BoxLayout(size_hint=(1, 1))
+        self.title_box = BoxLayout(size_hint=(1, None), size_hint_y = None, height = Window.size[1] / 8)
         self.title_box.orientation = "horizontal"
         self.main_box.add_widget(self.title_box)
 
@@ -187,7 +187,7 @@ class RegisterScreen (Screen):
                 self.username_text = self.username_text_input.text
                 self.password_text = self.password_text_input.text
                 print("pwd", self.password_text)
-                self.description_text = self.description_text_input.text
+                self.description_text = functions.filter_chars(self.description_text_input.text)
                 #self.following_text = self.following_text_input.text
                 #self.following_list = self.following_text.split(", ")
 

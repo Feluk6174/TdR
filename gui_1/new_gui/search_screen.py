@@ -287,13 +287,9 @@ class SearchScreen (Screen):
         self.search_label_no_press = Label(text = "Search")
         self.search_btn_box.add_widget(self.search_label_no_press)
         #self.searched_box.clear_widgets()
-        print("---")
-        print(self.search_post_hastags_input.text)
-        print(self.get_filter_flags())
-        print(self.search_user_input.text)
         if self.search_post_hastags_input.text != "" or self.get_filter_flags() != "0000000000":
             print(1)
-            searched_posts = conn.get_posts(hashtag = self.search_post_hastags_input.text, exclude_flags = self.get_filter_flags(), num = 10)
+            searched_posts = conn.get_posts(hashtag = functions.filter_chars(self.search_post_hastags_input.text), exclude_flags = self.get_filter_flags(), num = 10)
             if searched_posts != ():
                 self.all_displayed_posts_list = []
                 my_liked_posts_id = access_my_info.get_liked_id()
@@ -318,7 +314,7 @@ class SearchScreen (Screen):
                 self.content_in_scroll_box.height = self.content_in_scroll_box.height + self.searched_box.height
         elif self.search_post_hastags_input.text == "" and self.get_filter_flags() == "0000000000" and self.search_user_input.text != "":
             print(2)
-            searched_user = conn.get_user(self.search_user_input.text)
+            searched_user = conn.get_user(functions.filter_chars(self.search_user_input.text))
             print(searched_user)
             if searched_user == {}:
                 self.not_found_label = Label(text = "Nothing found", size_hint_y = None, height = Window.size[1]/8)

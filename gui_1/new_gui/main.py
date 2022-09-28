@@ -35,8 +35,6 @@ import register_screen, user_image_register_screen, profile_screen, home_screen,
 Window.size = (400, 600)
 
 
-if __name__ == "__main__":
-    print("halloooooooo")
 
 class MyApp (App):
     def build(self):

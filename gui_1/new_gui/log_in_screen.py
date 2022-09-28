@@ -28,7 +28,7 @@ from datetime import datetime
 from kivy.graphics import BorderImage
 from kivy.lang import Builder
 
-import user_image_register_screen, auth, home_screen, search_screen, chat_screen, create_post_screen, profile_screen, user_image_screen, access_my_info, other_user_profile_screen, following_screen
+import user_image_register_screen, auth, home_screen, search_screen, chat_screen, create_post_screen, profile_screen, user_image_screen, access_my_info, other_user_profile_screen, following_screen, functions
 
 
 #gotta change this!!!!!!!!!!!!!
@@ -97,10 +97,10 @@ class LogInScreen (Screen):
     def log_in_press(self, instance):
         con = self.connection
         print(self.username_text_input.text)
-        user_info = con.get_user(self.username_text_input.text)
+        user_info = con.get_user(functions.filter_chars(self.username_text_input.text))
         print(user_info)
         if user_info != {}:
-            reconstruct = auth.login(user_info["private_key"], self.username_text_input.text+self.password_text_input.text)
+            reconstruct = auth.login(user_info["private_key"], functions.filter_chars(self.username_text_input.text+self.password_text_input.text))
             print(reconstruct)
             if reconstruct == True:
                 self.initiate(user_info)

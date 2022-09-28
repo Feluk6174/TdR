@@ -81,6 +81,14 @@ def build_image(screen, user_image, order_number, width):
         image_grid.add_widget(color_bit)
     return image_grid
 
+def filter_chars(text:str):
+    invalid_chars = ["\\", "\'", "\"", "\n", "\t", "\r", "\0", "%", "\b", ";", "=", "\u259e"]
+
+    for char in enumerate(invalid_chars):
+        if char in text:
+            text = text.split(char)
+            text = "".join(text)
+    return text
 
 #def crear botó
 def make_post_btn(screen, user_name, user_image, post_flags, text_content, date, post_id, like_self, order_number):
