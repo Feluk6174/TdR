@@ -45,7 +45,7 @@ class MyApp (App):
         #look if user created and if it is registered. if it does not, make it
         check_info = register_screen.check_my_info_exists()
         if check_info == False:
-            sm.add_widget(register_screen.RegisterScreen(connection, name = "register"))
+            sm.add_widget(register_screen.RegisterScreen(connection, sm, name = "register"))
             sm.add_widget(user_image_register_screen.ImageScreen(connection, name = "image_register"))
         elif check_info == True:
             check_register = register_screen.check_my_user_exists(connection)

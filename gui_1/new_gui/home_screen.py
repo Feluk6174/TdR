@@ -79,7 +79,7 @@ class MainScreen (Screen):
         self.content_box = BoxLayout (size_hint = (1, 0.9))
         self.main_all_box.add_widget(self.content_box)
         
-        self.posts_grid = GridLayout(cols = 1, size_hint_y = None, spacing = 3)
+        self.posts_grid = GridLayout(cols = 1, size_hint_y = None, spacing = 20)
         self.posts_grid.bind(minimum_height=self.posts_grid.setter('height'))
         
         self.posts_grid_scroll = ScrollView()

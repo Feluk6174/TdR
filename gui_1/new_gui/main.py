@@ -29,14 +29,12 @@ from kivy.lang import Builder
 
 import api
 connection = api.Connection()
-import register_screen, user_image_register_screen, profile_screen, home_screen, chat_screen, search_screen, create_post_screen, user_image_screen, other_user_profile_screen, following_screen
+import register_screen, user_image_register_screen, profile_screen, home_screen, chat_screen, search_screen, create_post_screen, user_image_screen, other_user_profile_screen, following_screen, log_in_screen
 
 #optional. errase when doing apk
 Window.size = (400, 600)
 
 
-if __name__ == "__main__":
-    print("halloooooooo")
 
 class MyApp (App):
     def build(self):
@@ -50,6 +48,7 @@ class MyApp (App):
         if check_info == False:
             sm.add_widget(register_screen.RegisterScreen(connection, sm, name = "register"))
             sm.add_widget(user_image_register_screen.ImageScreen(name = "image_register"))
+            sm.add_widget(log_in_screen.LogInScreen(connection, sm, name = "log_in"))
         elif check_info == True:
             check_register = register_screen.check_my_user_exists(connection)
             if check_register == False:

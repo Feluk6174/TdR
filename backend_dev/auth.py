@@ -74,3 +74,14 @@ def verify(pub_key, signature, *args):
     except (ValueError, TypeError) as e:
         print("[ERROR]", e)
         return False
+
+def login(priv_key:str, password:str):
+    priv_key = reconstruct_key(priv_key)
+    with open("rsa_key.bin", "wb") as f:
+        f.write(priv_key.encode("utf-8"))
+    try:
+        get_keys(password)
+    except ValueError:
+        return False
+    
+    return True

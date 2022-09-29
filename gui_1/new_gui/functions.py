@@ -81,6 +81,14 @@ def build_image(screen, user_image, order_number, width):
         image_grid.add_widget(color_bit)
     return image_grid
 
+def filter_chars(text:str):
+    invalid_chars = ["\\", "\'", "\"", "\n", "\t", "\r", "\0", "%", "\b", ";", "=", "\u259e"]
+
+    for char in invalid_chars:
+        if char in text:
+            text = text.split(char)
+            text = "".join(text)
+    return text
 
 #def crear botó
 def make_post_btn(screen, user_name, user_image, post_flags, text_content, date, post_id, like_self, order_number):
@@ -113,7 +121,7 @@ def make_post_btn(screen, user_name, user_image, post_flags, text_content, date,
     flags_box = BoxLayout(size_hint = (1, 1))
     third_box.add_widget(flags_box)
 
-    all_flags = [['images/check_verd.png'], ['images/age18.png'], ['images/blood.png'], ['images/fist.png'], ['images/soga.png'], ['images/white.png'], ['images/white.png'], ['images/white.png'], ['images/white.png'], ['images/white.png'], ['images/white.png']]
+    all_flags = [['images/check_verd.png'], ['images/age18.png'], ['images/blood.png'], ['images/fist.png'], ['images/soga.png'], ['images/art.png'], ['images/discuss.png'], ['images/politic.png'], ['images/sport.png'], ['images/videogame.png'], ['images/music.png']]
     for x in range (len(all_flags) - 1):
         if post_flags[x] == "1":
             flag_btn = Button(border = (0, 0, 0, 0), size_hint_x = None, width = (Window.size[1] - Window.size[0] / 5) * 0.9 / 12, background_normal = all_flags[x + 1][0])
@@ -209,32 +217,3 @@ def adapt_text_to_window(text:str, text_size, window_size):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-def no(letters_per_line):
-    while text_to_cut_lenght > letters_per_line:
-        print(letters_per_line, text_to_cut_lenght, len(text))
-        for x in range (letters_per_line):
-            if text[len(text) - text_to_cut_lenght + letters_per_line - x -1] == " ":
-                if jump_done == 0:
-                    jump_done = 1
-                    l = [text[i] for i in range(len(text))]
-                    l[letters_per_line - x -1] = "\n"
-                    text_to_cut_lenght = text_to_cut_lenght - letters_per_line - x -1
-                    text = "".join(l)
-
-    return text

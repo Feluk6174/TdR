@@ -28,7 +28,7 @@ from datetime import datetime
 from kivy.graphics import BorderImage
 from kivy.lang import Builder
 
-import user_image_register_screen, auth, home_screen, search_screen, chat_screen, create_post_screen, profile_screen, user_image_screen, access_my_info, other_user_profile_screen
+import user_image_register_screen, auth, home_screen, search_screen, chat_screen, create_post_screen, profile_screen, user_image_screen, access_my_info, other_user_profile_screen, following_screen, functions
 
 
 def check_my_info_exists():
@@ -76,7 +76,7 @@ class RegisterScreen (Screen):
         self.add_widget(self.main_box)
 
         #titel
-        self.title_box = BoxLayout(size_hint=(1, 1))
+        self.title_box = BoxLayout(size_hint=(1, None), size_hint_y = None, height = Window.size[1] / 8)
         self.title_box.orientation = "horizontal"
         self.main_box.add_widget(self.title_box)
 
@@ -130,6 +130,10 @@ class RegisterScreen (Screen):
         #self.description_text_input.bind(keyboard_on_key_down = self.description_text_input_background_image_f)
         self.description_box.add_widget(self.description_text_input)
         
+        self.log_in_btn = Button(size_hint_y = 0.666666, text = "Log In, alredy registered", border = (0, 0, 0, 0), on_release = self.log_in_press)
+        self.main_box.add_widget(self.log_in_btn)
+
+        """
         self.following_box = BoxLayout(orientation = 'vertical')
         self.main_box.add_widget(self.following_box)
 
@@ -138,7 +142,7 @@ class RegisterScreen (Screen):
 
         self.following_text_input = TextInput(multiline = False)
         #self.following_text_input.bind(keyboard_on_key_down = self.following_text_input_background_image_f)
-        self.following_box.add_widget(self.following_text_input)
+        self.following_box.add_widget(self.following_text_input)"""
         
         self.register_btn = Button(size_hint = (1, 1), text = "Register")
         self.main_box.add_widget(self.register_btn)
@@ -148,39 +152,11 @@ class RegisterScreen (Screen):
     def to_image_making(self, instance):
         self.manager.transition = FallOutTransition()
         self.manager.current = "image_register"
-    
-    """
-    #funcions per que al deixar de seleccionar una casella hi hagi el fons corresponent
-    def following_text_input_background_image_f(self, instance):
-        if self.following_text_input.text != "":
-            self.following_text_input.background_normal = 'atlas://data/images/defaulttheme/textinput'
-        elif self.following_text_input.text == "":
-            self.following_text_input.background_normal = self.my_list_of_background_images[4]
-         
-    def description_text_input_background_image_f(self, instance):
-        if self.description_text_input.text != "":
-            self.description_text_input.background_normal = 'atlas://data/images/defaulttheme/textinput'
-        if self.description_text_input.text == "":
-            self.description_text_input.background_normal = self.my_list_of_background_images[3]
 
-    def repeat_password_text_input_background_image_f(self, instance):
-        if self.password_text_input.text != "":
-            self.password_text_input.background_normal = 'atlas://data/images/defaulttheme/textinput'
-        elif self.password_text_input.text == "":
-            self.password_text_input.background_normal = self.my_list_of_background_images[2]
-
-    def password_text_input_background_image_f(self, instance):
-        if self.password_text_input.text != "":
-            self.password_text_input.background_normal = 'atlas://data/images/defaulttheme/textinput'
-        elif self.password_text_input.text == "":
-            self.password_text_input.background_normal = self.my_list_of_background_images[1]
-
-    def username_text_input_background_image_f(self, instance):
-        if self.username_text_input.text != "":
-            self.username_text_input.background_normal = 'atlas://data/images/defaulttheme/textinput'
-        elif self.username_text_input.text == "":
-            self.username_text_input.background_normal = self.my_list_of_background_images[0]
-    """
+    #log_in def
+    def log_in_press(self, insance):
+        self.manager.transition = FallOutTransition()
+        self.manager.current = "log_in"
 
     #register user f
     def register(self, instance):
@@ -211,9 +187,9 @@ class RegisterScreen (Screen):
                 self.username_text = self.username_text_input.text
                 self.password_text = self.password_text_input.text
                 print("pwd", self.password_text)
-                self.description_text = self.description_text_input.text
-                self.following_text = self.following_text_input.text
-                self.following_list = self.following_text.split(", ")
+                self.description_text = functions.filter_chars(self.description_text_input.text)
+                #self.following_text = self.following_text_input.text
+                #self.following_list = self.following_text.split(", ")
 
                 #crear pantalla d'espera
                 self.clear_widgets()
@@ -248,13 +224,15 @@ class RegisterScreen (Screen):
         my_chat_screen = chat_screen.ChatScreen(con, name = "chat")
         other_profile_screen = other_user_profile_screen.OtherProfileScreen(con, name = "other_profile")
         create_post_scrn = create_post_screen.PostUserScreen(con, name = "create")
-        self.manager.add_widget(home_screen.MainScreen(con, my_profile_screen, my_search_screen, my_chat_screen, create_post_scrn, other_profile_screen, name = "main"))
+        follow_screen = following_screen.FollowingScreen(con, name = "following")
+        self.manager.add_widget(home_screen.MainScreen(con, my_profile_screen, my_search_screen, my_chat_screen, create_post_scrn, other_profile_screen, follow_screen, name = "main"))
         self.manager.add_widget(my_chat_screen)
         self.manager.add_widget(my_search_screen)
         self.manager.add_widget(create_post_scrn)
         self.manager.add_widget(my_profile_screen)
-        self.manager.add_widget(user_image_screen.ImageScreen(my_profile_screen, name = "image"))
+        self.manager.add_widget(user_image_screen.ImageScreen(my_profile_screen, con, name = "image"))
         self.manager.add_widget(other_profile_screen)
+        self.manager.add_widget(follow_screen)
         self.manager.transition = FallOutTransition()
         self.manager.current = "main"
     
@@ -269,7 +247,7 @@ class RegisterScreen (Screen):
         #dictionary["basic_info"]["user_key_storage"] = "rsa_key.bin"
         dictionary["semi_basic_info"]["profile_picture"] = self.image_str
         dictionary["semi_basic_info"]["description"] = self.description_text
-        dictionary["semi_basic_info"]["user_following"] = self.following_list
+        dictionary["semi_basic_info"]["user_following"] = []
         dictionary["semi_basic_info"]["liked_posts_id"] = []
         my_info_file = open("my_info.json", "w")
         my_info_file.write(json.dumps(dictionary))
