@@ -130,7 +130,7 @@ class RegisterScreen (Screen):
         #self.description_text_input.bind(keyboard_on_key_down = self.description_text_input_background_image_f)
         self.description_box.add_widget(self.description_text_input)
         
-        self.log_in_btn = Button(size_hint_y = 0.666666, text = "Log In, alredy registered", border = (0, 0, 0, 0), on_release = self.log_in_press)
+        self.log_in_btn = Button(size_hint_y = 0.666666, text = "Log In", border = (0, 0, 0, 0), on_release = self.log_in_press)
         self.main_box.add_widget(self.log_in_btn)
 
         """
