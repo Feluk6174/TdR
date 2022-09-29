@@ -74,8 +74,10 @@ class MyApp (App):
 
 
 if __name__ == "__main__":
-    MyApp().run()
-
+    try:
+        MyApp().run()
+    except:
+        connection.close()
 
 #change description api def
 #text_input a alçada de teclat
