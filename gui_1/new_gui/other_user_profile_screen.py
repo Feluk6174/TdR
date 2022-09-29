@@ -25,7 +25,6 @@ from kivy.uix.screenmanager import SlideTransition
 import kivy.utils
 from datetime import datetime
 
-from pyparsing import FollowedBy
 #import pyperclip
 
 import access_my_info, home_screen, search_screen, profile_screen, functions, chat_screen
