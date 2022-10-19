@@ -24,7 +24,7 @@ from kivy.uix.screenmanager import FallOutTransition
 from kivy.uix.screenmanager import SlideTransition
 import kivy.utils
 from datetime import datetime
-import pyperclip
+#import pyperclip
 
 import access_my_info, functions, search_screen, home_screen, chat_screen
 
@@ -295,7 +295,8 @@ class ProfileScreen (Screen):
         self.go_to_user_profile(order_number)
 
     def content_post_press(self, order_number, instance):
-        pyperclip.copy(instance.text)
+        #pyperclip.copy(instance.text)
+        pass
 
     def header_btn_press(self, instance):
         pass

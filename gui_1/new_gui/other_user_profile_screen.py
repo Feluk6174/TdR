@@ -25,8 +25,7 @@ from kivy.uix.screenmanager import SlideTransition
 import kivy.utils
 from datetime import datetime
 
-from pyparsing import FollowedBy
-import pyperclip
+#import pyperclip
 
 import access_my_info, home_screen, search_screen, profile_screen, functions, chat_screen
 
@@ -119,7 +118,8 @@ class OtherProfileScreen (Screen):
 
     
     def user_description_press(self, instance):
-        pyperclip.copy(instance.text)
+        #pyperclip.copy(instance.text)
+        pass
 
     def user_following_press(self, instance):
         #follow or unfollow
