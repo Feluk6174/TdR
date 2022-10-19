@@ -184,13 +184,8 @@ class SearchScreen (Screen):
         self.content_in_scroll_box.height = Window.size[1] / 8 + Window.size[1] / 6 + (Window.size[1] - Window.size[0] / 5) * 0.9 / 12 + Window.size[1] * 3 / 15
         self.content_grid.bind(minimum_height=self.content_grid.setter('height'))
         self.current_posts = 2
-
+    
     def new_posts_header_press(self, instance):
-        connection = self.connection
-        self.all_new_posts_info = connection.get_posts(sort_by = "time_posted", sort_order = "desc", num = 10)
-        self.all_newest_posts_info = functions.order_posts_by_timestamp(self.all_new_posts_info)
-        print(self.all_newest_posts_info)
-
         if self.current_posts == 2:
             self.content_in_scroll_box.clear_widgets()
 
@@ -213,6 +208,15 @@ class SearchScreen (Screen):
         self.content_grid.bind(minimum_height=self.content_grid.setter('height'))
         self.current_posts = 1
 
+    def new_posts_refresh(self, instance):
+        connection = self.connection
+        self.all_new_posts_info = connection.get_posts(sort_by = "time_posted", sort_order = "desc", num = 10)
+        self.all_newest_posts_info = functions.order_posts_by_timestamp(self.all_new_posts_info)
+        print(self.all_newest_posts_info)
+
+        self.create_newest_posts()
+        #create a list with users searched. in next def we get info from list
+
     def create_newest_posts(self):
         self.all_displayed_posts_list = []
         conn = self.connection
@@ -233,11 +237,11 @@ class SearchScreen (Screen):
 
     def refresh_search_screen(self, instance):
         if self.current_posts == 0 or self.current_posts == 2:
-            self.new_posts_header_press(0)
+            self.new_posts_refresh(0)
         
         elif self.current_posts == 1:
             self.search_header_press(0)
-            self.new_posts_header_press(0)
+            self.new_posts_refresh(0)
 
     def get_filter_flags(self):
         self.flag_list = ""
@@ -246,8 +250,12 @@ class SearchScreen (Screen):
         return self.flag_list
 
     def name_press(self, order_number,instance):
-        self.go_to_user_profile(order_number)
-        
+        #self.go_to_user_profile(order_number)
+        other_user_profile_screen = self.other_profile_screen
+        other_user_profile_screen.refresh_profile_screen(instance.text)
+        self.manager.transition = SlideTransition()
+        self.manager.current = "other_profile"
+        self.manager.transition.direction = "right"
 
     def image_press(self, order_number, instance):
         if order_number == -1:
@@ -262,12 +270,9 @@ class SearchScreen (Screen):
     def go_to_user_profile(self, order_number):
         con = self.connection
         other_user_profile_screen = self.other_profile_screen
-        user = self.all_displayed_posts_list[order_number][0]
-        print(user)
-        user = con.get_post(user)
-        print(user)
-        user = user["user_id"]
-        print(user)
+        post_id = self.all_displayed_posts_list[order_number][0]
+        post = con.get_post(post_id)
+        user = post["user_id"]
         other_user_profile_screen.refresh_profile_screen(user)
         self.manager.transition = SlideTransition()
         self.manager.current = "other_profile"
@@ -277,8 +282,27 @@ class SearchScreen (Screen):
         pyperclip.copy(instance.text)
     
     def clear_search_def(self, instance):
-        self.new_posts_header_press(0)
-        self.search_header_press(0)
+        self.search_btn_box.clear_widgets()
+        self.search_btn = Button(text = "Search", on_release = self.search_def, border = (0, 0, 0, 0))
+        self.search_btn_box.add_widget(self.search_btn)
+
+        self.search_user_input.text = ""
+        self.search_post_hastags_input.text = ""
+
+        for x in range (len(self.all_flags) - 2):
+            self.all_flags[x + 2][2] = 0
+        
+        self.flag_grid.clear_widgets()
+        for x in range (len(self.all_flags) - 2):
+            self.flag_btn = Button(border = (0, 0, 0, 0), font_size = 1, size_hint_x = None, width = (Window.size[1] - Window.size[0] / 5) * 0.9 / 12, text = str(self.all_flags[x + 2][1]), on_release = self.flag_press, background_normal = self.all_flags[x + 2][0])
+            self.all_flags[x + 2].append(self.flag_btn)
+            self.flag_grid.add_widget(self.flag_btn)
+        self.flag_grid.bind(minimum_width = self.flag_grid.setter('width'))
+
+        self.searched_box.clear_widgets()
+
+        self.content_in_scroll_box.height = Window.size[1] / 8 + Window.size[1] / 6 + (Window.size[1] - Window.size[0] / 5) * 0.9 / 12 + Window.size[1] * 3 / 15
+        self.content_grid.bind(minimum_height=self.content_grid.setter('height'))
 
     def search_def(self, instance):
         conn = self.connection

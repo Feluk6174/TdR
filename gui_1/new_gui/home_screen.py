@@ -26,7 +26,7 @@ import random
 from datetime import datetime
 from kivy.graphics import BorderImage
 from kivy.lang import Builder
-import pyperclip
+#import pyperclip
 
 import chat_screen, search_screen, profile_screen, functions, access_my_info, other_user_profile_screen, create_post_screen, following_screen
 #from gui_1.new_gui.following_screen import FollowingScreen
@@ -177,31 +177,39 @@ class MainScreen (Screen):
         print(302)
         all_test_posts_1 = []
         all_posts = []
+        self.all_users = []
         print(all_my_following)
-        for following in all_my_following:
-            print(following)
-            follower_posts = connection.get_posts(user_name = following)
+        for b in range (len(all_my_following)):
+            print(all_my_following[b])
+            follower_posts = connection.get_posts(user_name = all_my_following[b])
+            follower_info = connection.get_user(all_my_following[b])
+            self.all_users.append(follower_info)
             for post in follower_posts:
-                all_test_posts_1.append(post)
+                all_test_posts_1.append([post, b])
         all_test_posts = functions.order_posts_by_timestamp(all_test_posts_1)
         for a in range(len(all_test_posts)):
-            user_info = connection.get_user(all_test_posts[a]["user_id"])
-            print(user_info)
+            #user_info = connection.get_user(all_test_posts[a]["user_id"])
+            #print(user_info)
             print(304)
             #0 none, 1 yes
             actual_maybe_like = 0
             print(305)
             for liked in my_liked_posts:
-                    if liked == all_test_posts[a]["id"]:
+                    if liked == all_test_posts[a][0]["id"]:
                         print(306)
                         actual_maybe_like = 1
-            all_posts.append((all_test_posts[a]["user_id"], user_info["profile_picture"], all_test_posts[a]["flags"], all_test_posts[a]["content"], all_test_posts[a]["time_posted"],all_test_posts[a]["id"], actual_maybe_like))
+            all_posts.append((all_test_posts[a][0]["user_id"], self.all_users[all_test_posts[a][1]]["profile_picture"], all_test_posts[a][0]["flags"], all_test_posts[a][0]["content"], all_test_posts[a][0]["time_posted"],all_test_posts[a][0]["id"], actual_maybe_like))
             print(307)
         print(308)
         return all_posts
         
-    def name_press(self, order_number,instance):
-        self.go_to_user_profile(order_number)
+    def name_press(self, order_number, instance):
+        #self.go_to_user_profile(order_number)
+        other_user_profile_screen = self.other_profile_screen
+        other_user_profile_screen.refresh_profile_screen(instance.text)
+        self.manager.transition = SlideTransition()
+        self.manager.current = "other_profile"
+        self.manager.transition.direction = "right"
 
     def go_to_user_profile(self, order_number):
         con = self.connection
@@ -217,14 +225,14 @@ class MainScreen (Screen):
         self.manager.current = "other_profile"
         self.manager.transition.direction = "right"
 
-
     def image_press(self, order_number, instance):
         self.go_to_user_profile(order_number)
 
     def content_post_press(self, order_number, instance):
         #con = self.connection
         #text = con.get_user(self.all_posts_i_get[order_number][0])["content"]
-        pyperclip.copy(instance.text)
+        #pyperclip.copy(instance.text)
+        pass
 
     def like_press(self, order_number, instance):
         num = self.all_posts_i_get[order_number][2]

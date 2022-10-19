@@ -161,7 +161,8 @@ class RegisterScreen (Screen):
     #register user f
     def register(self, instance):
         #comprovar username, password i image que son correctes
-        self.other_users = check_user_exists(self.connection, self.username_text_input.text)
+        #check user_name is legal
+        self.other_users = check_user_exists(self.connection, functions.filter_chars(self.username_text_input.text))
         if self.other_users == True:
             self.username_btn.text = "Username incorrect:"
             self.username_text_input.text = ""
