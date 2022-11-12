@@ -1,15 +1,23 @@
 import math
 import matplotlib.pyplot as plt
 
-
-g = 5
+#log(g*n)=nodes preguntats
+g = 1
+#lier fraction
 p = 0.49
-t = 10
+#1/t=fraction of false accepted
+t = 2
 
-max_iter = 200
-x=11
+#max_iteration
+max_iter = 10000
+#start iteration (sometimes if too small can't do factorial for negatives)
+x0=200
+x=x0
+#quantity of honest nodes
 m=0
+#probability that gets added
 c=0
+#list of data
 list=[]
 
 
@@ -48,8 +56,49 @@ while x < max_iter:
         m = m + 1
     list.append(c)
     x = x + 1
+    print(x)
 
+
+#log(g*n)=nodes preguntats
+g = g
+#lier fraction
+p = 1-p
+#1/t=fraction of false accepted
+t = t
+
+#max_iteration
+max_iter = max_iter
+#start iteration (sometimes if too small can't do factorial for negatives)
+x=x0
+#quantity of honest nodes
+m=0
+#probability that gets added
+c=0
+#list of data
+list_2=[]
+
+while x < max_iter:
+    m=0
+    c=0
+    max0 = log(g, x)
+    max = int(math.ceil(max0/t))
+    while m < max:
+        c0 = calc(p, g, m, x)
+        c = c + c0
+        m = m + 1
+    list_2.append(c)
+    x = x + 1
+    print("_", x)
+
+final_list = []
+for a in range(max_iter-x0):
+    value=(list_2[a]/list[a])
+    print(value)
+    final_list.append(value)
 
 #print(list)
 plt.plot(list)
 plt.show()
+
+#plt.plot(list_2)
+#plt.show()
